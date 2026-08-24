@@ -1,0 +1,80 @@
+{
+  "meta": {
+    "note": "No prices are hard-coded here except the one that is published, stable and citable. Everything else you price yourself, because a laptop that cost 1,400 dollars when this was written will not cost that when you read it, and a tool that quotes stale prices at you is worse than one that asks.",
+    "test": "Before any of this, three questions. Does it produce income within twelve months? Would it still matter if the cheapest version of your work were automated? Does it compound, meaning does having it make the next thing easier? Two out of three is a good use of capital. Zero out of three is shopping."
+  },
+  "categories": [
+    {
+      "id": "tools",
+      "name": "The tools your work runs on",
+      "examples": "A laptop that does not stall. A camera and a microphone if you make things people watch. A second screen. Software you currently work around.",
+      "incomeWithin12m": true,
+      "aiResilient": false,
+      "compounds": true,
+      "note": "The cheapest real gain most people can buy. Not because better tools make you better, but because bad tools cost you hours every week and you have stopped noticing."
+    },
+    {
+      "id": "leverage",
+      "name": "Leverage on your own time",
+      "examples": "An AI subscription you actually use daily. Paid data. Anything that turns eight hours of work into two.",
+      "incomeWithin12m": true,
+      "aiResilient": true,
+      "compounds": true,
+      "note": "Costs tens of dollars a month against thousands of dollars a month of your time. If you use it seriously the arithmetic is not close."
+    },
+    {
+      "id": "credential",
+      "name": "A credential that a specific door requires",
+      "examples": "CFA Level 1. A licence. A certification a named employer or client has told you they want.",
+      "incomeWithin12m": false,
+      "aiResilient": true,
+      "compounds": true,
+      "verifiedCost": {
+        "label": "CFA Level 1, one sitting",
+        "early": 1140,
+        "standard": 1490,
+        "enrollment": 0,
+        "note": "The one-time enrollment fee was eliminated for exams from February 2026 onward, so the total cash cost of Level 1 is the registration fee alone.",
+        "source": "https://www.cfainstitute.org/programs/cfa-program/dates-fees",
+        "checkedOn": "2026-08-24"
+      },
+      "warning": "Only worth it when you can name the door it opens. A credential bought in the hope that it will make you want something is the most expensive way to procrastinate."
+    },
+    {
+      "id": "skill",
+      "name": "A skill with a market price",
+      "examples": "A course in something people pay for. Language tuition that opens a market. A specific technical skill your field is short of.",
+      "incomeWithin12m": true,
+      "aiResilient": false,
+      "compounds": true,
+      "note": "Judge it by whether you can name a person who would pay more for it, not by whether it sounds impressive."
+    },
+    {
+      "id": "venture",
+      "name": "Seed money for something you build",
+      "examples": "A domain and hosting. Inventory for a first run. The first month of a service you sell.",
+      "incomeWithin12m": true,
+      "aiResilient": true,
+      "compounds": true,
+      "note": "The only category here with unbounded upside and a real chance of returning nothing. Size it at what you can lose without changing your plans, and treat losing it as tuition."
+    },
+    {
+      "id": "access",
+      "name": "Being in the room",
+      "examples": "A flight to a conference where the people you need are. A membership. A trip to the city you want to work in.",
+      "incomeWithin12m": false,
+      "aiResilient": true,
+      "compounds": true,
+      "note": "The hardest to justify on a spreadsheet and often the highest returning. Careers move through people, and people are somewhere."
+    },
+    {
+      "id": "health",
+      "name": "The body and mind doing the work",
+      "examples": "Dentistry you have been putting off. Glasses. Sleep. A physiotherapist for the thing that hurts.",
+      "incomeWithin12m": false,
+      "aiResilient": true,
+      "compounds": true,
+      "note": "Deferred maintenance on a person compounds the same way it does on a building, and the repair bill arrives at the least convenient moment."
+    }
+  ]
+}

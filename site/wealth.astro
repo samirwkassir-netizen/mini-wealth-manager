@@ -1,0 +1,39 @@
+---
+// Drop this at src/pages/wealth.astro in the samirkassir.me repo.
+// The .tsx extension on the import is required: without it Astro cannot
+// match the file to the React renderer at build time.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Footer from '../components/Footer.astro';
+import MiniWealthManager from '../mwm/MiniWealthManager.tsx';
+---
+
+<BaseLayout
+  title="Mini Wealth Manager · Samir Kassir"
+  description="A portfolio tool for people whose cash is not the risk-free asset. Built for anyone in Lebanon, Egypt, Nigeria, Argentina or Turkey, where the money you can see is not the money you can withdraw. Not investment advice."
+>
+  <main class="fade-in">
+    <nav
+      aria-label="Primary navigation"
+      class="site-nav mx-auto mt-5 flex w-full max-w-[1180px] items-center justify-between gap-4 rounded-full border border-line/90 bg-paper/90 px-3 py-2.5 shadow-[0_10px_40px_rgba(15,15,15,0.05)] backdrop-blur md:px-4"
+    >
+      <a
+        href="/"
+        aria-label="Back to samirkassir.me"
+        class="grid h-10 w-10 place-items-center rounded-full bg-oxblood font-serif text-lg font-semibold text-paper transition-transform hover:-rotate-6 hover:scale-105 motion-reduce:transform-none"
+      >SK</a>
+      <div class="flex items-center gap-3 text-[13px] text-smoke sm:gap-5 sm:text-sm">
+        <a href="/#work" class="link-underline">Work</a>
+        <a href="/#writing" class="link-underline">Writing</a>
+        <a
+          href="https://github.com/samirwkassir-netizen/mini-wealth-manager"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="rounded-full border border-oxblood/25 bg-white px-4 py-2 font-medium text-oxblood transition-colors hover:bg-oxblood hover:text-paper"
+        >Source</a>
+      </div>
+    </nav>
+
+    <MiniWealthManager client:only="react" />
+  </main>
+  <Footer />
+</BaseLayout>

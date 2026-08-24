@@ -1,0 +1,82 @@
+---
+// Drop this at src/components/WealthTool.astro and render it from
+// src/pages/index.astro between <Work /> and <Writing />.
+---
+
+<section id="tool" class="scroll-mt-24 py-[52px] md:py-[88px]">
+  <div class="section-heading">
+    <div>
+      <p class="section-index">04 / Built</p>
+      <h2>The tool the banks will not build.</h2>
+    </div>
+    <p class="section-intro">Private banks start at half a million dollars and go up to ten. Nobody builds proper wealth tooling below that, because there is no money in it.</p>
+  </div>
+
+  <article class="feature-card relative mt-10 overflow-hidden rounded-[26px] border border-line bg-[#f0ece3] shadow-[0_30px_90px_rgba(15,15,15,0.09)]">
+    <div class="grid lg:grid-cols-[1.05fr_0.95fr]">
+      <div class="flex flex-col justify-center bg-white/75 p-8 sm:p-11 lg:p-14">
+        <p class="text-xs font-semibold tracking-[0.17em] text-oxblood uppercase">Open source tool</p>
+        <h3 class="mt-3 font-serif text-4xl leading-[0.95] sm:text-5xl">Mini Wealth Manager</h3>
+        <p class="mt-4 font-serif text-2xl leading-tight italic text-smoke">Your cash is not the risk-free asset.</p>
+
+        <p class="mt-7 max-w-[38rem] leading-relaxed text-smoke">
+          Every mainstream portfolio tool treats your bank balance as the safe corner of the balance sheet. That assumption is false for anyone in Lebanon, Egypt, Nigeria, Argentina or Turkey, where deposits can be trapped, currencies reprice, and the money you can see is not the money you can withdraw.
+        </p>
+        <p class="mt-4 max-w-[38rem] leading-relaxed text-smoke">
+          So this one asks a different question. Not how much you have, but how much of it is actually yours to move. Two people with the same seven thousand dollars get different answers, and the difference is the whole point.
+        </p>
+
+        <div class="mt-8 flex flex-wrap gap-2" aria-label="What the tool covers">
+          {['Where you stand', 'Runway, not budgets', 'Allocation', 'Stress tests', 'Every source shown'].map((item) => (
+            <span class="rounded-full border border-line bg-paper px-3 py-1.5 text-xs text-smoke">{item}</span>
+          ))}
+        </div>
+
+        <div class="mt-9 flex flex-wrap gap-3">
+          <a href="/wealth" class="button-primary">Open the tool <span aria-hidden="true">&#8594;</span></a>
+          <a
+            href="https://github.com/samirwkassir-netizen/mini-wealth-manager"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="button-secondary">Read the source <span aria-hidden="true">&#8599;</span></a>
+        </div>
+
+        <p class="mt-6 text-xs leading-relaxed text-smoke">
+          No account, no server, no network calls. Nothing you type leaves your browser. A teaching tool, and explicitly not investment advice.
+        </p>
+      </div>
+
+      <div class="relative grid min-h-[420px] place-items-center overflow-hidden p-9 sm:p-12">
+        <span class="absolute top-8 left-8 font-serif text-[7rem] leading-none text-oxblood/8" aria-hidden="true">$</span>
+
+        <div class="relative z-10 w-full max-w-[24rem]">
+          <div class="grid grid-cols-2 gap-5">
+            <div>
+              <div class="relative h-[150px] overflow-hidden rounded-lg border border-line bg-ink/[0.03]">
+                <div class="absolute inset-x-0 bottom-0 h-full bg-oxblood/15"></div>
+                <div class="absolute inset-x-0 bottom-0 h-[14%] bg-oxblood"></div>
+                <span class="absolute top-2 left-2.5 text-[0.7rem] font-semibold">$7,000</span>
+              </div>
+              <p class="mt-2.5 text-xs leading-snug text-smoke">Held in a bank at home</p>
+              <p class="mt-0.5 text-sm font-semibold">$980 you can reach</p>
+            </div>
+
+            <div>
+              <div class="relative h-[150px] overflow-hidden rounded-lg border border-line bg-ink/[0.03]">
+                <div class="absolute inset-x-0 bottom-0 h-full bg-oxblood/15"></div>
+                <div class="absolute inset-x-0 bottom-0 h-full bg-oxblood"></div>
+                <span class="absolute top-2 left-2.5 text-[0.7rem] font-semibold text-paper">$7,000</span>
+              </div>
+              <p class="mt-2.5 text-xs leading-snug text-smoke">Held somewhere it can move</p>
+              <p class="mt-0.5 text-sm font-semibold">$7,000 you can reach</p>
+            </div>
+          </div>
+
+          <p class="mt-6 text-sm leading-relaxed text-smoke">
+            Same net worth. Different amount of money. Every tool built for this assumes the case on the left cannot happen.
+          </p>
+        </div>
+      </div>
+    </div>
+  </article>
+</section>

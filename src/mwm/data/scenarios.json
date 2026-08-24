@@ -1,0 +1,318 @@
+{
+  "meta": {
+    "note": "Three of these four scenarios happened. The fourth did not and may never. Where a figure could not be verified from a real source it is held at zero and marked, rather than filled in with something plausible. A blank cell in a stress test is more honest than a confident guess, and you can see exactly which cells are blank."
+  },
+  "scenarios": [
+    {
+      "id": "gfc2008",
+      "name": "The 2008 crash",
+      "kind": "historical",
+      "period": "Calendar year 2008",
+      "summary": "Global shares lost about two fifths of their value in twelve months. Bonds and gold went up. This is the textbook case for owning things that do not all move together.",
+      "headline": "From its October 2007 peak to its March 2009 low, the MSCI World index fell 57.8 percent. That is seventeen months, not twelve, and it is the number people actually lived through.",
+      "headlineSource": "https://www.msci.com/documents/10199/149ed7bc-316e-4b4c-8ea4-43fcb5bd6523",
+      "shocks": {
+        "globalEquity": -40.71,
+        "emEquity": -53.33,
+        "globalBonds": 5.24,
+        "shortGov": 0,
+        "tips": 0,
+        "property": -37.7,
+        "gold": 4.32,
+        "cash": 0
+      },
+      "lines": [
+        {
+          "key": "globalEquity",
+          "figure": "-40.71%",
+          "measures": "MSCI World, net total return in USD, calendar 2008",
+          "source": "https://www.msci.com/documents/10199/149ed7bc-316e-4b4c-8ea4-43fcb5bd6523",
+          "verified": true
+        },
+        {
+          "key": "emEquity",
+          "figure": "-53.33%",
+          "measures": "MSCI Emerging Markets, net total return in USD, calendar 2008",
+          "source": "https://www.investmentoffice.com/rc/doc/Classic_Periodic_Table_2_7397.pdf",
+          "verified": true
+        },
+        {
+          "key": "globalBonds",
+          "figure": "+5.24%",
+          "measures": "Bloomberg US Aggregate, total return, calendar 2008. Used as the stand-in for global bonds because no verified global aggregate figure was found.",
+          "source": "https://www.investmentoffice.com/rc/doc/Classic_Periodic_Table_2_7397.pdf",
+          "verified": true
+        },
+        {
+          "key": "shortGov",
+          "figure": "held flat",
+          "measures": "No verified intermediate-Treasury figure for 2008. The 10-year Treasury returned about +20.1 percent that year, so holding this line at zero understates how much government bonds helped.",
+          "source": "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datafile/histretSP.html",
+          "verified": false
+        },
+        {
+          "key": "tips",
+          "figure": "held flat",
+          "measures": "Bloomberg does not publish TIPS index returns publicly. No figure was found.",
+          "source": null,
+          "verified": false
+        },
+        {
+          "key": "property",
+          "figure": "-37.7%",
+          "measures": "FTSE Nareit All Equity REITs, total return, calendar 2008",
+          "source": "https://www.reit.com/sites/default/files/reitwatch/RW2601.pdf",
+          "verified": true
+        },
+        {
+          "key": "gold",
+          "figure": "+4.32%",
+          "measures": "Gold spot price return, calendar 2008",
+          "source": "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datafile/histretSP.html",
+          "verified": true
+        },
+        {
+          "key": "cash",
+          "figure": "held flat",
+          "measures": "No verified figure. Treasury bills earned a small positive return in 2008.",
+          "source": null,
+          "verified": false
+        }
+      ]
+    },
+    {
+      "id": "covid2020",
+      "name": "The Covid crash",
+      "kind": "historical",
+      "period": "19 February to 23 March 2020",
+      "summary": "A third of the value of global shares gone in twenty-three trading days. The fastest fall of that size on record. Then it was all back within months.",
+      "headline": "Global shares fell 34 percent in about five weeks, and the same index finished the calendar year up 15.9 percent. Anyone who sold in March locked in the loss and missed the recovery.",
+      "headlineSource": "https://www.msci.com/documents/10199/149ed7bc-316e-4b4c-8ea4-43fcb5bd6523",
+      "shocks": {
+        "globalEquity": -33.97,
+        "emEquity": -31.16,
+        "globalBonds": 0,
+        "shortGov": 0,
+        "tips": 0,
+        "property": 0,
+        "gold": 0,
+        "cash": 0
+      },
+      "lines": [
+        {
+          "key": "globalEquity",
+          "figure": "-33.97%",
+          "measures": "MSCI World, net total return in USD, 19 Feb to 23 Mar 2020, computed from published daily index levels",
+          "source": "https://www.msci.com/",
+          "verified": true
+        },
+        {
+          "key": "emEquity",
+          "figure": "-31.16%",
+          "measures": "MSCI Emerging Markets, net total return in USD, same window",
+          "source": "https://www.msci.com/",
+          "verified": true
+        },
+        {
+          "key": "globalBonds",
+          "figure": "held flat",
+          "measures": "No public daily total-return series was reachable for this five-week window.",
+          "source": null,
+          "verified": false
+        },
+        {
+          "key": "shortGov",
+          "figure": "held flat",
+          "measures": "Same reason.",
+          "source": null,
+          "verified": false
+        },
+        {
+          "key": "tips",
+          "figure": "held flat",
+          "measures": "Same reason.",
+          "source": null,
+          "verified": false
+        },
+        {
+          "key": "property",
+          "figure": "held flat",
+          "measures": "No verified figure for this window. Listed property fell further than shares over the full year, finishing 2020 at -5.1 percent.",
+          "source": "https://www.reit.com/sites/default/files/reitwatch/RW2601.pdf",
+          "verified": false
+        },
+        {
+          "key": "gold",
+          "figure": "held flat",
+          "measures": "Historical daily LBMA gold prices were withdrawn from public access in March 2025 at the benchmark administrator's request, so this window could not be verified. Gold finished calendar 2020 up about 24 percent.",
+          "source": "https://www.gold.org/goldhub/research/outlook-2021",
+          "verified": false
+        },
+        {
+          "key": "cash",
+          "figure": "held flat",
+          "measures": "No verified figure for this window. Treasury bills earned a fraction of a percent over five weeks, which is the entire point of holding them.",
+          "source": null,
+          "verified": false
+        }
+      ]
+    },
+    {
+      "id": "inflation1974",
+      "name": "The 1970s inflation shock",
+      "kind": "historical",
+      "period": "1973 and 1974 combined",
+      "summary": "The scenario almost nobody models. Shares and bonds fell together while prices rose 22 percent. Gold nearly tripled. Diversifying across shares and bonds alone did not save anyone.",
+      "headline": "US shares lost 37 percent in cash terms over two years and 49 percent in real terms once inflation is taken out. Bonds gained 5.7 percent in cash terms and lost about 13 percent in real terms. Both of the things a normal portfolio is made of failed at the same time.",
+      "headlineSource": "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datafile/histretSP.html",
+      "inflation": 22.07,
+      "shocks": {
+        "globalEquity": -37.27,
+        "emEquity": 0,
+        "globalBonds": 5.72,
+        "shortGov": 5.72,
+        "tips": 0,
+        "property": 0,
+        "gold": 187.37,
+        "cash": 0
+      },
+      "lines": [
+        {
+          "key": "globalEquity",
+          "figure": "-37.27%",
+          "measures": "S&P 500 total return, 1973 and 1974 chained. Used as the equity line because no comparable published global series for that era was verified.",
+          "source": "https://www.slickcharts.com/sp500/returns",
+          "verified": true
+        },
+        {
+          "key": "emEquity",
+          "figure": "held flat",
+          "measures": "Emerging markets were not an investable asset class in 1973. There is nothing to put here.",
+          "source": null,
+          "verified": false
+        },
+        {
+          "key": "globalBonds",
+          "figure": "+5.72%",
+          "measures": "10-year US Treasury total return, 1973 and 1974 chained",
+          "source": "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datafile/histretSP.html",
+          "verified": true
+        },
+        {
+          "key": "shortGov",
+          "figure": "+5.72%",
+          "measures": "Same 10-year Treasury figure used for both bond lines.",
+          "source": "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datafile/histretSP.html",
+          "verified": true
+        },
+        {
+          "key": "tips",
+          "figure": "held flat",
+          "measures": "Inflation-linked Treasuries did not exist until 1997. The one asset built for this scenario was not available during it.",
+          "source": null,
+          "verified": false
+        },
+        {
+          "key": "property",
+          "figure": "held flat",
+          "measures": "Not verified for these years.",
+          "source": null,
+          "verified": false
+        },
+        {
+          "key": "gold",
+          "figure": "+187.37%",
+          "measures": "Gold price return, 1973 (+72.96 percent) and 1974 (+66.15 percent) chained",
+          "source": "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datafile/histretSP.html",
+          "verified": true
+        },
+        {
+          "key": "cash",
+          "figure": "held flat",
+          "measures": "Bills earned interest but lost badly to 22 percent inflation.",
+          "source": null,
+          "verified": false
+        }
+      ]
+    },
+    {
+      "id": "reordering",
+      "name": "A reordering",
+      "kind": "hypothetical",
+      "period": "No period. This has not happened.",
+      "summary": "The United States loses its position at the centre of the financial system over a decade. The dollar falls hard, US assets de-rate, and capital moves toward Asia, the Gulf and elsewhere.",
+      "headline": "Every number in this scenario is an assumption, not a forecast. Nobody has data on a thing that has not occurred. Change the numbers and watch what happens: that is the entire point of this panel.",
+      "headlineSource": null,
+      "purchasingPowerShock": -30,
+      "editable": true,
+      "shocks": {
+        "globalEquity": -55,
+        "emEquity": -35,
+        "globalBonds": -20,
+        "shortGov": -10,
+        "tips": -5,
+        "property": -50,
+        "gold": 120,
+        "cash": 0
+      },
+      "lines": [
+        {
+          "key": "globalEquity",
+          "figure": "-55%",
+          "measures": "Assumption. Global indices are roughly two thirds US by market value, so a US de-rating takes the world index with it.",
+          "source": null,
+          "verified": false
+        },
+        {
+          "key": "emEquity",
+          "figure": "-35%",
+          "measures": "Assumption. Falls with everything else at first, but is where the capital is assumed to end up.",
+          "source": null,
+          "verified": false
+        },
+        {
+          "key": "globalBonds",
+          "figure": "-20%",
+          "measures": "Assumption. Rising yields and a falling dollar.",
+          "source": null,
+          "verified": false
+        },
+        {
+          "key": "shortGov",
+          "figure": "-10%",
+          "measures": "Assumption. Short maturities lose less.",
+          "source": null,
+          "verified": false
+        },
+        {
+          "key": "tips",
+          "figure": "-5%",
+          "measures": "Assumption. Inflation linkage helps, dollar weakness does not.",
+          "source": null,
+          "verified": false
+        },
+        {
+          "key": "property",
+          "figure": "-50%",
+          "measures": "Assumption. Mostly US property in the index.",
+          "source": null,
+          "verified": false
+        },
+        {
+          "key": "gold",
+          "figure": "+120%",
+          "measures": "Assumption. The asset with no issuer and no counterparty.",
+          "source": null,
+          "verified": false
+        },
+        {
+          "key": "cash",
+          "figure": "0%",
+          "measures": "The dollar figure does not move. Its purchasing power is assumed to fall 30 percent, which is applied separately below.",
+          "source": null,
+          "verified": false
+        }
+      ]
+    }
+  ]
+}

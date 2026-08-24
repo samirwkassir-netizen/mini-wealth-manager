@@ -1,0 +1,585 @@
+/*
+  Mini Wealth Manager
+  Palette is inherited from samirkassir.me and deliberately not extended.
+  Chart colours are two families built from tokens that already exist:
+  warm neutrals for defensive assets, oxblood for assets that can hurt you.
+  Ordered light to dark by volatility, so the picture reads before the legend does.
+*/
+
+.mwm {
+  --paper: #fafaf7;
+  --ink: #0f0f0f;
+  --smoke: #5a5a5a;
+  --line: #e5e3dd;
+  --oxblood: #7a1f2a;
+
+  --surface: rgb(255 255 255 / 0.72);
+  --surface-solid: #ffffff;
+  --hairline: rgb(15 15 15 / 0.08);
+
+  --c-cash: #e5e3dd;
+  --c-shortGov: #c6c3bb;
+  --c-globalBonds: #9a9691;
+  --c-tips: #6e6b66;
+  --c-gold: #3a3733;
+  --c-property: #c08a8f;
+  --c-globalEquity: #7a1f2a;
+  --c-emEquity: #4c1119;
+
+  --pos: #3d5c4a;
+  --neg: #7a1f2a;
+
+  color: var(--ink);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.mwm *,
+.mwm *::before,
+.mwm *::after {
+  box-sizing: border-box;
+}
+
+.mwm h1,
+.mwm h2,
+.mwm h3 {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  margin: 0;
+}
+
+.mwm h1 {
+  font-size: clamp(2.3rem, 6vw, 4rem);
+}
+.mwm h2 {
+  font-size: clamp(1.75rem, 3.6vw, 2.7rem);
+}
+.mwm h3 {
+  font-size: clamp(1.15rem, 2vw, 1.45rem);
+}
+
+.mwm p {
+  margin: 0;
+}
+
+.mwm-eyebrow {
+  color: var(--oxblood);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+}
+
+.mwm-lede {
+  color: var(--smoke);
+  font-size: 1.02rem;
+  line-height: 1.62;
+  max-width: 62ch;
+}
+
+.mwm-small {
+  color: var(--smoke);
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
+.mwm-tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+}
+
+/* ---------- surfaces ---------- */
+
+.mwm-card {
+  min-width: 0;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 1.35rem 1.4rem;
+  backdrop-filter: blur(6px);
+}
+
+.mwm-card--flat {
+  background: transparent;
+  border-color: var(--hairline);
+}
+
+.mwm-card--ink {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+.mwm-card--ink .mwm-small,
+.mwm-card--ink .mwm-lede {
+  color: rgb(250 250 247 / 0.72);
+}
+
+.mwm-card--ink .mwm-eyebrow {
+  color: rgb(250 250 247 / 0.55);
+}
+
+.mwm-panel {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+/* ---------- controls ---------- */
+
+.mwm-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin-bottom: 0.35rem;
+}
+
+.mwm-hint {
+  color: var(--smoke);
+  font-size: 0.76rem;
+  line-height: 1.5;
+  margin-top: 0.3rem;
+}
+
+.mwm-input,
+.mwm-select {
+  width: 100%;
+  min-height: 2.7rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--surface-solid);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.mwm-select {
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--smoke) 50%),
+    linear-gradient(135deg, var(--smoke) 50%, transparent 50%);
+  background-position: calc(100% - 18px) calc(50% + 1px), calc(100% - 13px) calc(50% + 1px);
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  padding-right: 2.1rem;
+}
+
+.mwm-input:focus,
+.mwm-select:focus {
+  outline: none;
+  border-color: var(--oxblood);
+  box-shadow: 0 0 0 3px rgb(122 31 42 / 0.1);
+}
+
+.mwm-input-group {
+  position: relative;
+}
+
+.mwm-input-group .mwm-input {
+  padding-left: 1.9rem;
+}
+
+.mwm-input-prefix {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--smoke);
+  font-size: 0.9rem;
+  pointer-events: none;
+}
+
+.mwm-seg {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  overflow: hidden;
+  background: var(--surface-solid);
+}
+
+.mwm-seg button {
+  flex: 1;
+  min-height: 2.7rem;
+  padding: 0.4rem 0.6rem;
+  border: none;
+  border-right: 1px solid var(--line);
+  background: transparent;
+  color: var(--smoke);
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+.mwm-seg button:last-child {
+  border-right: none;
+}
+
+.mwm-seg button[aria-pressed='true'] {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.mwm-seg--stack {
+  flex-direction: column;
+}
+
+.mwm-seg--stack button {
+  border-right: none;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  padding: 0.7rem 0.85rem;
+}
+
+.mwm-seg--stack button:last-child {
+  border-bottom: none;
+}
+
+.mwm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 2.8rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: 999px;
+  border: 1px solid var(--oxblood);
+  background: var(--oxblood);
+  color: var(--paper);
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: transform 180ms ease, opacity 180ms ease;
+}
+
+.mwm-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.mwm-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.mwm-btn--ghost {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--line);
+}
+
+.mwm-btn--ghost:hover {
+  border-color: rgb(122 31 42 / 0.35);
+  color: var(--oxblood);
+}
+
+.mwm-btn--sm {
+  min-height: 2.2rem;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.78rem;
+}
+
+.mwm-linkish {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--oxblood);
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
+.mwm a {
+  color: inherit;
+  text-decoration-color: rgb(122 31 42 / 0.4);
+  text-underline-offset: 3px;
+}
+
+.mwm a:hover {
+  color: var(--oxblood);
+}
+
+/* ---------- bits ---------- */
+
+.mwm-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.16rem 0.55rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.mwm-pill--warn {
+  border-color: rgb(122 31 42 / 0.3);
+  color: var(--oxblood);
+  background: rgb(122 31 42 / 0.05);
+}
+
+.mwm-pill--ok {
+  border-color: rgb(61 92 74 / 0.3);
+  color: var(--pos);
+  background: rgb(61 92 74 / 0.05);
+}
+
+.mwm-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  border: 1px solid rgb(15 15 15 / 0.12);
+  flex-shrink: 0;
+}
+
+.mwm-callout {
+  border-left: 2px solid var(--line);
+  padding: 0.15rem 0 0.15rem 1rem;
+}
+
+.mwm-callout--critical {
+  border-left-color: var(--oxblood);
+}
+
+.mwm-callout--warn {
+  border-left-color: rgb(122 31 42 / 0.4);
+}
+
+.mwm-why {
+  border: 1px dashed rgb(15 15 15 / 0.16);
+  border-radius: 10px;
+  padding: 0.75rem 0.9rem;
+  background: rgb(15 15 15 / 0.015);
+}
+
+.mwm-divider {
+  height: 1px;
+  background: var(--line);
+  border: none;
+  margin: 0;
+}
+
+/* ---------- layout ---------- */
+
+.mwm-shell {
+  max-width: 74rem;
+  margin: 0 auto;
+  padding: 0 1.15rem;
+}
+
+.mwm-grid {
+  display: grid;
+  gap: 0.9rem;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 700px) {
+  .mwm-grid--2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .mwm-grid--3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .mwm-grid--4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .mwm-grid--sidebar {
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    gap: 1.6rem;
+  }
+}
+
+.mwm-stack {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.mwm-stack > * {
+  min-width: 0;
+}
+
+.mwm-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.mwm-scroll-x {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mwm-scroll-x .mwm-table {
+  min-width: 36rem;
+}
+
+.mwm-table td:first-child {
+  min-width: 9.5rem;
+}
+
+/* ---------- tables ---------- */
+
+.mwm-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.mwm-table th {
+  text-align: left;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--smoke);
+  padding: 0.55rem 0.7rem;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+
+.mwm-table td {
+  padding: 0.6rem 0.7rem;
+  border-bottom: 1px solid var(--hairline);
+  vertical-align: top;
+}
+
+.mwm-table tr:last-child td {
+  border-bottom: none;
+}
+
+.mwm-table .num {
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* ---------- steps ---------- */
+
+.mwm-rail {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.mwm-rail button {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.3rem 0.7rem 0.3rem 0.35rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--smoke);
+  font-family: inherit;
+  font-size: 0.76rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 160ms ease, border-color 160ms ease;
+}
+
+.mwm-rail button:hover:not(:disabled) {
+  color: var(--ink);
+}
+
+.mwm-rail button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.mwm-rail button[aria-current='true'] {
+  color: var(--ink);
+  border-color: var(--line);
+  background: var(--surface-solid);
+}
+
+.mwm-rail-num {
+  display: grid;
+  place-items: center;
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  font-size: 0.66rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.mwm-rail button[aria-current='true'] .mwm-rail-num {
+  background: var(--oxblood);
+  border-color: var(--oxblood);
+  color: var(--paper);
+}
+
+.mwm-rail-num--done {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+/* ---------- intro ---------- */
+
+.mwm-intro-stage {
+  position: relative;
+  min-height: 280px;
+  display: grid;
+  place-items: center;
+}
+
+.mwm-bar-track {
+  height: 34px;
+  border-radius: 6px;
+  background: rgb(15 15 15 / 0.05);
+  overflow: hidden;
+  display: flex;
+}
+
+.mwm-meter {
+  height: 8px;
+  border-radius: 999px;
+  background: rgb(15 15 15 / 0.07);
+  overflow: hidden;
+}
+
+.mwm-meter span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--oxblood);
+}
+
+/* ---------- print ---------- */
+
+@media print {
+  .mwm-noprint {
+    display: none !important;
+  }
+  .mwm-card {
+    break-inside: avoid;
+    backdrop-filter: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mwm * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

@@ -1,0 +1,42 @@
+@import 'tailwindcss';
+
+:root {
+  --color-paper: #fafaf7;
+  --color-ink: #0f0f0f;
+  --color-oxblood: #7a1f2a;
+  --color-line: #e5e3dd;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-paper);
+  background-image:
+    radial-gradient(circle at 88% 4%, rgb(122 31 42 / 0.09), transparent 25rem),
+    radial-gradient(circle at 5% 48%, rgb(122 31 42 / 0.04), transparent 34rem),
+    linear-gradient(rgb(15 15 15 / 0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(15 15 15 / 0.018) 1px, transparent 1px);
+  background-size: auto, auto, 34px 34px, 34px 34px;
+  background-attachment: fixed;
+  color: var(--color-ink);
+  overflow-x: hidden;
+}
+
+::selection {
+  background-color: var(--color-oxblood);
+  color: var(--color-paper);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-oxblood);
+  outline-offset: 3px;
+}
+
+@media (max-width: 767px) {
+  body {
+    background-attachment: scroll;
+  }
+}

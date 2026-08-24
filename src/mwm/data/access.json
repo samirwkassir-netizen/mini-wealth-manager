@@ -1,0 +1,92 @@
+{
+  "meta": {
+    "checkedOn": "2026-08-24",
+    "note": "None of this is tax advice and none of it is a recommendation of a broker. It is a set of published facts with links, gathered because they are hard to find in one place and because they change what a small investor outside the US and Europe should actually buy."
+  },
+  "broker": {
+    "title": "Where you would actually hold this",
+    "points": [
+      {
+        "claim": "Interactive Brokers lists Lebanon among the countries and territories it accepts applications from.",
+        "source": "https://www.interactivebrokers.com/en/accounts/open-account-country-list.php",
+        "caveat": "Appearing on the list is not the same as being approved. Expect real questions about source of funds."
+      },
+      {
+        "claim": "There is no account minimum and no inactivity fee on an individual account.",
+        "source": "https://www.interactivebrokers.com/en/accounts/required-minimums.php",
+        "caveat": "The ten thousand dollar minimum that turns up in search results applies to broker and institutional accounts, not to you."
+      },
+      {
+        "claim": "Deposits have to come from an account in your own name. Third-party deposits are generally rejected.",
+        "source": "https://www.interactivebrokers.com/en/support/fund-my-account.php",
+        "caveat": "This rules out having a relative abroad send the money for you, which is the first thing most people try."
+      },
+      {
+        "claim": "Wise's own list of countries you must live in to hold money with Wise does not include Lebanon.",
+        "source": "https://wise.com/help/articles/2813542/where-do-i-need-to-live-to-hold-money-with-wise",
+        "caveat": "Wise can send US dollars to Lebanon over Swift, and Lebanon is not on its unsupported list for registering and sending. But a Wise balance, which is what the broker's Wise integration transfers from, needs residence elsewhere. Revolut does not cover Lebanon at all."
+      },
+      {
+        "claim": "The practical consequence: for a Lebanon resident an international wire straight from the bank to the broker is the direct route. Routing through a digital account first adds a step and a fee without removing one.",
+        "source": null,
+        "caveat": "This is a conclusion drawn from the published facts above, not a quote from any of them. Check your own bank's outbound wire fee before assuming anything."
+      },
+      {
+        "claim": "Non-US persons file a W-8BEN with the broker at account opening.",
+        "source": "https://ibkrcampus.com/campus/trading-lessons/us-taxes-for-us-non-residents-3/",
+        "caveat": "It is a short form and it is where you claim a treaty rate if your country has one."
+      }
+    ]
+  },
+  "domicile": {
+    "title": "Why the Irish fund and not the American one",
+    "lede": "This is the single most valuable thing on this page for anyone outside the United States, and almost nobody is told it before they buy their first fund.",
+    "points": [
+      {
+        "claim": "Most US-source income paid to a foreign person is taxed at 30 percent, reduced only by a tax treaty.",
+        "source": "https://www.irs.gov/individuals/international-taxpayers/nra-withholding",
+        "caveat": "Lebanon does not appear on the IRS list of countries with a US income tax treaty, so there is no reduction to claim."
+      },
+      {
+        "claim": "An Irish fund holding US shares suffers 15 percent US withholding at the fund level under the US-Ireland treaty, rather than 30 percent.",
+        "source": "https://www.irs.gov/pub/irs-trty/ireland.pdf",
+        "caveat": "Article 10(2)(b) sets the 15 percent rate and Article 4(1)(d) treats an Irish collective investment undertaking as resident for treaty purposes. Whether a given fund qualifies under the limitation on benefits article is fund specific."
+      },
+      {
+        "claim": "Ireland does not deduct exit tax from a non-resident holder, and transactions in units held in a recognised clearing system, which covers exchange traded funds, do not require exit tax to be deducted at all.",
+        "source": "https://www.revenue.ie/en/tax-professionals/tdm/income-tax-capital-gains-tax-corporation-tax/part-27/27-01a-02.pdf",
+        "caveat": null
+      },
+      {
+        "claim": "US estate tax applies to a non-resident who dies holding more than 60,000 dollars of US-situated assets, at rates rising to 40 percent.",
+        "source": "https://www.irs.gov/businesses/small-businesses-self-employed/estate-tax-for-nonresidents-not-citizens-of-the-united-states",
+        "caveat": "The unified credit for a non-resident is 13,000 dollars, against 60,000 dollars of assets."
+      },
+      {
+        "claim": "Shares of a company organised outside the United States are not US-situated property, wherever the certificates sit. An Irish fund is an Irish company.",
+        "source": "https://www.irs.gov/instructions/i706na",
+        "caveat": "So a portfolio of Irish funds holding American shares is not exposed to that estate tax, while the same American shares held directly would be. Nobody enjoys thinking about this at twenty. It costs nothing to get right at the start and is expensive to fix later."
+      }
+    ]
+  },
+  "region": {
+    "title": "If you want the Gulf in your portfolio",
+    "points": [
+      {
+        "claim": "MSCI classifies Saudi Arabia, the UAE, Qatar, Kuwait and Egypt as emerging markets. Bahrain, Jordan, Oman and Morocco are frontier markets. Lebanon is a standalone market.",
+        "source": "https://www.msci.com/downloads/web/msci-com/indexes/index-resources/market-classification/MSCI%202026%20GLOBAL%20MARKET%20ACCESSIBILITY%20COUNTRY%20COMPARISON%20REPORT.pdf",
+        "caveat": "Standalone means outside the indices that global funds track. If you live in Lebanon, no ordinary emerging markets fund holds anything Lebanese. Your home market and your portfolio have almost nothing to do with each other."
+      },
+      {
+        "claim": "A broad emerging markets fund already holds Saudi Arabia, the UAE, Qatar, Kuwait and Egypt. Saudi Arabia was about 3.8 percent of the MSCI Emerging Markets index at the end of 2025.",
+        "source": "https://www.msci.com/downloads/web/msci-com/indexes/group/emerging-markets-indexes/MSCI%20Emerging%20Markets-cbr-en.pdf",
+        "caveat": "MSCI's current public factsheet discloses only the top five countries, so a precise weight for today is not published. Anything from roughly 3 to 4.5 percent is plausible and this tool will not pretend to a decimal place it cannot source."
+      },
+      {
+        "claim": "Single-country Gulf funds in a European wrapper are thin. Saudi Arabia has a physically backed Irish fund with real size. There is no UCITS-wrapped UAE or Qatar fund, and the HSBC Saudi fund and the iShares GCC ex-Saudi fund have both closed.",
+        "source": "https://www.ishares.com/uk/individual/en/products/279996/ishares-msci-saudi-arabia-capped-imi-ucits-etf",
+        "caveat": "Thin shelves and closing funds are a signal about how much money is really there, and worth reading as one."
+      }
+    ]
+  }
+}
