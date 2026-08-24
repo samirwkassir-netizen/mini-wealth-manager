@@ -29,9 +29,14 @@ const zero = (): Weights => ({
  * the underlying assumptions do not have.
  */
 export const BASE: Record<RiskLevel, Weights> = {
-  Cautious: { globalEquity: 34, emEquity: 5, property: 6, globalBonds: 25, tips: 12, shortGov: 13, cash: 5, gold: 0 },
-  Balanced: { globalEquity: 52, emEquity: 10, property: 8, globalBonds: 14, tips: 8, shortGov: 6, cash: 2, gold: 0 },
-  Growth: { globalEquity: 66, emEquity: 14, property: 8, globalBonds: 6, tips: 3, shortGov: 2, cash: 1, gold: 0 },
+  Cautious: { globalEquity: 18, emEquity: 3, property: 4, globalBonds: 30, tips: 15, shortGov: 20, cash: 10, gold: 0 },
+  Balanced: { globalEquity: 42, emEquity: 10, property: 8, globalBonds: 20, tips: 8, shortGov: 9, cash: 3, gold: 0 },
+  Growth: { globalEquity: 56, emEquity: 24, property: 16, globalBonds: 2, tips: 0, shortGov: 2, cash: 0, gold: 0 },
+}
+
+/** Share of the sleeve in things that can halve. Used in plain-English copy. */
+export function equityShare(w: Weights): number {
+  return w.globalEquity + w.emEquity + w.property
 }
 
 /**

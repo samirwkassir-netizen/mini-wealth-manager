@@ -3,7 +3,8 @@ import { computeStanding } from './standing'
 import { computeFlows } from './flows'
 import { computeHumanCapital, defaultUplift } from './humanCapital'
 import { computeRisk, RISK_LEVELS } from './risk'
-import { blendedWeights, computeTiering, growthWeights } from './policy'
+import { blendedWeights, computeTiering, equityShare, growthWeights } from './policy'
+import { historicalReturn } from './historical'
 import { buildAllocation, outcomeBand } from './portfolio'
 import { firstMoves } from './actions'
 
@@ -15,6 +16,7 @@ export * from './humanCapital'
 export * from './risk'
 export * from './policy'
 export * from './mvo'
+export * from './historical'
 export * from './portfolio'
 export * from './stress'
 export * from './actions'
@@ -42,10 +44,21 @@ export function analyse(state: AppState, upliftOverride?: number) {
     uplift,
   )
 
+  // Two views of each risk level: the whole plan including the cash buffer,
+  // and the long-term sleeve on its own. The sleeve is the honest comparison,
+  // because the buffer is identical whichever level you pick and flattens
+  // the difference between them.
   const alternatives = RISK_LEVELS.map((level: RiskLevel) => {
     const g = growthWeights(level, state.profile, standing.fragility.score)
     const w = blendedWeights(tiering, g)
-    return { level, allocation: buildAllocation(w, tiering.investableUsd, state.profile, state.picks) }
+    return {
+      level,
+      sleeveWeights: g,
+      allocation: buildAllocation(w, tiering.investableUsd, state.profile, state.picks),
+      sleeve: buildAllocation(g, tiering.growthUsd, state.profile, state.picks),
+      historical: historicalReturn(g),
+      equityPct: equityShare(g),
+    }
   })
 
   const actions = firstMoves(state, standing, flow, tiering, human)

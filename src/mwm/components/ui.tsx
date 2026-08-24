@@ -1,6 +1,6 @@
-import { motion, useMotionValue, useSpring, useInView, useReducedMotion } from 'motion/react'
-import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
-import type { AssetKey, Flag } from '../engine'
+import { AnimatePresence, motion, useInView, useMotionValue, useReducedMotion, useSpring } from 'motion/react'
+import { useEffect, useId, useRef, useState, type CSSProperties, type ReactNode } from 'react'
+import type { AssetKey } from '../engine'
 
 export const CHART_COLOR: Record<AssetKey, string> = {
   cash: 'var(--c-cash)',
@@ -13,85 +13,219 @@ export const CHART_COLOR: Record<AssetKey, string> = {
   emEquity: 'var(--c-emEquity)',
 }
 
-export function Card({
+/* ------------------------------------------------------------------ */
+/* plain English                                                       */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Every term a reader might not know, written the way you would say it out
+ * loud to a friend. If a word is not in here, it should not be on the screen.
+ */
+export const GLOSSARY: Record<string, string> = {
+  shares:
+    'A share is a small piece of a company. If you own one share of Apple, you own a tiny part of Apple, and you get a tiny part of whatever it earns. Prices go up and down every day.',
+  bonds:
+    'A bond is a loan you make to a government or a company. They pay you interest and give your money back on an agreed date. Safer than shares. Earns less.',
+  fund: 'A fund is one thing you buy that holds hundreds or thousands of companies at once. Instead of picking winners, you own a slice of everything. One purchase, instant spreading.',
+  etf: 'An ETF is a fund you buy and sell on a stock exchange the same way you would buy a single share. That is the only real difference from an ordinary fund.',
+  volatility:
+    'How much something jumps around. A 16 percent figure means that in a normal year the value can easily end up 16 percent above or below where it started. It is a measure of the ride, not of whether you lose money in the end.',
+  expectedReturn:
+    'A best guess at what something earns per year, averaged over ten or twenty years. Some years will be much better and some much worse. Nobody gets this exactly right.',
+  emergencyMoney:
+    'Boring money you can reach in one day, kept for the month your laptop dies and your car breaks in the same week. It is not meant to grow. It is meant to stop you selling your investments at the worst possible moment.',
+  monthsCovered:
+    'How many months you could pay for your normal life if all your income stopped tomorrow, using only the money you can actually reach.',
+  inflation:
+    'Prices going up over time. If prices rise 3 percent a year, the same 100 dollars buys 3 percent less next year. Money sitting still quietly loses value.',
+  diversify:
+    'Not putting everything in one place. Different countries, different types of investment, different institutions. Some things go down while others go up, so the whole pile moves less.',
+  ter: 'The yearly fee a fund charges you, taken automatically. 0.20 percent means 2 dollars a year for every 1,000 dollars you hold. Small numbers, but they run every year for decades.',
+  ucits:
+    'A fund registered in Ireland and regulated in Europe. For anyone outside America this is usually the better version of the same fund, for tax reasons explained in the Where to hold it section.',
+  domicile: 'Which country a fund is legally registered in. It changes how much tax gets taken from you before you ever see the money.',
+  withholding:
+    'Tax taken out automatically before money reaches you. On American funds this is 30 percent of the dividends for most people outside the US, and 15 percent if you buy the Irish version instead.',
+  buffer:
+    'The same thing as emergency money. Cash you can reach in a day, sized in months of your spending rather than as a percentage.',
+  rebalance:
+    'Once or twice a year, selling a bit of whatever grew too big and buying whatever shrank, to get back to your target mix. It quietly makes you sell high and buy low.',
+  drawdown: 'How far something falls from its highest point before it recovers. The number that makes people panic and sell.',
+  correlation:
+    'Whether two things move together. If shares and gold have low correlation, gold often holds up when shares fall, which is the entire reason to own both.',
+}
+
+export function Define({ term, children }: { term: keyof typeof GLOSSARY | string; children: ReactNode }) {
+  const [open, setOpen] = useState(false)
+  const text = GLOSSARY[term]
+  if (!text) return <>{children}</>
+  return (
+    <span
+      className="mwm-define"
+      tabIndex={0}
+      role="button"
+      aria-label={`What ${String(children)} means`}
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+      onFocus={() => setOpen(true)}
+      onBlur={() => setOpen(false)}
+      onClick={() => setOpen((o) => !o)}
+    >
+      {children}
+      <AnimatePresence>
+        {open ? (
+          <motion.span
+            className="mwm-define-pop"
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.18 }}
+          >
+            {text}
+          </motion.span>
+        ) : null}
+      </AnimatePresence>
+    </span>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/* surfaces                                                            */
+/* ------------------------------------------------------------------ */
+
+export function Box({
   children,
-  tone = 'default',
+  variant,
   className = '',
   style,
 }: {
   children: ReactNode
-  tone?: 'default' | 'flat' | 'ink'
+  variant?: 'quiet' | 'edge' | 'accent' | 'tight'
   className?: string
-  style?: React.CSSProperties
+  style?: CSSProperties
 }) {
-  const t = tone === 'ink' ? 'mwm-card--ink' : tone === 'flat' ? 'mwm-card--flat' : ''
+  const v = variant ? `mwm-box--${variant}` : ''
   return (
-    <div className={`mwm-card ${t} ${className}`} style={style}>
+    <div className={`mwm-box ${v} ${className}`} style={style}>
       {children}
     </div>
   )
 }
 
-export function Reveal({ children, delay = 0, y = 14 }: { children: ReactNode; delay?: number; y?: number }) {
+export function Pair({ left, right }: { left: ReactNode; right: ReactNode }) {
+  return (
+    <div className="mwm-pair">
+      <div>{left}</div>
+      <div>{right}</div>
+    </div>
+  )
+}
+
+export function Tile({
+  label,
+  value,
+  sub,
+  hero = false,
+}: {
+  label: ReactNode
+  value: ReactNode
+  sub?: ReactNode
+  hero?: boolean
+}) {
+  return (
+    <div className={`mwm-tile ${hero ? 'mwm-tile--hero' : ''}`}>
+      <p className="mwm-eyebrow">{label}</p>
+      <p className="mwm-num mwm-tile-value">{value}</p>
+      {sub ? <p className="mwm-note">{sub}</p> : null}
+    </div>
+  )
+}
+
+export function Reveal({ children, delay = 0, y = 18 }: { children: ReactNode; delay?: number; y?: number }) {
   const ref = useRef<HTMLDivElement>(null)
-  const inView = useInView(ref, { once: true, margin: '-40px' })
+  const inView = useInView(ref, { once: true, margin: '-50px' })
   const reduce = useReducedMotion()
   return (
     <motion.div
       ref={ref}
       initial={reduce ? false : { opacity: 0, y }}
       animate={inView || reduce ? { opacity: 1, y: 0 } : undefined}
-      transition={{ duration: 0.55, delay, ease: [0.2, 0.8, 0.2, 1] }}
+      transition={{ duration: 0.6, delay, ease: [0.2, 0.8, 0.2, 1] }}
     >
       {children}
     </motion.div>
   )
 }
 
-export function Counter({
-  value,
-  format,
-  className = '',
-}: {
-  value: number
-  format: (n: number) => string
-  className?: string
-}) {
+export function Counter({ value, format }: { value: number; format: (n: number) => string }) {
   const reduce = useReducedMotion()
   const mv = useMotionValue(reduce ? value : 0)
-  const spring = useSpring(mv, { stiffness: 90, damping: 22, mass: 0.7 })
+  const spring = useSpring(mv, { stiffness: 80, damping: 24, mass: 0.8 })
   const [text, setText] = useState(() => format(reduce ? value : 0))
 
   useEffect(() => {
     mv.set(value)
   }, [value, mv])
-
   useEffect(() => spring.on('change', (v) => setText(format(v))), [spring, format])
 
+  return <span aria-label={format(value)}>{text}</span>
+}
+
+export function SectionHead({
+  eyebrow,
+  title,
+  lede,
+  aside,
+}: {
+  eyebrow?: string
+  title: string
+  lede?: ReactNode
+  aside?: ReactNode
+}) {
   return (
-    <span className={`mwm-tabular ${className}`} aria-label={format(value)}>
-      {text}
-    </span>
+    <header className="mwm-head">
+      <div>
+        {eyebrow ? <p className="mwm-eyebrow" style={{ marginBottom: '1rem' }}>{eyebrow}</p> : null}
+        <h2>{title}</h2>
+      </div>
+      <div className="mwm-stack" style={{ gap: '1rem', paddingTop: '0.5rem' }}>
+        {lede ? <p className="mwm-lede">{lede}</p> : null}
+        {aside}
+      </div>
+    </header>
   )
 }
+
+export function Quote({ children, by }: { children: ReactNode; by?: string }) {
+  return (
+    <div className="mwm-stack" style={{ gap: '0.9rem' }}>
+      <p className="mwm-quote">{children}</p>
+      {by ? <p className="mwm-tiny">{by}</p> : null}
+    </div>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/* controls                                                            */
+/* ------------------------------------------------------------------ */
 
 export function Field({
   label,
   hint,
   children,
 }: {
-  label: string
-  hint?: string
+  label: ReactNode
+  hint?: ReactNode
   children: (id: string) => ReactNode
 }) {
   const id = useId()
   return (
-    <div>
+    <div className="mwm-field">
       <label className="mwm-label" htmlFor={id}>
         {label}
       </label>
-      {children(id)}
       {hint ? <p className="mwm-hint">{hint}</p> : null}
+      {children(id)}
     </div>
   )
 }
@@ -116,7 +250,7 @@ export function MoneyInput({
 
   return (
     <div className="mwm-input-group">
-      {currency ? <span className="mwm-input-prefix">{currency === 'USD' ? '$' : currency}</span> : null}
+      {currency ? <span className="mwm-prefix">{currency === 'USD' ? '$' : currency}</span> : null}
       <input
         id={id}
         className="mwm-input"
@@ -133,35 +267,29 @@ export function MoneyInput({
   )
 }
 
-export function Segmented<T extends string>({
+export function Choices<T extends string>({
   options,
   value,
   onChange,
-  stack = false,
+  row = false,
 }: {
-  options: { value: T; label: string; hint?: string }[]
+  options: { value: T; label: string; sub?: string }[]
   value: T
   onChange: (v: T) => void
-  stack?: boolean
+  row?: boolean
 }) {
   return (
-    <div className={`mwm-seg ${stack ? 'mwm-seg--stack' : ''}`} role="group">
+    <div className={`mwm-choices ${row ? 'mwm-choices--row' : ''}`} role="group">
       {options.map((o) => (
-        <button key={o.value} type="button" aria-pressed={value === o.value} onClick={() => onChange(o.value)}>
+        <button
+          key={o.value}
+          type="button"
+          className="mwm-choice"
+          aria-pressed={value === o.value}
+          onClick={() => onChange(o.value)}
+        >
           <span>{o.label}</span>
-          {o.hint && stack ? (
-            <span
-              style={{
-                display: 'block',
-                fontSize: '0.72rem',
-                opacity: 0.7,
-                fontWeight: 400,
-                marginTop: '0.15rem',
-              }}
-            >
-              {o.hint}
-            </span>
-          ) : null}
+          {o.sub ? <span className="mwm-choice-sub">{o.sub}</span> : null}
         </button>
       ))}
     </div>
@@ -190,6 +318,39 @@ export function Select({
   )
 }
 
+export function Slider({
+  id,
+  value,
+  onChange,
+  min,
+  max,
+  step = 1,
+}: {
+  id?: string
+  value: number
+  onChange: (n: number) => void
+  min: number
+  max: number
+  step?: number
+}) {
+  return (
+    <input
+      id={id}
+      className="mwm-range"
+      type="range"
+      min={min}
+      max={max}
+      step={step}
+      value={value}
+      onChange={(e) => onChange(Number(e.target.value))}
+    />
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/* bits                                                                */
+/* ------------------------------------------------------------------ */
+
 export function Pill({ children, tone = 'default' }: { children: ReactNode; tone?: 'default' | 'warn' | 'ok' }) {
   const t = tone === 'warn' ? 'mwm-pill--warn' : tone === 'ok' ? 'mwm-pill--ok' : ''
   return <span className={`mwm-pill ${t}`}>{children}</span>
@@ -199,24 +360,21 @@ export function Swatch({ color }: { color: string }) {
   return <span className="mwm-swatch" style={{ background: color }} />
 }
 
-export function Callout({ flag }: { flag: Flag }) {
+export function Source({ url, label = 'source' }: { url: string | null; label?: string }) {
+  if (!url) return <span className="mwm-tiny">no source found</span>
   return (
-    <div className={`mwm-callout mwm-callout--${flag.severity}`}>
-      <p style={{ fontWeight: 600, fontSize: '0.88rem' }}>{flag.title}</p>
-      <p className="mwm-small" style={{ marginTop: '0.2rem' }}>
-        {flag.body}
-      </p>
-    </div>
+    <a className="mwm-tiny" href={url} target="_blank" rel="noreferrer noopener">
+      {label}
+    </a>
   )
 }
 
-/** The panel that shows the working. Open by default is the point of the project. */
-export function Why({ title = 'Why this number', children }: { title?: string; children: ReactNode }) {
+export function Disclose({ summary, children }: { summary: string; children: ReactNode }) {
   const [open, setOpen] = useState(false)
   return (
-    <div style={{ marginTop: '0.75rem' }}>
-      <button type="button" className="mwm-linkish" onClick={() => setOpen((o) => !o)}>
-        {open ? 'Hide the working' : title}
+    <div>
+      <button type="button" className="mwm-link" onClick={() => setOpen((o) => !o)}>
+        {open ? 'Hide this' : summary}
       </button>
       <motion.div
         initial={false}
@@ -224,7 +382,7 @@ export function Why({ title = 'Why this number', children }: { title?: string; c
         transition={{ duration: 0.32, ease: [0.2, 0.8, 0.2, 1] }}
         style={{ overflow: 'hidden' }}
       >
-        <div className="mwm-why mwm-small" style={{ marginTop: '0.55rem' }}>
+        <div className="mwm-box mwm-box--quiet mwm-box--tight" style={{ marginTop: '0.9rem' }}>
           {children}
         </div>
       </motion.div>
@@ -232,82 +390,16 @@ export function Why({ title = 'Why this number', children }: { title?: string; c
   )
 }
 
-export function Source({ url, label = 'source' }: { url: string | null; label?: string }) {
-  if (!url) return <span className="mwm-small">no source found</span>
-  return (
-    <a className="mwm-small" href={url} target="_blank" rel="noreferrer noopener">
-      {label}
-    </a>
-  )
-}
-
-export function Meter({ pct, color = 'var(--oxblood)' }: { pct: number; color?: string }) {
+export function Bar({ pct, color = 'var(--accent)' }: { pct: number; color?: string }) {
   const reduce = useReducedMotion()
   return (
-    <div className="mwm-meter">
+    <div style={{ height: 10, borderRadius: 999, background: 'var(--surface-2)', overflow: 'hidden' }}>
       <motion.span
-        style={{ background: color }}
+        style={{ display: 'block', height: '100%', borderRadius: 999, background: color }}
         initial={reduce ? false : { width: 0 }}
         animate={{ width: `${Math.max(0, Math.min(100, pct))}%` }}
-        transition={{ duration: 0.8, ease: [0.2, 0.8, 0.2, 1] }}
+        transition={{ duration: 0.9, ease: [0.2, 0.8, 0.2, 1] }}
       />
-    </div>
-  )
-}
-
-export function StatTile({
-  label,
-  value,
-  sub,
-  tone = 'default',
-}: {
-  label: string
-  value: ReactNode
-  sub?: ReactNode
-  tone?: 'default' | 'ink'
-}) {
-  return (
-    <Card tone={tone === 'ink' ? 'ink' : 'default'}>
-      <p className="mwm-eyebrow">{label}</p>
-      <p
-        className="mwm-tabular"
-        style={{
-          fontFamily: "'EB Garamond', Georgia, serif",
-          fontSize: 'clamp(1.7rem, 3.4vw, 2.3rem)',
-          lineHeight: 1.05,
-          letterSpacing: '-0.03em',
-          marginTop: '0.5rem',
-        }}
-      >
-        {value}
-      </p>
-      {sub ? (
-        <p className="mwm-small" style={{ marginTop: '0.35rem' }}>
-          {sub}
-        </p>
-      ) : null}
-    </Card>
-  )
-}
-
-export function SectionHead({
-  index,
-  title,
-  intro,
-}: {
-  index: string
-  title: string
-  intro?: ReactNode
-}) {
-  return (
-    <div style={{ marginBottom: '1.4rem' }}>
-      <p className="mwm-eyebrow">{index}</p>
-      <h2 style={{ marginTop: '0.5rem' }}>{title}</h2>
-      {intro ? (
-        <p className="mwm-lede" style={{ marginTop: '0.8rem' }}>
-          {intro}
-        </p>
-      ) : null}
     </div>
   )
 }

@@ -1,7 +1,7 @@
 import { motion, useInView, useReducedMotion } from 'motion/react'
 import { useRef } from 'react'
 import type { AssetKey } from '../engine'
-import { CHART_COLOR } from './ui'
+import { CHART_COLOR, Swatch } from './ui'
 
 export interface Slice {
   key: AssetKey
@@ -9,8 +9,7 @@ export interface Slice {
   value: number
 }
 
-/** Allocation donut. Ordered light to dark by risk, so the ring reads before the legend. */
-export function Donut({ slices, size = 220, thickness = 26 }: { slices: Slice[]; size?: number; thickness?: number }) {
+export function Donut({ slices, size = 260, thickness = 34 }: { slices: Slice[]; size?: number; thickness?: number }) {
   const ref = useRef<SVGSVGElement>(null)
   const inView = useInView(ref, { once: true, margin: '-30px' })
   const reduce = useReducedMotion()
@@ -24,11 +23,11 @@ export function Donut({ slices, size = 220, thickness = 26 }: { slices: Slice[];
     <svg
       ref={ref}
       viewBox={`0 0 ${size} ${size}`}
-      style={{ width: '100%', maxWidth: size, height: 'auto', display: 'block' }}
+      style={{ width: '100%', maxWidth: size, height: 'auto', display: 'block', margin: '0 auto' }}
       role="img"
       aria-label={slices.map((s) => `${s.label} ${((s.value / total) * 100).toFixed(0)} percent`).join(', ')}
     >
-      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgb(15 15 15 / 0.05)" strokeWidth={thickness} />
+      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--surface-2)" strokeWidth={thickness} />
       {slices.map((s, i) => {
         const frac = s.value / total
         const len = c * frac
@@ -48,7 +47,7 @@ export function Donut({ slices, size = 220, thickness = 26 }: { slices: Slice[];
             transform={`rotate(-90 ${size / 2} ${size / 2})`}
             initial={reduce ? false : { opacity: 0, strokeDasharray: `0 ${c}` }}
             animate={inView || reduce ? { opacity: 1, strokeDasharray: `${len} ${c - len}` } : undefined}
-            transition={{ duration: 0.75, delay: 0.06 * i, ease: [0.2, 0.8, 0.2, 1] }}
+            transition={{ duration: 0.8, delay: 0.07 * i, ease: [0.2, 0.8, 0.2, 1] }}
           />
         )
       })}
@@ -63,8 +62,7 @@ export interface BarSegment {
   color: string
 }
 
-/** One horizontal bar split into labelled parts. Used for access, currency and tiers. */
-export function SplitBar({ segments, height = 34 }: { segments: BarSegment[]; height?: number }) {
+export function SplitBar({ segments, height = 44 }: { segments: BarSegment[]; height?: number }) {
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { once: true, margin: '-30px' })
   const reduce = useReducedMotion()
@@ -72,7 +70,7 @@ export function SplitBar({ segments, height = 34 }: { segments: BarSegment[]; he
 
   return (
     <div ref={ref}>
-      <div className="mwm-bar-track" style={{ height }}>
+      <div style={{ display: 'flex', height, borderRadius: 8, overflow: 'hidden', background: 'var(--surface-2)' }}>
         {segments.map((s, i) => (
           <motion.div
             key={s.key}
@@ -80,16 +78,16 @@ export function SplitBar({ segments, height = 34 }: { segments: BarSegment[]; he
             style={{ background: s.color, height: '100%' }}
             initial={reduce ? false : { width: 0 }}
             animate={inView || reduce ? { width: `${(s.value / total) * 100}%` } : undefined}
-            transition={{ duration: 0.7, delay: 0.05 * i, ease: [0.2, 0.8, 0.2, 1] }}
+            transition={{ duration: 0.75, delay: 0.06 * i, ease: [0.2, 0.8, 0.2, 1] }}
           />
         ))}
       </div>
-      <div className="mwm-row" style={{ marginTop: '0.65rem', gap: '0.9rem' }}>
+      <div className="mwm-row" style={{ marginTop: '0.9rem', gap: '1.3rem' }}>
         {segments
           .filter((s) => s.value > 0)
           .map((s) => (
-            <span key={s.key} className="mwm-row mwm-small" style={{ gap: '0.35rem' }}>
-              <span className="mwm-swatch" style={{ background: s.color }} />
+            <span key={s.key} className="mwm-row mwm-note" style={{ gap: '0.45rem' }}>
+              <Swatch color={s.color} />
               {s.label} {((s.value / total) * 100).toFixed(0)}%
             </span>
           ))}
@@ -106,10 +104,15 @@ export interface FrontierMarker {
   hollow?: boolean
 }
 
+/**
+ * Markers carry a number on the plot and their name in a legend underneath.
+ * Labels drawn next to the dots collided as soon as two portfolios sat close
+ * together, which they always do.
+ */
 export function FrontierChart({
   curve,
   markers,
-  height = 300,
+  height = 320,
 }: {
   curve: { ret: number; vol: number }[]
   markers: FrontierMarker[]
@@ -119,9 +122,9 @@ export function FrontierChart({
   const ref = useRef<SVGSVGElement>(null)
   const inView = useInView(ref, { once: true, margin: '-30px' })
 
-  const W = 560
+  const W = 640
   const H = height
-  const pad = { l: 46, r: 90, t: 26, b: 42 }
+  const pad = { l: 58, r: 24, t: 30, b: 52 }
 
   const all = [...curve, ...markers]
   const volMin = Math.max(0, Math.min(...all.map((p) => p.vol)) - 1.5)
@@ -133,89 +136,150 @@ export function FrontierChart({
   const y = (v: number) => H - pad.b - ((v - retMin) / (retMax - retMin)) * (H - pad.t - pad.b)
 
   const path = curve.map((p, i) => `${i === 0 ? 'M' : 'L'}${x(p.vol).toFixed(1)},${y(p.ret).toFixed(1)}`).join(' ')
+  const ticks = 4
 
-  const xTicks = 4
-  const yTicks = 4
+  // Two portfolios that sit close together used to draw one dot on top of the
+  // other. Nudge each one clear of the ones already placed.
+  const placed: { cx: number; cy: number }[] = []
+  const spots = markers.map((m) => {
+    let cx = x(m.vol)
+    let cy = y(m.ret)
+    for (let guard = 0; guard < 12; guard++) {
+      const hit = placed.find((q) => Math.hypot(q.cx - cx, q.cy - cy) < 30)
+      if (!hit) break
+      const dx = cx - hit.cx || 1
+      const dy = cy - hit.cy || -1
+      const len = Math.hypot(dx, dy)
+      cx += (dx / len) * 16
+      cy += (dy / len) * 16
+    }
+    placed.push({ cx, cy })
+    return { cx, cy, anchorX: x(m.vol), anchorY: y(m.ret) }
+  })
 
   return (
-    <svg ref={ref} viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', maxWidth: 720, margin: '0 auto', height: 'auto', display: 'block' }} role="img" aria-label="Efficient frontier: expected return against volatility">
-      {Array.from({ length: yTicks + 1 }, (_, i) => {
-        const v = retMin + ((retMax - retMin) * i) / yTicks
-        return (
-          <g key={`y${i}`}>
-            <line x1={pad.l} x2={W - pad.r} y1={y(v)} y2={y(v)} stroke="rgb(15 15 15 / 0.07)" strokeWidth={1} />
-            <text x={pad.l - 8} y={y(v) + 3.5} textAnchor="end" fontSize={10} fill="var(--smoke)">
-              {v.toFixed(1)}%
+    <div>
+      <svg
+        ref={ref}
+        viewBox={`0 0 ${W} ${H}`}
+        style={{ width: '100%', height: 'auto', display: 'block' }}
+        role="img"
+        aria-label="Expected return against how much the portfolio moves"
+      >
+        {Array.from({ length: ticks + 1 }, (_, i) => {
+          const v = retMin + ((retMax - retMin) * i) / ticks
+          return (
+            <g key={`y${i}`}>
+              <line x1={pad.l} x2={W - pad.r} y1={y(v)} y2={y(v)} stroke="var(--edge)" strokeWidth={1} />
+              <text x={pad.l - 10} y={y(v) + 4} textAnchor="end" fontSize={12} fill="var(--muted)">
+                {v.toFixed(1)}%
+              </text>
+            </g>
+          )
+        })}
+        {Array.from({ length: ticks + 1 }, (_, i) => {
+          const v = volMin + ((volMax - volMin) * i) / ticks
+          return (
+            <text key={`x${i}`} x={x(v)} y={H - pad.b + 20} textAnchor="middle" fontSize={12} fill="var(--muted)">
+              {v.toFixed(0)}%
             </text>
-          </g>
-        )
-      })}
-      {Array.from({ length: xTicks + 1 }, (_, i) => {
-        const v = volMin + ((volMax - volMin) * i) / xTicks
-        return (
-          <text key={`x${i}`} x={x(v)} y={H - pad.b + 16} textAnchor="middle" fontSize={10} fill="var(--smoke)">
-            {v.toFixed(0)}%
-          </text>
-        )
-      })}
+          )
+        })}
 
-      <text x={W - pad.r} y={H - 6} fontSize={9.5} fill="var(--smoke)" textAnchor="end">
-        volatility, how much it moves in a year
-      </text>
-      <text x={pad.l} y={12} fontSize={9.5} fill="var(--smoke)" textAnchor="start">
-        expected return per year
-      </text>
+        <text x={pad.l} y={16} fontSize={12} fill="var(--muted)">
+          what it might earn each year
+        </text>
+        <text x={W - pad.r} y={H - 10} fontSize={12} fill="var(--muted)" textAnchor="end">
+          how much it moves up and down
+        </text>
 
-      <motion.path
-        d={path}
-        fill="none"
-        stroke="var(--ink)"
-        strokeWidth={1.6}
-        strokeLinecap="round"
-        initial={reduce ? false : { pathLength: 0 }}
-        animate={inView || reduce ? { pathLength: 1 } : undefined}
-        transition={{ duration: 1.1, ease: [0.2, 0.8, 0.2, 1] }}
-      />
+        <motion.path
+          d={path}
+          fill="none"
+          stroke="var(--fg)"
+          strokeWidth={2}
+          strokeLinecap="round"
+          initial={reduce ? false : { pathLength: 0 }}
+          animate={inView || reduce ? { pathLength: 1 } : undefined}
+          transition={{ duration: 1.1, ease: [0.2, 0.8, 0.2, 1] }}
+        />
 
-      {markers.map((m, i) => (
-        <motion.g
-          key={m.label}
-          initial={reduce ? false : { opacity: 0, scale: 0.5 }}
-          animate={inView || reduce ? { opacity: 1, scale: 1 } : undefined}
-          transition={{ duration: 0.4, delay: 0.7 + i * 0.09 }}
-          style={{ transformOrigin: `${x(m.vol)}px ${y(m.ret)}px` }}
-        >
-          <circle
-            cx={x(m.vol)}
-            cy={y(m.ret)}
-            r={m.emphasis ? 6 : 4.5}
-            fill={m.hollow ? 'var(--paper)' : m.emphasis ? 'var(--oxblood)' : 'var(--smoke)'}
-            stroke={m.emphasis ? 'var(--oxblood)' : 'var(--smoke)'}
-            strokeWidth={1.6}
-          />
-          <text
-            x={x(m.vol) + (x(m.vol) > W * 0.72 ? -10 : 10)}
-            y={y(m.ret) + 3.5}
-            fontSize={10.5}
-            fontWeight={m.emphasis ? 600 : 400}
-            fill={m.emphasis ? 'var(--oxblood)' : 'var(--smoke)'}
-            textAnchor={x(m.vol) > W * 0.72 ? 'end' : 'start'}
-          >
+        {markers.map((m, i) => {
+          const sp = spots[i]
+          const moved = Math.hypot(sp.cx - sp.anchorX, sp.cy - sp.anchorY) > 2
+          return (
+            <motion.g
+              key={m.label}
+              initial={reduce ? false : { opacity: 0, scale: 0.4 }}
+              animate={inView || reduce ? { opacity: 1, scale: 1 } : undefined}
+              transition={{ duration: 0.4, delay: 0.7 + i * 0.1 }}
+              style={{ transformOrigin: `${sp.cx}px ${sp.cy}px` }}
+            >
+              {moved ? (
+                <line
+                  x1={sp.anchorX}
+                  y1={sp.anchorY}
+                  x2={sp.cx}
+                  y2={sp.cy}
+                  stroke="var(--muted)"
+                  strokeWidth={1}
+                  opacity={0.5}
+                />
+              ) : null}
+              <circle
+                cx={sp.cx}
+                cy={sp.cy}
+                r={m.emphasis ? 13 : 11}
+                fill={m.hollow ? 'var(--bg)' : m.emphasis ? 'var(--accent)' : 'var(--muted)'}
+                stroke={m.emphasis ? 'var(--accent)' : 'var(--muted)'}
+                strokeWidth={2}
+              />
+              <text
+                x={sp.cx}
+                y={sp.cy + 4.5}
+                textAnchor="middle"
+                fontSize={12}
+                fontWeight={600}
+                fill={m.hollow ? 'var(--muted)' : 'var(--bg)'}
+              >
+                {i + 1}
+              </text>
+            </motion.g>
+          )
+        })}
+      </svg>
+
+      <div className="mwm-row" style={{ gap: '1.4rem', marginTop: '1rem' }}>
+        {markers.map((m, i) => (
+          <span key={m.label} className="mwm-row mwm-note" style={{ gap: '0.5rem' }}>
+            <span
+              style={{
+                display: 'grid',
+                placeItems: 'center',
+                width: 22,
+                height: 22,
+                borderRadius: 999,
+                fontSize: 12,
+                fontWeight: 600,
+                background: m.hollow ? 'transparent' : m.emphasis ? 'var(--accent)' : 'var(--muted)',
+                color: m.hollow ? 'var(--muted)' : 'var(--bg)',
+                border: `2px solid ${m.emphasis ? 'var(--accent)' : 'var(--muted)'}`,
+              }}
+            >
+              {i + 1}
+            </span>
             {m.label}
-          </text>
-        </motion.g>
-      ))}
-    </svg>
+          </span>
+        ))}
+      </div>
+    </div>
   )
 }
 
-/** Contribution bars for a stress scenario. Negative left, positive right, zero in the middle. */
 export function StressBars({
   rows,
-  height = 26,
 }: {
   rows: { key: AssetKey; label: string; shock: number; contribution: number; verified: boolean }[]
-  height?: number
 }) {
   const reduce = useReducedMotion()
   const ref = useRef<HTMLDivElement>(null)
@@ -223,25 +287,36 @@ export function StressBars({
   const max = Math.max(1, ...rows.map((r) => Math.abs(r.contribution)))
 
   return (
-    <div ref={ref} className="mwm-stack" style={{ gap: '0.5rem' }}>
+    <div ref={ref} className="mwm-stack" style={{ gap: '0.9rem' }}>
       {rows.map((r, i) => {
         const w = (Math.abs(r.contribution) / max) * 50
         const neg = r.contribution < 0
         return (
-          <div key={r.key} style={{ display: 'grid', gridTemplateColumns: '1fr 2fr auto', gap: '0.6rem', alignItems: 'center' }}>
-            <span className="mwm-small" style={{ color: 'var(--ink)' }}>
-              {r.label}
-              {!r.verified ? <span style={{ color: 'var(--smoke)' }}> · flat</span> : null}
-            </span>
-            <div style={{ position: 'relative', height }}>
-              <div style={{ position: 'absolute', left: '50%', top: 0, bottom: 0, width: 1, background: 'rgb(15 15 15 / 0.14)' }} />
+          <div key={r.key}>
+            <div
+              className="mwm-row"
+              style={{ justifyContent: 'space-between', gap: '1rem', marginBottom: '0.4rem' }}
+            >
+              <span className="mwm-note" style={{ color: 'var(--fg)' }}>
+                {r.label}
+                {!r.verified ? <span className="mwm-tiny"> · no figure, held flat</span> : null}
+              </span>
+              <span className="mwm-tabular" style={{ fontWeight: 600, whiteSpace: 'nowrap' }}>
+                {r.contribution >= 0 ? '+' : ''}
+                {r.contribution.toFixed(1)}%
+              </span>
+            </div>
+            <div style={{ position: 'relative', height: 22 }}>
+              <div
+                style={{ position: 'absolute', left: '50%', top: 0, bottom: 0, width: 1, background: 'var(--edge)' }}
+              />
               <motion.div
                 style={{
                   position: 'absolute',
-                  top: 4,
-                  bottom: 4,
+                  top: 3,
+                  bottom: 3,
                   background: neg ? CHART_COLOR[r.key] : 'var(--pos)',
-                  borderRadius: 3,
+                  borderRadius: 4,
                   ...(neg ? { right: '50%' } : { left: '50%' }),
                 }}
                 initial={reduce ? false : { width: 0 }}
@@ -249,10 +324,6 @@ export function StressBars({
                 transition={{ duration: 0.6, delay: i * 0.05, ease: [0.2, 0.8, 0.2, 1] }}
               />
             </div>
-            <span className="mwm-small mwm-tabular" style={{ minWidth: '4.2rem', textAlign: 'right' }}>
-              {r.contribution >= 0 ? '+' : ''}
-              {r.contribution.toFixed(1)}%
-            </span>
           </div>
         )
       })}
@@ -260,23 +331,14 @@ export function StressBars({
   )
 }
 
-/** Months of runway as a strip of ticks. Reads as time rather than as a percentage. */
-export function RunwayStrip({
-  months,
-  target,
-  totalMonths,
-}: {
-  months: number
-  target: number
-  totalMonths: number
-}) {
+export function MonthsStrip({ months, target, totalMonths }: { months: number; target: number; totalMonths: number }) {
   const reduce = useReducedMotion()
   const span = Math.max(target + 2, Math.ceil(totalMonths) + 1, 6)
-  const cells = Array.from({ length: span }, (_, i) => i)
+  const cells = Array.from({ length: Math.min(span, 24) }, (_, i) => i)
 
   return (
     <div>
-      <div style={{ display: 'flex', gap: 3 }}>
+      <div style={{ display: 'flex', gap: 4 }}>
         {cells.map((i) => {
           const reachable = i < Math.floor(months)
           const owned = i < Math.floor(totalMonths)
@@ -285,10 +347,10 @@ export function RunwayStrip({
               key={i}
               style={{
                 flex: 1,
-                height: 30,
-                borderRadius: 3,
-                background: reachable ? 'var(--oxblood)' : owned ? 'rgb(122 31 42 / 0.18)' : 'rgb(15 15 15 / 0.06)',
-                border: i === target - 1 ? '1px dashed rgb(15 15 15 / 0.45)' : '1px solid transparent',
+                height: 44,
+                borderRadius: 5,
+                background: reachable ? 'var(--accent)' : owned ? 'var(--accent-soft)' : 'var(--surface-2)',
+                border: i === target - 1 ? '2px dashed var(--fg)' : '2px solid transparent',
               }}
               initial={reduce ? false : { opacity: 0, scaleY: 0.3 }}
               animate={{ opacity: 1, scaleY: 1 }}
@@ -297,14 +359,14 @@ export function RunwayStrip({
           )
         })}
       </div>
-      <div className="mwm-row" style={{ marginTop: '0.6rem', gap: '0.9rem' }}>
-        <span className="mwm-row mwm-small" style={{ gap: '0.35rem' }}>
-          <span className="mwm-swatch" style={{ background: 'var(--oxblood)' }} /> months you can reach
+      <div className="mwm-row" style={{ marginTop: '0.9rem', gap: '1.3rem' }}>
+        <span className="mwm-row mwm-note" style={{ gap: '0.45rem' }}>
+          <Swatch color="var(--accent)" /> months you can reach
         </span>
-        <span className="mwm-row mwm-small" style={{ gap: '0.35rem' }}>
-          <span className="mwm-swatch" style={{ background: 'rgb(122 31 42 / 0.18)' }} /> months you own but cannot reach
+        <span className="mwm-row mwm-note" style={{ gap: '0.45rem' }}>
+          <Swatch color="var(--accent-soft)" /> months you own but cannot reach
         </span>
-        <span className="mwm-small">dashed line is your target of {target}</span>
+        <span className="mwm-note">dashed box is your target of {target}</span>
       </div>
     </div>
   )

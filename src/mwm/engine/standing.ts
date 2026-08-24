@@ -2,19 +2,19 @@ import type { Account, AccountType, Access, Flag, Standing } from './types'
 import { hardness, toUsd, fmtUsd } from './fx'
 
 export const ACCOUNT_TYPES: { value: AccountType; label: string; hint: string }[] = [
-  { value: 'localBank', label: 'Bank where I live', hint: 'Your normal bank, in your own country' },
-  { value: 'internationalBank', label: 'Bank in another country', hint: 'An account held abroad' },
-  { value: 'neobank', label: 'Wise, Revolut or similar', hint: 'A digital account, usually multi currency' },
-  { value: 'brokerage', label: 'Brokerage account', hint: 'Where you hold investments' },
-  { value: 'cashHand', label: 'Cash in hand', hint: 'Physical notes, at home or in a safe' },
-  { value: 'goldPhysical', label: 'Physical gold', hint: 'Coins or bars you can hold' },
+  { value: 'localBank', label: 'A bank in the country I live in', hint: 'Your normal, everyday bank' },
+  { value: 'internationalBank', label: 'A bank in another country', hint: 'An account you hold abroad' },
+  { value: 'neobank', label: 'Wise, Revolut or something like it', hint: 'An app-based account, usually multi-currency' },
+  { value: 'brokerage', label: 'An investment account', hint: 'Where you already hold shares or funds' },
+  { value: 'cashHand', label: 'Cash at home', hint: 'Physical notes, in a drawer or a safe' },
+  { value: 'goldPhysical', label: 'Gold you can hold', hint: 'Coins or bars' },
   { value: 'crypto', label: 'Crypto', hint: 'On an exchange or in a wallet' },
 ]
 
 export const ACCESS_OPTIONS: { value: Access; label: string; hint: string }[] = [
-  { value: 'today', label: 'All of it, today', hint: 'You could withdraw or spend the full amount tomorrow morning' },
-  { value: 'days', label: 'Some of it, or slowly', hint: 'There are limits, delays, notice periods or fees' },
-  { value: 'restricted', label: 'Almost none of it', hint: 'You can see the balance but you cannot get at it' },
+  { value: 'today', label: 'All of it, tomorrow morning', hint: 'You could walk in, or tap the app, and take the whole amount out' },
+  { value: 'days', label: 'Only some of it, or only slowly', hint: 'There is a weekly limit, a waiting period, a fee, or a queue' },
+  { value: 'restricted', label: 'Almost none of it', hint: 'You can see the balance on the screen but you cannot get at the money' },
 ]
 
 export function accountTypeLabel(t: AccountType): string {

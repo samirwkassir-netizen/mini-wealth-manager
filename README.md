@@ -46,11 +46,26 @@ That choice is deliberate and I will defend it. An unconstrained optimiser fed p
 
 So the recommendation is a policy with round numbers, and the efficient frontier is drawn beside it so you can see how much theoretical efficiency the policy gives up. It is close to the curve and not on it, on purpose.
 
-The optimiser itself is a projected gradient descent onto the simplex with box constraints, written from scratch in about eighty lines with no dependencies. Caps: 35 percent emerging market equity, 20 percent listed property, 15 percent gold, 40 percent inflation-linked bonds. The caps are stated on screen, not buried in the model.
+The optimiser itself is a projected gradient descent onto the simplex with box constraints, written from scratch with no dependencies. Caps: 35 percent emerging market equity, 20 percent listed property, 15 percent gold, 40 percent inflation-linked bonds, all stated on screen rather than buried in the model.
 
-**Risk level** comes from four openly scored inputs: horizon, what you say you would actually do in a 30 percent drawdown, income stability, and existing runway. Two hard overrides sit on top of the score. A horizon under about two years is forced to Cautious regardless of anything else, because over two years equities are close to a coin toss and no score should be allowed to argue with that. And anyone who says they would sell in a crash gets moved down a level, because a portfolio you sell at the bottom returns less than a smaller one you hold.
+### Two return columns, not one
 
----
+Every number in this tool is shown twice, because there are two honest answers and they are far apart.
+
+| | Cautious | Balanced | Growth |
+|---|---|---|---|
+| If the last century repeats | 5.6% | 7.3% | 9.3% |
+| What the houses forecast | 4.9% | 6.1% | 7.4% |
+| Moves about | 5% | 10% | 16% |
+| Share of it in equities | 25% | 60% | 96% |
+
+The left row comes from Dimson, Marsh and Staunton's 1900 to 2025 series and the Nareit REIT index. The middle row comes from J.P. Morgan's 2026 assumptions. The gap between them is the most useful thing on the page, and hiding either one would be dishonest.
+
+**Why not the 10 to 12 percent people quote?** Because that figure is American shares alone: the S&P 500 returned 10.4 percent a year over the last thirty years and 11.9 percent over the last fifty. A portfolio spread across the whole world returned about 8.5 percent over a comparable stretch. The missing point and a half is the price of not having everything you own in one country, and the tool says so on screen rather than quietly inflating a number to meet an expectation.
+
+**Risk level** comes from four openly scored inputs: horizon, what you say you would actually do in a 30 percent fall, income stability, and existing runway. Two hard overrides sit on top. A horizon under about two years is forced to Cautious regardless of anything else, because over two years equities are close to a coin toss. And anyone who says they would sell in a crash gets moved down a level, because a portfolio you sell at the bottom returns less than a smaller one you hold.
+
+The three options are compared on the long-term sleeve rather than the whole plan. The emergency buffer is identical whichever level you pick, so blending it in flattens the difference between them: in the first version of this tool that collapsed a real choice into a 0.9 point spread. There is now a test that fails if it ever happens again.
 
 ## Every number, and where it came from
 
@@ -61,7 +76,9 @@ Not one figure in this tool was produced by me. Each is read off a published sou
 | Expected returns, volatility, correlations | [J.P. Morgan 2026 Long-Term Capital Market Assumptions, USD matrix](https://am.jpmorgan.com/content/dam/jpm-am-aem/global/en/insights/ltcma-2026-us-matrix_usd.pdf) | 30 Sep 2025 |
 | Cross-check | [Vanguard Capital Markets Model](https://corporate.vanguard.com/content/corporatesite/us/en/corp/vemo/vemo-return-forecasts.html) | 30 Jun 2026 |
 | Cross-check | [BlackRock Investment Institute CMAs](https://www.blackrock.com/blk-inst-c-assets/images/tools/blackrock-investment-institute/cma/blackrock-capital-market-assumptions.xlsx) | 30 Jun 2026 |
-| Long-run history | [UBS Global Investment Returns Yearbook 2026 (Dimson, Marsh, Staunton)](https://www.ubs.com/content/dam/assets/wm/static/cio/documents/giry2026-summary-public.pdf) | 1900 to 2025 |
+| Long-run history, the left column | [UBS Global Investment Returns Yearbook 2026 (Dimson, Marsh, Staunton)](https://www.ubs.com/content/dam/assets/wm/static/cio/documents/giry2026-summary-public.pdf) | 1900 to 2025 |
+| Property history | [FTSE Nareit REITWatch](https://www.reit.com/sites/default/files/reitwatch/RW2607.pdf) | 1972 to Jun 2026 |
+| Prices in the self-investment section | Manufacturer and provider pages, one per item | 24 Aug 2026 |
 | Fund expense ratios, ISINs, domiciles | Issuer product pages, one per fund | 24 Aug 2026 |
 | Exchange rates | ECB, Banque du Liban, CBRT, BCRA, CBUAE, SAMA | see ledger |
 | Crisis returns | MSCI, Nareit, Damodaran NYU dataset, slickcharts | see ledger |
@@ -89,7 +106,7 @@ No external APIs. No network calls at runtime. No backend, no account, no storag
 
 - React 19, TypeScript, Vite, Tailwind v4, Motion for animation
 - Instrument universe, capital market assumptions, exchange rates and stress scenarios all live in versioned JSON with source URLs and as-of dates
-- 39 unit tests covering the arithmetic, including a positive semi-definiteness check on the covariance matrix, verification that the efficient frontier is monotone, and a test that every unverified stress-test line is actually held at zero
+- 49 unit tests covering the arithmetic, including a positive semi-definiteness check on the covariance matrix, verification that the efficient frontier is monotone, a test that every unverified stress-test line is actually held at zero, and a set that fails if the three risk levels ever collapse toward each other again
 - Deployed on Cloudflare Pages, and embedded as a React island on an Astro site
 
 ```bash
@@ -119,6 +136,7 @@ This was a two-day build. Things I know are missing:
 - More currencies, and a proper treatment of parallel exchange rates rather than a single note
 - Saving a plan locally so you can come back to it
 - Instrument coverage outside the Irish and US wrappers, which is thin for anyone in the Gulf for reasons the tool explains
+- The prices in the self-investment section need a re-check every few months, and the hardware ones sooner than that
 
 ---
 

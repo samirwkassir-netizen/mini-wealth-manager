@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { toUsd, hardness, rates } from '../fx'
 import { computeStanding } from '../standing'
-import { ASSET_KEYS, BASE, blendedWeights, bufferMonths, goldWeight, growthWeights, normalise } from '../policy'
+import { ASSET_KEYS, BASE, blendedWeights, bufferMonths, equityShare, goldWeight, growthWeights, normalise } from '../policy'
+import { HISTORICAL_LINES, historicalFor, historicalReturn } from '../historical'
 import { COV, CORRELATIONS, CORRELATION_ORDER, MU, frontier, maxSharpePortfolio, portfolioReturn, portfolioVol, toVector } from '../mvo'
 import { analyse } from '../index'
 import { applyScenario, SCENARIOS } from '../stress'
@@ -377,5 +378,76 @@ describe('the whole thing holds together', () => {
       expect(inst.instrumentId).toBeTruthy()
     }
     expect(a.allocation.rows.every((r) => r.instrumentId.length > 0)).toBe(true)
+  })
+})
+
+describe('the three levels are actually different', () => {
+  const p = { horizonYears: 20 as const, drawdownReaction: 'buy' as const, usPerson: false, emTilt: 'moderate' as const, includeProperty: true }
+  const sleeve = (lvl: 'Cautious' | 'Balanced' | 'Growth') => growthWeights(lvl, p, 0)
+
+  it('spreads the forecast return by at least two points, floor to ceiling', () => {
+    const lo = portfolioReturn(toVector(sleeve('Cautious')))
+    const hi = portfolioReturn(toVector(sleeve('Growth')))
+    // v1 shipped with a 0.9 point spread, which made the choice meaningless.
+    expect(hi - lo).toBeGreaterThan(2)
+  })
+
+  it('spreads the historical return by at least three points', () => {
+    expect(historicalReturn(sleeve('Growth')) - historicalReturn(sleeve('Cautious'))).toBeGreaterThan(3)
+  })
+
+  it('spreads the volatility by at least eight points', () => {
+    const lo = portfolioVol(toVector(sleeve('Cautious')))
+    const hi = portfolioVol(toVector(sleeve('Growth')))
+    expect(hi - lo).toBeGreaterThan(8)
+  })
+
+  it('lands each level near the range a normal adviser would quote', () => {
+    expect(historicalReturn(sleeve('Cautious'))).toBeGreaterThan(4.5)
+    expect(historicalReturn(sleeve('Cautious'))).toBeLessThan(6.5)
+    expect(historicalReturn(sleeve('Balanced'))).toBeGreaterThan(6.5)
+    expect(historicalReturn(sleeve('Balanced'))).toBeLessThan(8.5)
+    expect(historicalReturn(sleeve('Growth'))).toBeGreaterThan(8.5)
+  })
+
+  it('puts Growth almost entirely in things that can fall', () => {
+    expect(equityShare(sleeve('Growth'))).toBeGreaterThan(90)
+    expect(equityShare(sleeve('Cautious'))).toBeLessThan(35)
+  })
+
+  it('orders them correctly on every axis', () => {
+    const levels = ['Cautious', 'Balanced', 'Growth'] as const
+    for (let i = 1; i < levels.length; i++) {
+      const prev = sleeve(levels[i - 1])
+      const cur = sleeve(levels[i])
+      expect(portfolioReturn(toVector(cur))).toBeGreaterThan(portfolioReturn(toVector(prev)))
+      expect(portfolioVol(toVector(cur))).toBeGreaterThan(portfolioVol(toVector(prev)))
+      expect(historicalReturn(cur)).toBeGreaterThan(historicalReturn(prev))
+    }
+  })
+})
+
+describe('the historical figures', () => {
+  it('cover every asset class the model uses', () => {
+    for (const k of ASSET_KEYS) expect(() => historicalFor(k)).not.toThrow()
+  })
+
+  it('carry a source and a period on every line', () => {
+    for (const l of HISTORICAL_LINES) {
+      expect(l.source, `${l.key} has no source`).toBeTruthy()
+      expect(l.period, `${l.key} has no period`).toBeTruthy()
+      expect(l.measures.length).toBeGreaterThan(20)
+    }
+  })
+
+  it('says out loud which lines are stand-ins rather than their own figure', () => {
+    const standIns = HISTORICAL_LINES.filter((l) => !l.verified)
+    for (const l of standIns) {
+      expect(l.measures.toLowerCase()).toMatch(/stands in|did not exist|arithmetic|not their/)
+    }
+  })
+
+  it('is higher than the forecast for shares, which is the whole point of showing both', () => {
+    expect(historicalFor('globalEquity').nominal).toBeGreaterThan(7.0)
   })
 })

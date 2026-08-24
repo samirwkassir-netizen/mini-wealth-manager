@@ -1,80 +1,115 @@
 {
   "meta": {
-    "note": "No prices are hard-coded here except the one that is published, stable and citable. Everything else you price yourself, because a laptop that cost 1,400 dollars when this was written will not cost that when you read it, and a tool that quotes stale prices at you is worse than one that asks.",
-    "test": "Before any of this, three questions. Does it produce income within twelve months? Would it still matter if the cheapest version of your work were automated? Does it compound, meaning does having it make the next thing easier? Two out of three is a good use of capital. Zero out of three is shopping."
+    "checkedOn": "2026-08-24",
+    "note": "Real prices, checked on the date above, each with a link. They will age. Hardware in particular is moving right now: Apple raised Mac prices in June 2026 because of a memory shortage, and Windows laptops moved with them, so anything you remember from 2024 is wrong by a few hundred dollars.",
+    "test": "Three questions, and you only need two yeses."
   },
+  "questions": [
+    {
+      "n": "1",
+      "short": "Does it pay you back within a year?",
+      "long": "Not does it feel useful. Can you name the money it brings in, or the money it stops going out, inside twelve months. If you cannot name it, you are guessing."
+    },
+    {
+      "n": "2",
+      "short": "Would it still matter if a machine could do the cheap version of your job?",
+      "long": "Some skills are getting less valuable fast because software does them now. Others get more valuable because they need a person in the room. Ask which one you are buying."
+    },
+    {
+      "n": "3",
+      "short": "Does it make the next thing easier?",
+      "long": "A laptop makes every future project cheaper. A one-off certificate that leads nowhere does not. Things that compound are worth more than things that are simply useful once."
+    }
+  ],
   "categories": [
     {
       "id": "tools",
       "name": "The tools your work runs on",
-      "examples": "A laptop that does not stall. A camera and a microphone if you make things people watch. A second screen. Software you currently work around.",
-      "incomeWithin12m": true,
-      "aiResilient": false,
-      "compounds": true,
-      "note": "The cheapest real gain most people can buy. Not because better tools make you better, but because bad tools cost you hours every week and you have stopped noticing."
+      "plain": "The machine you work on, every day, for the next four years.",
+      "why": "The cheapest real gain most people can buy, not because a better laptop makes you smarter, but because a bad one costs you hours every single week and you have stopped noticing.",
+      "answers": [true, false, true],
+      "items": [
+        { "name": "MacBook Air 13 inch, M5, 16GB, 512GB", "price": 1299, "note": "Apple raised this by 200 dollars in June 2026.", "source": "https://www.apple.com/shop/buy-mac/macbook-air" },
+        { "name": "MacBook Pro 14 inch, M5, 16GB, 1TB", "price": 1999, "note": "Only worth it over the Air if you edit video or run heavy models.", "source": "https://www.apple.com/shop/buy-mac/macbook-pro/14-inch-m5" },
+        { "name": "Lenovo IdeaPad Slim 5i, 14 inch, 16GB", "price": 900, "note": "The cheapest current-generation machine from a major maker's own store. Does everything a finance student needs.", "source": "https://www.lenovo.com/us/en/p/laptops/ideapad/ideapad-slim-series/lenovo-ideapad-slim-5i-ultra-gen-11-14-inch-intel/83vxcto1wwus1" },
+        { "name": "Dell UltraSharp 27 inch 4K monitor", "price": 700, "note": "A second screen is the cheapest speed increase in this whole list.", "source": "https://www.dell.com/en-us/shop/dell-ultrasharp-27-4k-thunderbolt-hub-monitor-u2725qe/apd/210-bqhr/monitors-monitor-accessories" }
+      ]
     },
     {
       "id": "hours",
-      "name": "More output from the same hours",
-      "examples": "An AI subscription you actually use daily. Paid data. Anything that turns eight hours of work into two.",
-      "incomeWithin12m": true,
-      "aiResilient": true,
-      "compounds": true,
-      "note": "Costs tens of dollars a month against thousands of dollars a month of your time. If you use it seriously the arithmetic is not close."
+      "name": "More done in the same hours",
+      "plain": "Software that turns eight hours of work into two.",
+      "why": "Tens of dollars a month against thousands of dollars a month of your own time. If you actually use it every day the arithmetic is not close. If you subscribe and forget, it is money on fire.",
+      "answers": [true, true, true],
+      "items": [
+        { "name": "Claude Pro", "price": 20, "per": "month", "note": "17 a month if you pay 200 for the year up front.", "source": "https://claude.com/pricing" },
+        { "name": "ChatGPT Plus", "price": 20, "per": "month", "note": "There is also a cheaper Go tier at 8 a month.", "source": "https://chatgpt.com/pricing/" },
+        { "name": "Canva Pro", "price": 180, "per": "year", "note": "Worth it only if you actually make things people look at.", "source": "https://www.canva.com/pricing/" },
+        { "name": "Adobe Photography plan, Photoshop and Lightroom", "price": 20, "per": "month", "note": "Students get the full suite at 16 a month for the first year instead of 70.", "source": "https://www.adobe.com/creativecloud/plans.html" }
+      ]
     },
     {
       "id": "credential",
-      "name": "A credential that a specific door requires",
-      "examples": "CFA Level 1. A licence. A certification a named employer or client has told you they want.",
-      "incomeWithin12m": false,
-      "aiResilient": true,
-      "compounds": true,
-      "verifiedCost": {
-        "label": "CFA Level 1, one sitting",
-        "early": 1140,
-        "standard": 1490,
-        "enrollment": 0,
-        "note": "The one-time enrollment fee was eliminated for exams from February 2026 onward, so the total cash cost of Level 1 is the registration fee alone.",
-        "source": "https://www.cfainstitute.org/programs/cfa-program/dates-fees",
-        "checkedOn": "2026-08-24"
-      },
-      "warning": "Only worth it when you can name the door it opens. A credential bought in the hope that it will make you want something is the most expensive way to procrastinate."
+      "name": "A qualification a specific door needs",
+      "plain": "A certificate somebody has actually told you they want to see.",
+      "why": "Only worth it when you can name the door it opens. A qualification bought hoping it will make you want something is the most expensive way to procrastinate ever invented.",
+      "answers": [false, true, true],
+      "items": [
+        { "name": "Bloomberg Market Concepts", "price": 0, "note": "Free on any university Bloomberg terminal, including at AUB. Eight hours, and it is the single best value item on this page.", "source": "https://researchguides.library.brocku.ca/Bloomberg/BMC" },
+        { "name": "CFA Level 1, one sitting", "price": 1140, "priceHigh": 1490, "note": "Lower figure is early registration, higher is standard. No enrolment fee since February 2026. Check the exact figure yourself before you rely on it: CFA Institute's own shop currently shows 1,340 and its fee table does not load as text.", "source": "https://store.cfainstitute.org/cfa-program-level-i-registration/", "flag": true },
+        { "name": "CFI membership, includes the financial modelling certification", "price": 398, "priceHigh": 497, "per": "year", "note": "Lower figure is the current discount, higher is the normal price.", "source": "https://corporatefinanceinstitute.com/pricing/" },
+        { "name": "Google Data Analytics Certificate on Coursera", "price": 49, "per": "month", "note": "Included if you have Coursera Plus. Most people finish in three to six months.", "source": "https://www.coursera.org/professional-certificates/google-data-analytics" }
+      ]
     },
     {
       "id": "skill",
-      "name": "A skill with a market price",
-      "examples": "A course in something people pay for. Language tuition that opens a market. A specific technical skill your field is short of.",
-      "incomeWithin12m": true,
-      "aiResilient": false,
-      "compounds": true,
-      "note": "Judge it by whether you can name a person who would pay more for it, not by whether it sounds impressive."
+      "name": "A skill somebody pays for",
+      "plain": "Learning something a named person would pay more for.",
+      "why": "Judge it by whether you can name one person who would pay you more once you have it. Not by whether it sounds impressive at dinner.",
+      "answers": [true, false, true],
+      "items": [
+        { "name": "Coursera Plus, everything", "price": 399, "per": "year", "note": "59 a month if you pay monthly, so the year pays for itself in seven months.", "source": "https://www.coursera.org/courseraplus" }
+      ]
+    },
+    {
+      "id": "content",
+      "name": "Being able to make things people watch",
+      "plain": "A camera, a microphone and a light.",
+      "why": "If any part of your plan involves being known before you are hired, this is the equipment that makes you look like you meant it. The microphone matters more than the camera, which surprises people.",
+      "answers": [true, true, true],
+      "items": [
+        { "name": "Sony ZV-E10 II with the kit lens", "price": 1100, "note": "The standard first camera for people who make things. Sony's own store would not show a price, so this is a retailer figure.", "source": "https://www.bestbuy.com/product/sony-alpha-zv-e10-ii-mirrorless-content-creators-camera-kit-with-16-50mm-oss-ii-lens-black/J7XSRH5689", "flag": true },
+        { "name": "Shure MV7+ microphone", "price": 293, "note": "Bad audio loses people faster than bad video. Buy this before you buy the camera.", "source": "https://www.bestbuy.com/product/shure-mv7-usb-c-xlr-dynamic-podcast-microphone-black/J78FTSYH94" },
+        { "name": "Elgato Key Light Air", "price": 140, "note": "One light, pointed at your face, beats every camera upgrade.", "source": "https://www.elgato.com/us/en/p/key-light-air" }
+      ]
     },
     {
       "id": "venture",
-      "name": "Seed money for something you build",
-      "examples": "A domain and hosting. Inventory for a first run. The first month of a service you sell.",
-      "incomeWithin12m": true,
-      "aiResilient": true,
-      "compounds": true,
-      "note": "The only category here with unbounded upside and a real chance of returning nothing. Size it at what you can lose without changing your plans, and treat losing it as tuition."
+      "name": "Starting the thing itself",
+      "plain": "The first small costs of something you actually sell.",
+      "why": "The only line here with no ceiling on what it returns and a real chance of returning nothing at all. Size it at what you could lose without changing any of your plans, and treat losing it as tuition.",
+      "answers": [true, true, true],
+      "items": [
+        { "name": "A .com domain, first year", "price": 11, "per": "year", "note": "About 18 a year to renew, and rising after November 2026.", "source": "https://www.namecheap.com/domains/" },
+        { "name": "Hosting a site", "price": 0, "note": "Free on Vercel or Cloudflare until you have real traffic. Twenty a month after that.", "source": "https://vercel.com/pricing" },
+        { "name": "LinkedIn Premium", "price": 40, "per": "month", "note": "Only worth it in the months you are actively applying or reaching out. Cancel in between.", "source": "https://premium.linkedin.com/careers/career" }
+      ]
     },
     {
       "id": "access",
       "name": "Being in the room",
-      "examples": "A flight to a conference where the people you need are. A membership. A trip to the city you want to work in.",
-      "incomeWithin12m": false,
-      "aiResilient": true,
-      "compounds": true,
-      "note": "The hardest to justify on a spreadsheet and often the highest returning. Careers move through people, and people are somewhere."
+      "plain": "A flight, a ticket, a membership.",
+      "why": "The hardest thing on this page to justify on a spreadsheet and often the highest returning. Careers move through people, and people are somewhere specific.",
+      "answers": [false, true, true],
+      "items": []
     },
     {
       "id": "health",
-      "name": "The body and mind doing the work",
-      "examples": "Dentistry you have been putting off. Glasses. Sleep. A physiotherapist for the thing that hurts.",
-      "incomeWithin12m": false,
-      "aiResilient": true,
-      "compounds": true,
-      "note": "Deferred maintenance on a person compounds the same way it does on a building, and the repair bill arrives at the least convenient moment."
+      "name": "The body doing the work",
+      "plain": "The dentist, the glasses, the sleep, the thing that hurts.",
+      "why": "Deferred maintenance on a person compounds the same way it does on a building, and the repair bill always arrives in the worst month.",
+      "answers": [false, true, true],
+      "items": []
     }
   ]
 }

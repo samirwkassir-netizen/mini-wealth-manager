@@ -1,46 +1,28 @@
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useEffect, useState } from 'react'
-import { Card } from './ui'
+import { Box, Reveal } from './ui'
 
 const BEATS = [
-  {
-    caption: 'Two people. The same seven thousand dollars.',
-    left: 100,
-    right: 100,
-    leftReach: 100,
-    rightReach: 100,
-  },
-  {
-    caption: 'One holds it in a bank that will not let it go. The other holds it somewhere it can move.',
-    left: 100,
-    right: 100,
-    leftReach: 14,
-    rightReach: 100,
-  },
-  {
-    caption: 'Same net worth. Different amount of money. Every tool built for this assumes the first case cannot happen.',
-    left: 100,
-    right: 100,
-    leftReach: 14,
-    rightReach: 100,
-  },
+  { caption: 'Two people. The same seven thousand dollars.', left: 100 },
+  { caption: 'One keeps it in a bank that will not let it go.', left: 14 },
+  { caption: 'Same net worth. Different amount of money.', left: 14 },
 ]
 
-const MODULES = [
+const STEPS = [
   {
     n: '01',
     title: 'Where you stand',
-    body: 'Not a total. What you earn in, what you spend in, which system holds it, and how much of it you could actually withdraw tomorrow morning.',
+    body: 'What you have, what currency it is in, who is holding it, and how much of it you could take out tomorrow morning.',
   },
   {
     n: '02',
     title: 'Where it goes',
-    body: 'Income, spending and the things you are saving for, measured in months of runway rather than in budget categories nobody keeps to.',
+    body: 'What comes in, what goes out, and what you are saving for. Measured in months of your life, not in budget categories.',
   },
   {
     n: '03',
     title: 'What to do with it',
-    body: 'A portfolio built from the answers above, plus the case for spending some of it on yourself first, which is usually the higher return.',
+    body: 'A plan built from your answers, starting with why spending some of it on yourself probably beats investing it.',
   },
 ]
 
@@ -53,66 +35,85 @@ export function Intro({ onStart, onExample }: { onStart: () => void; onExample: 
       setBeat(BEATS.length - 1)
       return
     }
-    const t = setInterval(() => setBeat((b) => (b + 1) % BEATS.length), 3200)
+    const t = setInterval(() => setBeat((b) => (b + 1) % BEATS.length), 3000)
     return () => clearInterval(t)
   }, [reduce])
 
   const b = BEATS[beat]
 
   return (
-    <div className="mwm-shell" style={{ paddingTop: '2.5rem', paddingBottom: '3rem' }}>
-      <motion.div
-        initial={reduce ? false : { opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, ease: [0.2, 0.8, 0.2, 1] }}
-      >
-        <p className="mwm-eyebrow">Mini Wealth Manager</p>
-        <h1 style={{ marginTop: '0.9rem', maxWidth: '18ch' }}>
-          Private banking for people private banks will not see.
-        </h1>
-        <p className="mwm-lede" style={{ marginTop: '1.1rem' }}>
-          You are twenty something. You have money sitting around from an internship, a gift, a part-time job. You
-          do not know what to do with it and nobody has ever taught you. Every serious tool for this starts at half
-          a million dollars, and some start at ten million. This one starts at whatever you have.
-        </p>
-      </motion.div>
+    <div className="mwm-shell">
+      {/* hero */}
+      <section style={{ paddingTop: 'clamp(3rem, 7vw, 5rem)', paddingBottom: 'clamp(2.5rem, 5vw, 4rem)' }}>
+        <motion.div
+          initial={reduce ? false : { opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: [0.2, 0.8, 0.2, 1] }}
+        >
+          <p className="mwm-eyebrow">Mini Wealth Manager</p>
+          <h1 style={{ marginTop: '1.4rem', maxWidth: '15ch' }}>
+            You have money. Nobody taught you what to do with it.
+          </h1>
+        </motion.div>
 
-      <div className="mwm-grid mwm-grid--sidebar" style={{ marginTop: '2.4rem', alignItems: 'center' }}>
-        <Card tone="flat" style={{ padding: '1.8rem 1.6rem' }}>
-          <div className="mwm-intro-stage">
-            <div style={{ width: '100%' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.4rem' }}>
-                {(
-                  [
-                    { name: 'Held in a bank at home', reach: b.leftReach, key: 'l' },
-                    { name: 'Held somewhere it can move', reach: b.rightReach, key: 'r' },
-                  ] as const
-                ).map((col) => (
+        <div className="mwm-grid mwm-grid--wide" style={{ marginTop: 'clamp(2rem, 4vw, 3rem)', alignItems: 'start' }}>
+          <motion.p
+            className="mwm-body"
+            style={{ fontSize: 'clamp(1.15rem, 2vw, 1.4rem)', lineHeight: 1.55 }}
+            initial={reduce ? false : { opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.12 }}
+          >
+            You are in your twenties. There is money sitting around from an internship, a gift, a part-time job. Real
+            tools for this start at half a million dollars and go up to ten million, so nobody has ever built one for
+            you. This one starts at whatever you actually have. It takes about four minutes.
+          </motion.p>
+
+          <motion.div
+            className="mwm-stack"
+            style={{ gap: '1.2rem' }}
+            initial={reduce ? false : { opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.24 }}
+          >
+            <button className="mwm-btn mwm-btn--lg" onClick={onStart} style={{ width: '100%' }}>
+              Start with your numbers →
+            </button>
+            <button className="mwm-btn mwm-btn--ghost mwm-btn--lg" onClick={onExample} style={{ width: '100%' }}>
+              Show me an example first
+            </button>
+            <p className="mwm-tiny">
+              No account. No sign up. Nothing you type ever leaves your browser, because there is no server to send it
+              to.
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* the idea */}
+      <section className="mwm-section" style={{ paddingTop: 0 }}>
+        <div className="mwm-grid mwm-grid--wide" style={{ alignItems: 'center' }}>
+          <Reveal>
+            <Box variant="quiet" style={{ padding: 'clamp(1.6rem, 3vw, 2.6rem)' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(1.2rem, 3vw, 2.5rem)' }}>
+                {[
+                  { name: 'Kept in a bank at home', reach: b.left, key: 'l' },
+                  { name: 'Kept somewhere it can move', reach: 100, key: 'r' },
+                ].map((col) => (
                   <div key={col.key}>
                     <div
                       style={{
                         position: 'relative',
-                        height: 150,
-                        borderRadius: 8,
-                        border: '1px solid var(--line)',
-                        background: 'rgb(15 15 15 / 0.03)',
+                        height: 'clamp(140px, 22vw, 200px)',
+                        borderRadius: 10,
+                        border: '1px solid var(--edge)',
+                        background: 'var(--surface-2)',
                         overflow: 'hidden',
                       }}
                     >
+                      <div style={{ position: 'absolute', inset: 0, background: 'var(--accent-soft)' }} />
                       <motion.div
-                        style={{
-                          position: 'absolute',
-                          left: 0,
-                          right: 0,
-                          bottom: 0,
-                          background: 'rgb(122 31 42 / 0.16)',
-                        }}
-                        initial={false}
-                        animate={{ height: '100%' }}
-                        transition={{ duration: 0.9, ease: [0.2, 0.8, 0.2, 1] }}
-                      />
-                      <motion.div
-                        style={{ position: 'absolute', left: 0, right: 0, bottom: 0, background: 'var(--oxblood)' }}
+                        style={{ position: 'absolute', left: 0, right: 0, bottom: 0, background: 'var(--accent)' }}
                         initial={false}
                         animate={{ height: `${col.reach}%` }}
                         transition={{ duration: 0.9, ease: [0.2, 0.8, 0.2, 1] }}
@@ -121,9 +122,9 @@ export function Intro({ onStart, onExample }: { onStart: () => void; onExample: 
                         className="mwm-tabular"
                         style={{
                           position: 'absolute',
-                          left: 10,
-                          top: 8,
-                          fontSize: '0.72rem',
+                          left: 12,
+                          top: 10,
+                          fontSize: '0.9rem',
                           fontWeight: 600,
                           color: 'var(--ink)',
                         }}
@@ -131,83 +132,84 @@ export function Intro({ onStart, onExample }: { onStart: () => void; onExample: 
                         $7,000
                       </span>
                     </div>
-                    <p className="mwm-small" style={{ marginTop: '0.55rem' }}>
+                    <p className="mwm-note" style={{ marginTop: '0.8rem' }}>
                       {col.name}
                     </p>
-                    <p className="mwm-tabular" style={{ fontSize: '0.9rem', fontWeight: 600, marginTop: '0.15rem' }}>
-                      ${Math.round((col.reach / 100) * 7000).toLocaleString('en-US')} you can reach
+                    <p className="mwm-num" style={{ fontSize: '1.7rem', marginTop: '0.3rem' }}>
+                      ${Math.round((col.reach / 100) * 7000).toLocaleString('en-US')}
                     </p>
+                    <p className="mwm-tiny">you can actually reach</p>
                   </div>
                 ))}
               </div>
 
-              <div style={{ minHeight: '3.2rem', marginTop: '1.3rem' }}>
+              <div style={{ minHeight: '3.4rem', marginTop: '1.8rem' }}>
                 <AnimatePresence mode="wait">
                   <motion.p
                     key={beat}
-                    className="mwm-lede"
-                    style={{ fontSize: '0.95rem' }}
-                    initial={reduce ? false : { opacity: 0, y: 8 }}
+                    className="mwm-note"
+                    style={{ fontSize: '1.05rem', color: 'var(--fg)' }}
+                    initial={reduce ? false : { opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={reduce ? undefined : { opacity: 0, y: -8 }}
+                    exit={reduce ? undefined : { opacity: 0, y: -10 }}
                     transition={{ duration: 0.4 }}
                   >
                     {b.caption}
                   </motion.p>
                 </AnimatePresence>
               </div>
-            </div>
-          </div>
-        </Card>
+            </Box>
+          </Reveal>
 
-        <div className="mwm-stack" style={{ gap: '1rem' }}>
-          <Card tone="ink">
-            <p className="mwm-eyebrow">The idea</p>
-            <p style={{ marginTop: '0.6rem', fontSize: '1.02rem', lineHeight: 1.55 }}>
-              Your cash is not the risk-free asset. Every mainstream portfolio tool assumes it is. That assumption is
-              false for anyone in Lebanon, Egypt, Nigeria, Argentina or Turkey, where deposits can be trapped,
-              currencies collapse, and the money you can see is not the money you can withdraw.
-            </p>
-          </Card>
-          <div className="mwm-row" style={{ gap: '0.7rem' }}>
-            <button className="mwm-btn" onClick={onStart}>
-              Start with your numbers
-            </button>
-            <button className="mwm-btn mwm-btn--ghost" onClick={onExample}>
-              Show me an example first
-            </button>
-          </div>
-          <p className="mwm-small">
-            Nothing you type leaves your browser. There is no account, no server and no network call. Close the tab
-            and it is gone.
-          </p>
-        </div>
-      </div>
-
-      <div className="mwm-grid mwm-grid--3" style={{ marginTop: '2.4rem' }}>
-        {MODULES.map((m, i) => (
-          <motion.div
-            key={m.n}
-            initial={reduce ? false : { opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55, delay: 0.25 + i * 0.12 }}
-          >
-            <Card style={{ height: '100%' }}>
-              <p className="mwm-eyebrow">{m.n}</p>
-              <h3 style={{ marginTop: '0.55rem' }}>{m.title}</h3>
-              <p className="mwm-small" style={{ marginTop: '0.55rem' }}>
-                {m.body}
+          <Reveal delay={0.1}>
+            <div>
+              <p className="mwm-eyebrow">The idea</p>
+              <p className="mwm-quote" style={{ marginTop: '1.2rem' }}>
+                Your cash is not the safe part.
               </p>
-            </Card>
-          </motion.div>
-        ))}
-      </div>
+              <p className="mwm-body" style={{ marginTop: '1.4rem' }}>
+                Every serious portfolio tool treats the money in your bank as the safe corner of the picture, the thing
+                everything else is measured against. If you live in Lebanon, Egypt, Nigeria, Argentina or Turkey, that
+                one assumption is doing an enormous amount of quiet work. Accounts get frozen. Currencies fall. The
+                balance on the screen is not the money you can take out.
+              </p>
+              <p className="mwm-body" style={{ marginTop: '1rem' }}>
+                So this asks a different question. Not how much you have. How much of it is actually yours to move.
+              </p>
+            </div>
+          </Reveal>
+        </div>
+      </section>
 
-      <p className="mwm-small" style={{ marginTop: '1.8rem', maxWidth: '70ch' }}>
-        This is a teaching tool and it is explicitly not investment advice. It shows its reasoning, lists every
-        assumption it makes, and links the source of every number it uses. Where a number could not be verified it
-        says so rather than filling the gap. That framing is the project, not a disclaimer added at the end.
-      </p>
+      {/* three steps */}
+      <section className="mwm-section" style={{ paddingTop: 0 }}>
+        <h2 style={{ marginBottom: '2rem' }}>Three questions, then a plan.</h2>
+        <div className="mwm-grid mwm-grid--3">
+          {STEPS.map((s, i) => (
+            <Reveal key={s.n} delay={i * 0.1}>
+              <Box style={{ height: '100%' }}>
+                <p className="mwm-hub-num">{s.n}</p>
+                <h3 style={{ marginTop: '0.7rem', fontSize: '1.7rem' }}>{s.title}</h3>
+                <p className="mwm-note" style={{ marginTop: '0.9rem' }}>
+                  {s.body}
+                </p>
+              </Box>
+            </Reveal>
+          ))}
+        </div>
+
+        <div className="mwm-row" style={{ marginTop: '2.5rem' }}>
+          <button className="mwm-btn mwm-btn--lg" onClick={onStart}>
+            Start →
+          </button>
+        </div>
+
+        <p className="mwm-note" style={{ marginTop: '2.5rem', maxWidth: '68ch' }}>
+          This is a teaching tool and it is not investment advice. It shows its reasoning, lists every assumption it
+          makes, and links the source of every number it uses. Where a number could not be checked, it says so instead
+          of filling the gap. That is the point of the thing, not a disclaimer added at the end.
+        </p>
+      </section>
     </div>
   )
 }

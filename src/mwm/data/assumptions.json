@@ -194,5 +194,126 @@
       0.1,
       1.0
     ]
-  ]
+  ],
+  "historical": {
+    "title": "What these actually returned, historically",
+    "note": "The forecasts above are what large houses think the next ten to fifteen years will look like. The numbers below are what actually happened over the longest periods anyone has measured. They are much higher. Both are real, and the gap between them is the most honest thing on this page: nobody knows which one the next thirty years will resemble.",
+    "primarySource": "UBS Global Investment Returns Yearbook 2026, compiled by Dimson, Marsh and Staunton, covering 1900 to 2025",
+    "primarySourceUrl": "https://www.ubs.com/content/dam/assets/wm/static/cio/documents/giry2026-summary-public.pdf",
+    "inflationOverPeriod": 2.9,
+    "lines": [
+      {
+        "key": "globalEquity",
+        "label": "Global shares",
+        "nominal": 8.5,
+        "real": null,
+        "period": "1900 to 2025",
+        "measures": "Dimson Marsh Staunton developed markets composite, in dollars",
+        "source": "https://www.ubs.com/global/en/media/display-page-ndp/en-20260303-global-investment-returns-yearbook-2026.html",
+        "verified": true
+      },
+      {
+        "key": "emEquity",
+        "label": "Emerging market shares",
+        "nominal": 10.9,
+        "real": null,
+        "period": "1960 to 2025",
+        "measures": "Dimson Marsh Staunton emerging markets composite, in dollars. Over the full 1900 to 2025 period it was 6.9 percent, held back by markets that shut down entirely in the first half of the century.",
+        "source": "https://www.ubs.com/global/en/media/display-page-ndp/en-20260303-global-investment-returns-yearbook-2026.html",
+        "verified": true
+      },
+      {
+        "key": "property",
+        "label": "Listed property",
+        "nominal": 11.0,
+        "real": null,
+        "period": "1972 to June 2026",
+        "measures": "FTSE Nareit All Equity REITs, total return. Over the last thirty years it was 9.42 percent.",
+        "source": "https://www.reit.com/sites/default/files/reitwatch/RW2607.pdf",
+        "verified": true
+      },
+      {
+        "key": "globalBonds",
+        "label": "Global bonds",
+        "nominal": 4.6,
+        "real": 1.6,
+        "period": "1900 to 2025",
+        "measures": "Dimson Marsh Staunton US long government bonds. No verified global bond figure was published for this period, so the US series stands in for it.",
+        "source": "https://www.ubs.com/content/dam/assets/wm/static/cio/documents/giry2026-summary-public.pdf",
+        "verified": true
+      },
+      {
+        "key": "shortGov",
+        "label": "Short government bonds",
+        "nominal": 4.6,
+        "real": 1.6,
+        "period": "1900 to 2025",
+        "measures": "Same US long bond series. Short bonds would have earned less than this and more than cash.",
+        "source": "https://www.ubs.com/content/dam/assets/wm/static/cio/documents/giry2026-summary-public.pdf",
+        "verified": true
+      },
+      {
+        "key": "tips",
+        "label": "Inflation-linked bonds",
+        "nominal": 4.6,
+        "real": 1.6,
+        "period": "1900 to 2025",
+        "measures": "These did not exist until 1997, so there is no long history. The bond figure stands in for them.",
+        "source": "https://www.ubs.com/content/dam/assets/wm/static/cio/documents/giry2026-summary-public.pdf",
+        "verified": false
+      },
+      {
+        "key": "cash",
+        "label": "Cash and Treasury bills",
+        "nominal": 3.4,
+        "real": 0.5,
+        "period": "1900 to 2025",
+        "measures": "Dimson Marsh Staunton US Treasury bills. Half a percent a year above inflation, over 126 years.",
+        "source": "https://www.ubs.com/content/dam/assets/wm/static/cio/documents/giry2026-summary-public.pdf",
+        "verified": true
+      },
+      {
+        "key": "gold",
+        "label": "Gold",
+        "nominal": 4.2,
+        "real": 1.3,
+        "period": "1900 to 2025",
+        "measures": "The only published figure is the real one, 1.3 percent a year above inflation. The 4.2 percent shown is that figure plus the 2.9 percent inflation the same source reports for the same period. That addition is our arithmetic, not theirs.",
+        "source": "https://www.ubs.com/content/dam/assets/wm/static/cio/documents/giry2026-summary-public.pdf",
+        "verified": false
+      }
+    ],
+    "landmarks": [
+      {
+        "label": "US shares, every year since 1900",
+        "value": "9.8%",
+        "sub": "6.6 percent a year after inflation. One dollar became 124,854.",
+        "source": "https://www.ubs.com/content/dam/assets/wm/static/cio/documents/giry2026-summary-public.pdf"
+      },
+      {
+        "label": "The S&P 500, last 30 years",
+        "value": "10.4%",
+        "sub": "To 30 June 2026, dividends reinvested.",
+        "source": "https://www.reit.com/sites/default/files/reitwatch/RW2607.pdf"
+      },
+      {
+        "label": "The S&P 500, last 50 years",
+        "value": "11.9%",
+        "sub": "The number most people have in their head when they say shares return about ten percent.",
+        "source": "https://www.reit.com/sites/default/files/reitwatch/RW2607.pdf"
+      },
+      {
+        "label": "US government bonds since 1900",
+        "value": "4.6%",
+        "sub": "1.6 percent a year after inflation.",
+        "source": "https://www.ubs.com/content/dam/assets/wm/static/cio/documents/giry2026-summary-public.pdf"
+      },
+      {
+        "label": "Cash since 1900",
+        "value": "3.4%",
+        "sub": "0.5 percent a year after inflation. Cash barely keeps up, over 126 years.",
+        "source": "https://www.ubs.com/content/dam/assets/wm/static/cio/documents/giry2026-summary-public.pdf"
+      }
+    ]
+  }
 }

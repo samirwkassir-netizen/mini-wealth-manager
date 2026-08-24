@@ -13,11 +13,12 @@ import {
   type Goal,
   type Profile,
 } from '../engine'
-import { Callout, Card, Field, Meter, MoneyInput, Segmented, Select, SectionHead, Swatch, Why } from './ui'
-import { RunwayStrip, SplitBar } from './charts'
+import { Bar, Box, Choices, Define, Field, MoneyInput, Reveal, SectionHead, Select, Slider, Tile } from './ui'
+import { MonthsStrip } from './charts'
 
 const CURRENCIES = rates.map((r) => ({ value: r.code, label: `${r.code} · ${r.name}` }))
 const uid = () => Math.random().toString(36).slice(2, 9)
+const money = (n: number) => fmtUsd(n)
 
 export function newAccount(): Account {
   return { id: uid(), label: '', type: 'localBank', currency: 'USD', amount: 0, access: 'today', transferable: true }
@@ -29,50 +30,43 @@ export function newGoal(): Goal {
 
 /* ------------------------------------------------------------------ */
 
-export function Step1({
-  accounts,
-  onChange,
-}: {
-  accounts: Account[]
-  onChange: (a: Account[]) => void
-}) {
+export function Step1({ accounts, onChange }: { accounts: Account[]; onChange: (a: Account[]) => void }) {
   const standing = computeStanding(accounts)
-
   const update = (id: string, patch: Partial<Account>) =>
     onChange(accounts.map((a) => (a.id === id ? { ...a, ...patch } : a)))
 
   return (
-    <div className="mwm-shell" style={{ paddingTop: '2rem', paddingBottom: '3rem' }}>
+    <div className="mwm-shell mwm-section" style={{ paddingTop: '2.5rem' }}>
       <SectionHead
-        index="Module 01"
-        title="Where you stand"
-        intro="Not a total. A total tells you almost nothing. What matters is which currency it is in, which institution is holding it, and how much of it you could actually get your hands on tomorrow morning."
+        eyebrow="Question 1 of 3"
+        title="What do you have, and where is it?"
+        lede="Round numbers are completely fine. The important part is not the amount, it is where each pile sits and whether you could actually take it out."
       />
 
-      <div className="mwm-grid mwm-grid--sidebar">
-        <div className="mwm-stack" style={{ gap: '0.9rem' }}>
+      <div className="mwm-grid mwm-grid--wide" style={{ alignItems: 'start' }}>
+        <div className="mwm-stack" style={{ gap: '1.2rem' }}>
           <AnimatePresence initial={false}>
             {accounts.map((a, i) => (
               <motion.div
                 key={a.id}
                 layout
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 14 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.32 }}
+                transition={{ duration: 0.3 }}
               >
-                <Card>
-                  <div className="mwm-row" style={{ justifyContent: 'space-between', marginBottom: '0.9rem' }}>
-                    <p className="mwm-eyebrow">Account {String(i + 1).padStart(2, '0')}</p>
+                <Box>
+                  <div className="mwm-row" style={{ justifyContent: 'space-between', marginBottom: '1.6rem' }}>
+                    <p className="mwm-eyebrow">Pot {i + 1}</p>
                     {accounts.length > 1 ? (
-                      <button className="mwm-linkish" onClick={() => onChange(accounts.filter((x) => x.id !== a.id))}>
+                      <button className="mwm-link" onClick={() => onChange(accounts.filter((x) => x.id !== a.id))}>
                         remove
                       </button>
                     ) : null}
                   </div>
 
-                  <div className="mwm-grid mwm-grid--2">
-                    <Field label="What is it">
+                  <div className="mwm-stack" style={{ gap: '1.8rem' }}>
+                    <Field label="Where is this money?">
                       {(id) => (
                         <Select
                           id={id}
@@ -82,170 +76,103 @@ export function Step1({
                         />
                       )}
                     </Field>
-                    <Field label="Name it, if you like">
-                      {(id) => (
-                        <input
-                          id={id}
-                          className="mwm-input"
-                          placeholder={ACCOUNT_TYPES.find((t) => t.value === a.type)?.hint}
-                          value={a.label}
-                          onChange={(e) => update(a.id, { label: e.target.value })}
-                        />
-                      )}
-                    </Field>
-                  </div>
 
-                  <div className="mwm-grid mwm-grid--2" style={{ marginTop: '0.9rem' }}>
-                    <Field label="How much">
-                      {(id) => (
-                        <MoneyInput
-                          id={id}
-                          currency={a.currency}
-                          value={a.amount}
-                          onChange={(n) => update(a.id, { amount: n })}
-                        />
-                      )}
-                    </Field>
-                    <Field label="In which currency">
-                      {(id) => (
-                        <Select id={id} value={a.currency} onChange={(v) => update(a.id, { currency: v })} options={CURRENCIES} />
-                      )}
-                    </Field>
-                  </div>
+                    <div className="mwm-grid mwm-grid--2">
+                      <Field label="How much is in it?">
+                        {(id) => (
+                          <MoneyInput
+                            id={id}
+                            currency={a.currency}
+                            value={a.amount}
+                            onChange={(n) => update(a.id, { amount: n })}
+                          />
+                        )}
+                      </Field>
+                      <Field label="In what currency?">
+                        {(id) => (
+                          <Select
+                            id={id}
+                            value={a.currency}
+                            onChange={(v) => update(a.id, { currency: v })}
+                            options={CURRENCIES}
+                          />
+                        )}
+                      </Field>
+                    </div>
 
-                  <div style={{ marginTop: '1.1rem' }}>
                     <Field
-                      label="How much of it could you withdraw tomorrow"
-                      hint="Answer honestly. This single question changes more of the output than the amount does."
+                      label="If you needed all of it tomorrow, could you get it?"
+                      hint="Please answer honestly. This one question changes the plan more than the amount does."
                     >
                       {() => (
-                        <Segmented
-                          stack
+                        <Choices
                           value={a.access}
                           onChange={(v) => update(a.id, { access: v as Access })}
-                          options={ACCESS_OPTIONS}
+                          options={ACCESS_OPTIONS.map((o) => ({ value: o.value, label: o.label, sub: o.hint }))}
                         />
                       )}
                     </Field>
-                  </div>
 
-                  <div style={{ marginTop: '1.1rem' }}>
-                    <Field label="Could you send it to another country">
+                    <Field
+                      label="Could you send this money to another country?"
+                      hint="For example, to open an investment account abroad."
+                    >
                       {() => (
-                        <Segmented
+                        <Choices
+                          row
                           value={a.transferable ? 'yes' : 'no'}
                           onChange={(v) => update(a.id, { transferable: v === 'yes' })}
                           options={[
                             { value: 'yes', label: 'Yes' },
-                            { value: 'no', label: 'No, or not without a fight' },
+                            { value: 'no', label: 'No, or not easily' },
                           ]}
                         />
                       )}
                     </Field>
                   </div>
-                </Card>
+                </Box>
               </motion.div>
             ))}
           </AnimatePresence>
 
-          <button className="mwm-btn mwm-btn--ghost" onClick={() => onChange([...accounts, newAccount()])}>
-            Add another account
+          <button
+            className="mwm-btn mwm-btn--ghost mwm-btn--lg"
+            onClick={() => onChange([...accounts, newAccount()])}
+          >
+            + Add another pot of money
           </button>
         </div>
 
-        <div className="mwm-stack" style={{ gap: '0.9rem', position: 'sticky', top: '1.5rem', alignSelf: 'start' }}>
-          <Card>
-            <p className="mwm-eyebrow">What you own</p>
-            <p
-              className="mwm-tabular"
-              style={{ fontFamily: "'EB Garamond', Georgia, serif", fontSize: '2.4rem', letterSpacing: '-0.03em', marginTop: '0.4rem' }}
-            >
-              {fmtUsd(standing.totalUsd)}
-            </p>
-            <p className="mwm-eyebrow" style={{ marginTop: '1rem' }}>
-              What you can reach tomorrow
-            </p>
-            <p
-              className="mwm-tabular"
-              style={{
-                fontFamily: "'EB Garamond', Georgia, serif",
-                fontSize: '2.4rem',
-                letterSpacing: '-0.03em',
-                marginTop: '0.4rem',
-                color: 'var(--oxblood)',
-              }}
-            >
-              {fmtUsd(standing.accessibleTodayUsd)}
-            </p>
-            {standing.totalUsd > 0 ? (
-              <div style={{ marginTop: '1.2rem' }}>
-                <SplitBar
-                  segments={[
-                    { key: 'today', label: 'today', value: standing.accessibleTodayUsd, color: 'var(--oxblood)' },
-                    { key: 'days', label: 'slowly', value: standing.accessibleDaysUsd, color: 'rgb(122 31 42 / 0.35)' },
-                    { key: 'restricted', label: 'not really', value: standing.restrictedUsd, color: 'rgb(15 15 15 / 0.12)' },
-                  ]}
-                />
-              </div>
-            ) : null}
-          </Card>
-
+        <div className="mwm-stack" style={{ gap: '1.2rem', position: 'sticky', top: '1.5rem' }}>
+          <Tile label="What you have" value={money(standing.totalUsd)} />
+          <Tile
+            hero
+            label="What you could actually use"
+            value={money(standing.deployableUsd)}
+            sub={
+              standing.totalUsd > standing.deployableUsd + 1
+                ? `${money(standing.totalUsd - standing.deployableUsd)} of it is stuck, slow, or cannot leave the country.`
+                : 'All of it. Good position to be in.'
+            }
+          />
           {standing.totalUsd > 0 ? (
-            <Card>
-              <div className="mwm-row" style={{ justifyContent: 'space-between' }}>
-                <p className="mwm-eyebrow">Fragility</p>
-                <span className="mwm-tabular" style={{ fontWeight: 600 }}>
-                  {standing.fragility.score} / 100
+            <Box variant="edge">
+              <p className="mwm-eyebrow">How exposed is it</p>
+              <div className="mwm-row" style={{ alignItems: 'baseline', gap: '0.8rem', marginTop: '0.6rem' }}>
+                <span className="mwm-num" style={{ fontSize: '2.4rem' }}>
+                  {standing.fragility.score}
                 </span>
+                <span className="mwm-note">out of 100</span>
               </div>
-              <div style={{ marginTop: '0.6rem' }}>
-                <Meter pct={standing.fragility.score} />
+              <div style={{ marginTop: '0.9rem' }}>
+                <Bar pct={standing.fragility.score} />
               </div>
-              <p className="mwm-small" style={{ marginTop: '0.7rem' }}>
-                How much of your money depends on somebody else keeping a promise. This drives your buffer size and
-                how much gold the portfolio holds. It is built entirely from your own answers, not from any
-                assumption about your country.
+              <p className="mwm-tiny" style={{ marginTop: '0.9rem' }}>
+                Higher means more of your money depends on somebody else keeping a promise. It sets how much emergency
+                cash you need and how much gold ends up in your mix.
               </p>
-              <Why title="Show the four parts">
-                <div className="mwm-stack" style={{ gap: '0.75rem' }}>
-                  {standing.fragility.parts.map((p) => (
-                    <div key={p.key}>
-                      <div className="mwm-row" style={{ justifyContent: 'space-between' }}>
-                        <span style={{ fontWeight: 600 }}>{p.label}</span>
-                        <span className="mwm-tabular">
-                          {p.points} / {p.max}
-                        </span>
-                      </div>
-                      <p style={{ marginTop: '0.2rem' }}>{p.detail}</p>
-                    </div>
-                  ))}
-                </div>
-              </Why>
-            </Card>
+            </Box>
           ) : null}
-
-          {standing.byCurrency.length > 1 ? (
-            <Card>
-              <p className="mwm-eyebrow">Currency mix</p>
-              <div className="mwm-stack" style={{ gap: '0.45rem', marginTop: '0.7rem' }}>
-                {standing.byCurrency.map((c) => (
-                  <div key={c.code} className="mwm-row" style={{ justifyContent: 'space-between' }}>
-                    <span className="mwm-row" style={{ gap: '0.4rem' }}>
-                      <Swatch color={c.hardness > 0.5 ? 'var(--oxblood)' : c.hardness > 0 ? 'var(--c-tips)' : 'var(--c-shortGov)'} />
-                      <span style={{ fontSize: '0.85rem' }}>{c.code}</span>
-                    </span>
-                    <span className="mwm-tabular mwm-small">{c.pct.toFixed(0)}%</span>
-                  </div>
-                ))}
-              </div>
-            </Card>
-          ) : null}
-
-          {standing.flags.map((f) => (
-            <Card key={f.id} tone="flat">
-              <Callout flag={f} />
-            </Card>
-          ))}
         </div>
       </div>
     </div>
@@ -267,188 +194,209 @@ export function Step2({
   const spendUsd = flows.spendMonthly / (rates.find((r) => r.code === flows.spendCurrency)?.perUsd ?? 1)
   const reach = spendUsd > 0 ? standing.accessibleTodayUsd / spendUsd : 0
   const total = spendUsd > 0 ? standing.totalUsd / spendUsd : 0
-
   const set = (patch: Partial<Flows>) => onChange({ ...flows, ...patch })
 
   return (
-    <div className="mwm-shell" style={{ paddingTop: '2rem', paddingBottom: '3rem' }}>
+    <div className="mwm-shell mwm-section" style={{ paddingTop: '2.5rem' }}>
       <SectionHead
-        index="Module 02"
-        title="Where it goes"
-        intro="Budget categories are a way of feeling organised. Runway is a way of knowing how long you would last. This module only asks for the numbers that change the answer."
+        eyebrow="Question 2 of 3"
+        title="What comes in, and what goes out?"
+        lede="Averages are fine. This is here to work out one thing: how many months you could survive if everything stopped tomorrow."
       />
 
-      <div className="mwm-grid mwm-grid--sidebar">
-        <div className="mwm-stack" style={{ gap: '0.9rem' }}>
-          <Card>
+      <div className="mwm-grid mwm-grid--wide" style={{ alignItems: 'start' }}>
+        <div className="mwm-stack" style={{ gap: '1.2rem' }}>
+          <Box>
             <p className="mwm-eyebrow">Money coming in</p>
-            <div className="mwm-grid mwm-grid--2" style={{ marginTop: '0.9rem' }}>
-              <Field label="Average per month">
-                {(id) => (
-                  <MoneyInput
-                    id={id}
-                    currency={flows.incomeCurrency}
-                    value={flows.incomeMonthly}
-                    onChange={(n) => set({ incomeMonthly: n })}
-                  />
-                )}
-              </Field>
-              <Field label="Paid in">
-                {(id) => (
-                  <Select id={id} value={flows.incomeCurrency} onChange={(v) => set({ incomeCurrency: v })} options={CURRENCIES} />
-                )}
-              </Field>
-            </div>
-            <div style={{ marginTop: '1rem' }}>
-              <Field label="How reliable is it" hint="This matters more than the amount. It decides whether markets are the right place for your money at all yet.">
+            <div className="mwm-stack" style={{ gap: '1.8rem', marginTop: '1.5rem' }}>
+              <div className="mwm-grid mwm-grid--2">
+                <Field label="Roughly how much a month?">
+                  {(id) => (
+                    <MoneyInput
+                      id={id}
+                      currency={flows.incomeCurrency}
+                      value={flows.incomeMonthly}
+                      onChange={(n) => set({ incomeMonthly: n })}
+                    />
+                  )}
+                </Field>
+                <Field label="Paid in what currency?">
+                  {(id) => (
+                    <Select
+                      id={id}
+                      value={flows.incomeCurrency}
+                      onChange={(v) => set({ incomeCurrency: v })}
+                      options={CURRENCIES}
+                    />
+                  )}
+                </Field>
+              </div>
+
+              <Field
+                label="How reliable is it?"
+                hint="This matters more than the amount. It decides whether markets are the right place for your money at all yet."
+              >
                 {() => (
-                  <Segmented
-                    stack
+                  <Choices
                     value={flows.incomeStability}
                     onChange={(v) => set({ incomeStability: v })}
                     options={[
-                      { value: 'recurring', label: 'The same every month', hint: 'A salary, a retainer, something you can count on' },
-                      { value: 'irregular', label: 'It comes and goes', hint: 'Freelance, commission, seasonal work' },
-                      { value: 'none', label: 'Nothing regular yet', hint: 'Studying, between things, or just starting' },
+                      { value: 'recurring', label: 'The same every month', sub: 'A salary, or a client who always pays' },
+                      { value: 'irregular', label: 'It comes and goes', sub: 'Freelance, commission, seasonal work' },
+                      { value: 'none', label: 'Nothing regular yet', sub: 'Studying, between jobs, or just starting out' },
                     ]}
                   />
                 )}
               </Field>
             </div>
-          </Card>
+          </Box>
 
-          <Card>
+          <Box>
             <p className="mwm-eyebrow">Money going out</p>
-            <div className="mwm-grid mwm-grid--2" style={{ marginTop: '0.9rem' }}>
-              <Field label="Average per month">
-                {(id) => (
-                  <MoneyInput
-                    id={id}
-                    currency={flows.spendCurrency}
-                    value={flows.spendMonthly}
-                    onChange={(n) => set({ spendMonthly: n })}
-                  />
-                )}
-              </Field>
-              <Field label="Spent in">
-                {(id) => (
-                  <Select id={id} value={flows.spendCurrency} onChange={(v) => set({ spendCurrency: v })} options={CURRENCIES} />
-                )}
-              </Field>
-            </div>
-            <div style={{ marginTop: '1rem' }}>
-              <Field
-                label={`Share of income you want to put to work: ${flows.investPct}%`}
-                hint="Of what comes in, not of what is left over. Most people who wait for what is left over invest nothing."
-              >
-                {(id) => (
-                  <input
-                    id={id}
-                    type="range"
-                    min={0}
-                    max={80}
-                    step={5}
-                    value={flows.investPct}
-                    onChange={(e) => set({ investPct: Number(e.target.value) })}
-                    style={{ width: '100%', accentColor: 'var(--oxblood)' }}
-                  />
-                )}
-              </Field>
-            </div>
-          </Card>
+            <div className="mwm-stack" style={{ gap: '1.8rem', marginTop: '1.5rem' }}>
+              <div className="mwm-grid mwm-grid--2">
+                <Field label="Roughly how much a month?">
+                  {(id) => (
+                    <MoneyInput
+                      id={id}
+                      currency={flows.spendCurrency}
+                      value={flows.spendMonthly}
+                      onChange={(n) => set({ spendMonthly: n })}
+                    />
+                  )}
+                </Field>
+                <Field label="Spent in what currency?">
+                  {(id) => (
+                    <Select
+                      id={id}
+                      value={flows.spendCurrency}
+                      onChange={(v) => set({ spendCurrency: v })}
+                      options={CURRENCIES}
+                    />
+                  )}
+                </Field>
+              </div>
 
-          <Card>
+              <Field
+                label={`How much of what comes in do you want to put aside? ${flows.investPct}%`}
+                hint="Of what arrives, not of what is left at the end. People who wait for what is left usually save nothing."
+              >
+                {(id) => <Slider id={id} value={flows.investPct} onChange={(v) => set({ investPct: v })} min={0} max={80} step={5} />}
+              </Field>
+            </div>
+          </Box>
+
+          <Box>
             <div className="mwm-row" style={{ justifyContent: 'space-between' }}>
               <p className="mwm-eyebrow">Things you are saving for</p>
-              <button className="mwm-linkish" onClick={() => onChange({ ...flows, goals: [...flows.goals, newGoal()] })}>
-                add one
+              <button className="mwm-link" onClick={() => onChange({ ...flows, goals: [...flows.goals, newGoal()] })}>
+                + add one
               </button>
             </div>
-            <p className="mwm-small" style={{ marginTop: '0.5rem' }}>
-              A trip, a camera, a course, a deposit. Anything you need the money for inside three years is not
-              portfolio money and the tool will keep it out of shares.
+            <p className="mwm-note" style={{ marginTop: '0.9rem' }}>
+              A trip, a laptop, a course, a deposit. Anything you need within three years will be kept out of shares,
+              because three years is not long enough to ride out a bad one.
             </p>
 
-            <div className="mwm-stack" style={{ gap: '0.7rem', marginTop: '1rem' }}>
+            <div className="mwm-stack" style={{ gap: '1.2rem', marginTop: '1.5rem' }}>
               <AnimatePresence initial={false}>
                 {flows.goals.map((g) => (
                   <motion.div
                     key={g.id}
                     layout
-                    initial={{ opacity: 0, y: 8 }}
+                    initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.28 }}
-                    style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr) auto', gap: '0.5rem', alignItems: 'end' }}
+                    transition={{ duration: 0.26 }}
                   >
-                    <input
-                      className="mwm-input"
-                      placeholder="Travel"
-                      value={g.name}
-                      onChange={(e) =>
-                        onChange({ ...flows, goals: flows.goals.map((x) => (x.id === g.id ? { ...x, name: e.target.value } : x)) })
-                      }
-                    />
-                    <MoneyInput
-                      currency={g.currency}
-                      value={g.amount}
-                      onChange={(n) => onChange({ ...flows, goals: flows.goals.map((x) => (x.id === g.id ? { ...x, amount: n } : x)) })}
-                    />
-                    <div className="mwm-input-group">
-                      <input
-                        className="mwm-input"
-                        style={{ paddingLeft: '0.75rem' }}
-                        inputMode="numeric"
-                        value={g.months}
-                        onChange={(e) =>
-                          onChange({
-                            ...flows,
-                            goals: flows.goals.map((x) => (x.id === g.id ? { ...x, months: Number(e.target.value.replace(/\D/g, '')) || 0 } : x)),
-                          })
-                        }
-                      />
+                    <div className="mwm-grid mwm-grid--3">
+                      <Field label="What is it?">
+                        {(id) => (
+                          <input
+                            id={id}
+                            className="mwm-input"
+                            placeholder="A trip home"
+                            value={g.name}
+                            onChange={(e) =>
+                              onChange({
+                                ...flows,
+                                goals: flows.goals.map((x) => (x.id === g.id ? { ...x, name: e.target.value } : x)),
+                              })
+                            }
+                          />
+                        )}
+                      </Field>
+                      <Field label="How much?">
+                        {(id) => (
+                          <MoneyInput
+                            id={id}
+                            currency={g.currency}
+                            value={g.amount}
+                            onChange={(n) =>
+                              onChange({
+                                ...flows,
+                                goals: flows.goals.map((x) => (x.id === g.id ? { ...x, amount: n } : x)),
+                              })
+                            }
+                          />
+                        )}
+                      </Field>
+                      <Field label="In how many months?">
+                        {(id) => (
+                          <input
+                            id={id}
+                            className="mwm-input"
+                            inputMode="numeric"
+                            value={g.months}
+                            onChange={(e) =>
+                              onChange({
+                                ...flows,
+                                goals: flows.goals.map((x) =>
+                                  x.id === g.id ? { ...x, months: Number(e.target.value.replace(/\D/g, '')) || 0 } : x,
+                                ),
+                              })
+                            }
+                          />
+                        )}
+                      </Field>
                     </div>
                     <button
-                      className="mwm-linkish"
-                      style={{ paddingBottom: '0.75rem' }}
+                      className="mwm-link"
+                      style={{ marginTop: '0.6rem' }}
                       onClick={() => onChange({ ...flows, goals: flows.goals.filter((x) => x.id !== g.id) })}
                     >
-                      remove
+                      remove this one
                     </button>
                   </motion.div>
                 ))}
               </AnimatePresence>
-              {flows.goals.length ? (
-                <p className="mwm-small">Columns are: what it is, how much, and how many months from now.</p>
-              ) : null}
             </div>
-          </Card>
+          </Box>
         </div>
 
-        <div className="mwm-stack" style={{ gap: '0.9rem', position: 'sticky', top: '1.5rem', alignSelf: 'start' }}>
-          <Card>
-            <p className="mwm-eyebrow">Your runway</p>
-            <p
-              className="mwm-tabular"
-              style={{ fontFamily: "'EB Garamond', Georgia, serif", fontSize: '2.4rem', letterSpacing: '-0.03em', marginTop: '0.4rem' }}
-            >
-              {reach.toFixed(1)} months
-            </p>
-            <p className="mwm-small" style={{ marginTop: '0.3rem' }}>
-              How long the money you can actually reach would last if everything stopped tomorrow.
-            </p>
-            {total > reach + 0.2 ? (
-              <p className="mwm-small" style={{ marginTop: '0.6rem', color: 'var(--oxblood)' }}>
-                Counting everything you own it would be {total.toFixed(1)} months. The difference is the part of your
-                net worth that will not answer the phone in a crisis.
+        <div className="mwm-stack" style={{ gap: '1.2rem', position: 'sticky', top: '1.5rem' }}>
+          <Tile
+            hero
+            label="Months you are covered for"
+            value={reach.toFixed(1)}
+            sub="How long the money you can reach would pay for your life if everything stopped tomorrow."
+          />
+          {total > reach + 0.2 ? (
+            <Box variant="edge">
+              <p className="mwm-note">
+                Counting everything you own it would be <strong>{total.toFixed(1)} months</strong>. The difference is
+                the part of your money that will not answer the phone in an emergency.
               </p>
-            ) : null}
-            {spendUsd > 0 ? (
-              <div style={{ marginTop: '1.1rem' }}>
-                <RunwayStrip months={reach} target={6} totalMonths={total} />
-              </div>
-            ) : null}
-          </Card>
+            </Box>
+          ) : null}
+          {spendUsd > 0 ? (
+            <Box variant="edge">
+              <p className="mwm-eyebrow" style={{ marginBottom: '1rem' }}>
+                <Define term="monthsCovered">Months covered</Define>
+              </p>
+              <MonthsStrip months={reach} target={6} totalMonths={total} />
+            </Box>
+          ) : null}
         </div>
       </div>
     </div>
@@ -471,55 +419,63 @@ export function Step3({
   const set = (patch: Partial<Profile>) => onChange({ ...profile, ...patch })
 
   return (
-    <div className="mwm-shell" style={{ paddingTop: '2rem', paddingBottom: '3rem' }}>
+    <div className="mwm-shell mwm-section" style={{ paddingTop: '2.5rem' }}>
       <SectionHead
-        index="Module 03, part one"
-        title="How much risk fits"
-        intro="Four questions. Two are about your circumstances and two are about you. The answers are scored openly and you can see every point as it lands."
+        eyebrow="Question 3 of 3"
+        title="How much risk suits you?"
+        lede="Two questions about your situation and two about you. Everything is scored in the open, and you can watch the points land on the right."
       />
 
-      <div className="mwm-grid mwm-grid--sidebar">
-        <div className="mwm-stack" style={{ gap: '0.9rem' }}>
-          <Card>
-            <Field label="When might you need this money" hint="Not when you would like to spend it. When you might have to.">
+      <div className="mwm-grid mwm-grid--wide" style={{ alignItems: 'start' }}>
+        <div className="mwm-stack" style={{ gap: '1.2rem' }}>
+          <Box>
+            <Field
+              label="When might you need this money back?"
+              hint="Not when you would like to spend it. When you might have no choice."
+            >
               {() => (
-                <Segmented
-                  stack
+                <Choices
                   value={String(profile.horizonYears)}
                   onChange={(v) => set({ horizonYears: Number(v) as Profile['horizonYears'] })}
                   options={[
-                    { value: '2', label: 'Within a couple of years', hint: 'Shares are close to a coin toss over that stretch' },
-                    { value: '5', label: 'Around five years', hint: 'Long enough for some risk, not for all of it' },
-                    { value: '10', label: 'Ten years or so', hint: 'Long enough for most of it' },
-                    { value: '20', label: 'Twenty years or more', hint: 'Time is the thing that turns volatility into return' },
+                    { value: '2', label: 'Within a year or two', sub: 'Over that stretch shares are close to a coin toss' },
+                    { value: '5', label: 'About five years', sub: 'Long enough for some risk, not for all of it' },
+                    { value: '10', label: 'Around ten years', sub: 'Long enough for most of it' },
+                    { value: '20', label: 'Twenty years or more', sub: 'Time is what turns a bumpy ride into a return' },
                   ]}
                 />
               )}
             </Field>
-          </Card>
+          </Box>
 
-          <Card>
-            <Field label="It falls 30 percent in six months. What do you actually do" hint="Not what you should do. What you would do.">
+          <Box>
+            <Field
+              label="It drops 30 percent in six months. What do you actually do?"
+              hint="Not what you should do. What you would really do at two in the morning."
+            >
               {() => (
-                <Segmented
-                  stack
+                <Choices
                   value={profile.drawdownReaction}
                   onChange={(v) => set({ drawdownReaction: v as Profile['drawdownReaction'] })}
                   options={[
-                    { value: 'sell', label: 'I would sell', hint: 'Honest, and the tool will take you seriously' },
-                    { value: 'hold', label: 'I would sit on my hands', hint: 'Most people say this' },
-                    { value: 'buy', label: 'I would buy more', hint: 'Only true if you have cash sitting there' },
+                    { value: 'sell', label: 'I would sell', sub: 'An honest answer, and worth more than a brave one' },
+                    { value: 'hold', label: 'I would sit on my hands', sub: 'Most people say this. About half of them do it' },
+                    { value: 'buy', label: 'I would buy more', sub: 'Only true if you have spare cash sitting there' },
                   ]}
                 />
               )}
             </Field>
-          </Card>
+          </Box>
 
-          <Card>
-            <div className="mwm-grid mwm-grid--2">
-              <Field label="Are you a US person or US resident" hint="This changes which version of the same fund you should buy, and it matters more than most people realise.">
+          <Box>
+            <div className="mwm-stack" style={{ gap: '1.8rem' }}>
+              <Field
+                label="Are you American, or living in America?"
+                hint="This changes which version of the same fund you should buy, and it matters far more than most people realise."
+              >
                 {() => (
-                  <Segmented
+                  <Choices
+                    row
                     value={profile.usPerson ? 'yes' : 'no'}
                     onChange={(v) => set({ usPerson: v === 'yes' })}
                     options={[
@@ -529,61 +485,74 @@ export function Step3({
                   />
                 )}
               </Field>
-              <Field label="Emerging markets" hint="A broad world fund already holds some. This decides whether you hold more than the index does.">
+
+              <Field
+                label="Fast-growing countries like Saudi, India and Brazil"
+                hint="A normal world fund already holds some. This decides whether you hold more than the world does."
+              >
                 {() => (
-                  <Segmented
+                  <Choices
+                    row
                     value={profile.emTilt}
                     onChange={(v) => set({ emTilt: v as Profile['emTilt'] })}
                     options={[
-                      { value: 'none', label: 'Index' },
-                      { value: 'moderate', label: 'A tilt' },
-                      { value: 'strong', label: 'More' },
+                      { value: 'none', label: 'Just the world' },
+                      { value: 'moderate', label: 'A bit extra' },
+                      { value: 'strong', label: 'A lot extra' },
                     ]}
                   />
                 )}
               </Field>
-            </div>
-            <div style={{ marginTop: '1rem' }}>
-              <Field label="Listed property" hint="Behaves like shares with extra steps. Reasonable to leave out entirely.">
+
+              <Field
+                label="Property companies"
+                hint="Shares in companies that own and rent out buildings. Behaves like shares, not like owning a flat."
+              >
                 {() => (
-                  <Segmented
+                  <Choices
+                    row
                     value={profile.includeProperty ? 'yes' : 'no'}
                     onChange={(v) => set({ includeProperty: v === 'yes' })}
                     options={[
-                      { value: 'yes', label: 'Include it' },
-                      { value: 'no', label: 'Leave it out' },
+                      { value: 'yes', label: 'Include them' },
+                      { value: 'no', label: 'Leave them out' },
                     ]}
                   />
                 )}
               </Field>
             </div>
-          </Card>
+          </Box>
         </div>
 
-        <div style={{ position: 'sticky', top: '1.5rem', alignSelf: 'start' }}>
-          <Card tone="ink">
-            <p className="mwm-eyebrow">Where that lands you</p>
-            <p style={{ fontFamily: "'EB Garamond', Georgia, serif", fontSize: '2.6rem', letterSpacing: '-0.03em', marginTop: '0.4rem' }}>
+        <div style={{ position: 'sticky', top: '1.5rem' }}>
+          <Box variant="accent">
+            <p className="mwm-eyebrow">Where that puts you</p>
+            <p className="mwm-num" style={{ fontSize: 'clamp(2.6rem, 5vw, 3.6rem)', margin: '0.6rem 0 1.6rem' }}>
               {level}
             </p>
-            <div className="mwm-stack" style={{ gap: '0.7rem', marginTop: '1.2rem' }}>
+            <div className="mwm-stack" style={{ gap: '1.4rem' }}>
               {levelWhy.map((p) => (
                 <div key={p.label}>
-                  <div className="mwm-row" style={{ justifyContent: 'space-between' }}>
-                    <span style={{ fontSize: '0.82rem' }}>{p.label}</span>
-                    <span className="mwm-tabular" style={{ fontSize: '0.82rem' }}>
+                  <div className="mwm-row" style={{ justifyContent: 'space-between', marginBottom: '0.4rem' }}>
+                    <span className="mwm-note" style={{ color: 'var(--fg)' }}>
+                      {p.label}
+                    </span>
+                    <span className="mwm-tabular" style={{ fontWeight: 600 }}>
                       {p.points} / {p.max}
                     </span>
                   </div>
-                  <p className="mwm-small" style={{ marginTop: '0.15rem' }}>
+                  <Bar pct={(p.points / p.max) * 100} />
+                  <p className="mwm-tiny" style={{ marginTop: '0.5rem' }}>
                     {p.detail}
                   </p>
                 </div>
               ))}
             </div>
-          </Card>
+          </Box>
         </div>
       </div>
     </div>
   )
 }
+
+export { Reveal }
