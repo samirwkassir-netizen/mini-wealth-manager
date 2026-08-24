@@ -237,7 +237,7 @@ export function Ledger() {
                     <td className="mwm-small">
                       {ASSET_KEYS.includes(i.assetClass as never) ? assetMeta(i.assetClass as never).label : 'not allocated'}
                     </td>
-                    <td className="mwm-small">{i.isin ?? '—'}</td>
+                    <td className="mwm-small">{i.isin ?? 'none'}</td>
                     <td className="mwm-small">
                       {i.domicile}
                       {i.usSitus ? (

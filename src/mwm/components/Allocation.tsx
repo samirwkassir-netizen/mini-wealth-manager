@@ -267,7 +267,7 @@ export function AllocationSection({
                       </td>
                       {ASSET_KEYS.map((k) => (
                         <td key={k} className="num">
-                          {alt.allocation.weights[k] < 0.05 ? '—' : `${alt.allocation.weights[k].toFixed(0)}%`}
+                          {alt.allocation.weights[k] < 0.05 ? '·' : `${alt.allocation.weights[k].toFixed(0)}%`}
                         </td>
                       ))}
                       <td className="num">{fmtPct(alt.allocation.stat.expectedReturn)}</td>

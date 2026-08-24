@@ -14,8 +14,8 @@
       "note": "The cheapest real gain most people can buy. Not because better tools make you better, but because bad tools cost you hours every week and you have stopped noticing."
     },
     {
-      "id": "leverage",
-      "name": "Leverage on your own time",
+      "id": "hours",
+      "name": "More output from the same hours",
       "examples": "An AI subscription you actually use daily. Paid data. Anything that turns eight hours of work into two.",
       "incomeWithin12m": true,
       "aiResilient": true,
