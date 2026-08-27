@@ -1,5 +1,5 @@
-import { fmtUsd, type Analysis } from '../engine'
-import { Bar, Box, Counter, Define, Pair, Reveal, SectionHead, Swatch, Tile } from './ui'
+import { CASH_EROSION, erodedValue, fmtUsd, type Analysis } from '../engine'
+import { Bar, Box, Counter, Define, Pair, Reveal, SectionHead, Source, Swatch, Tile } from './ui'
 
 const money = (n: number) => fmtUsd(n)
 
@@ -94,6 +94,68 @@ export function SecStanding({ a, mirror }: { a: Analysis; mirror: Analysis }) {
                 />
               ))}
             </div>
+          </Box>
+        </Reveal>
+      ) : null}
+
+      {s.totalUsd > 0 ? (
+        <Reveal>
+          <Box variant="accent">
+            <p className="mwm-eyebrow">What standing still costs</p>
+            <p className="mwm-body" style={{ marginTop: '1rem' }}>
+              Money that sits does not stay the same size. It stays the same number. Since {CASH_EROSION.startLabel},
+              the month Lebanon's banks stopped giving people their deposits, US prices rose{' '}
+              {CASH_EROSION.pricesRosePct} percent. A dollar left alone through that buys{' '}
+              {CASH_EROSION.purchasingPowerLostPct} percent less than it did.
+            </p>
+            <div className="mwm-grid mwm-grid--2" style={{ marginTop: '1.8rem' }}>
+              <Pair
+                left={
+                  <>
+                    <p className="mwm-tiny">Your {money(s.totalUsd)}, if you had held it since {CASH_EROSION.startLabel}</p>
+                    <p className="mwm-num" style={{ fontSize: '1.9rem', marginTop: '0.4rem' }}>
+                      {money(s.totalUsd)}
+                    </p>
+                  </>
+                }
+                right={
+                  <>
+                    <p className="mwm-tiny">would buy what this bought then</p>
+                    <p className="mwm-num mwm-accent" style={{ fontSize: '1.9rem', marginTop: '0.4rem' }}>
+                      {money(erodedValue(s.totalUsd))}
+                    </p>
+                  </>
+                }
+              />
+              <Pair
+                left={
+                  <>
+                    <p className="mwm-tiny">Prices, per year, over those {CASH_EROSION.years} years</p>
+                    <p className="mwm-num" style={{ fontSize: '1.9rem', marginTop: '0.4rem' }}>
+                      +{CASH_EROSION.annualInflationPct}%
+                    </p>
+                  </>
+                }
+                right={
+                  <>
+                    <p className="mwm-tiny">what your cash lost, per year</p>
+                    <p className="mwm-num mwm-accent" style={{ fontSize: '1.9rem', marginTop: '0.4rem' }}>
+                      -{CASH_EROSION.annualLossPct}%
+                    </p>
+                  </>
+                }
+              />
+            </div>
+            <p className="mwm-tiny" style={{ marginTop: '1.5rem' }}>
+              {CASH_EROSION.measures} Index {CASH_EROSION.startIndex} in {CASH_EROSION.startLabel} against{' '}
+              {CASH_EROSION.endIndex} in {CASH_EROSION.endLabel}.{' '}
+              <Source url={CASH_EROSION.startSourceUrl} label="2019 release" />{' '}
+              <Source url={CASH_EROSION.sourceUrl} label="latest release" />
+            </p>
+            <p className="mwm-tiny" style={{ marginTop: '0.6rem' }}>
+              This is one particular six year window and it ran hotter than normal. Over the long run US prices have
+              risen nearer 3 percent a year. Do not read the number above as a rule.
+            </p>
           </Box>
         </Reveal>
       ) : null}

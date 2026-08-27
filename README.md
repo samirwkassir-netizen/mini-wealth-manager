@@ -28,6 +28,8 @@ Three modules, all deliberately shallow, all working end to end.
 
 **1. Where you stand.** Every account you hold, tagged with what currency it is in, which kind of institution holds it, how much of it you could withdraw tomorrow, and whether it can cross a border. It produces two numbers instead of one: what you own, and what you can put to work. Everything downstream runs on the second.
 
+It also shows what waiting has cost. US prices rose 29.8 percent between October 2019, the month Lebanon's banks stopped paying out, and July 2026. A dollar held untouched through that buys 22.9 percent less, close to 3.8 percent a year. Both index values and both BLS releases are on screen, and the tool says plainly that this window ran hotter than the long run rather than passing it off as a rule.
+
 It also produces a fragility score out of 100, built from four things you declare yourself: money you cannot reach, money that cannot leave the country, everything sitting in one institution, and money held in a currency that has repriced before. The tool makes no assumption about your country. It only counts what you tell it.
 
 **2. Where it goes.** Income, spending, the share you want to invest, and the things you are saving for. The output is runway in months, and it deliberately shows two runways: one counting everything you own, one counting only what you can reach. The gap between them is the part of your net worth that will not answer the phone in a crisis.
@@ -82,6 +84,7 @@ Not one figure in this tool was produced by me. Each is read off a published sou
 | Fund expense ratios, ISINs, domiciles | Issuer product pages, one per fund | 24 Aug 2026 |
 | Exchange rates | ECB, Banque du Liban, CBRT, BCRA, CBUAE, SAMA | see ledger |
 | Crisis returns | MSCI, Nareit, Damodaran NYU dataset, slickcharts | see ledger |
+| What cash lost since 2019 | [BLS CPI-U, Oct 2019 release](https://www.bls.gov/news.release/archives/cpi_11132019.htm) and [Jul 2026 release](https://www.bls.gov/news.release/cpi.nr0.htm) | 257.346 to 333.918 |
 | Withholding and estate tax | IRS, US-Ireland treaty text, Irish Revenue | 24 Aug 2026 |
 
 Those three houses do not agree with each other. On emerging market equity, J.P. Morgan says 7.8 percent, BlackRock says 8.8 percent, and Vanguard says 2.0 to 4.0 percent. That is a five point spread on the same asset class over the same horizon. The tool says so on screen, because anyone quoting an expected return to one decimal place is telling you about their model rather than about the future.

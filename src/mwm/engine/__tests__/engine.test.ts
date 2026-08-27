@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { toUsd, hardness, rates } from '../fx'
 import { computeStanding } from '../standing'
 import { ASSET_KEYS, BASE, blendedWeights, bufferMonths, equityShare, goldWeight, growthWeights, normalise } from '../policy'
-import { HISTORICAL_LINES, historicalFor, historicalReturn } from '../historical'
+import { CASH_EROSION, erodedValue, HISTORICAL_LINES, historicalFor, historicalReturn } from '../historical'
 import { COV, CORRELATIONS, CORRELATION_ORDER, MU, frontier, maxSharpePortfolio, portfolioReturn, portfolioVol, toVector } from '../mvo'
 import { analyse } from '../index'
 import { applyScenario, SCENARIOS } from '../stress'
@@ -449,5 +449,31 @@ describe('the historical figures', () => {
 
   it('is higher than the forecast for shares, which is the whole point of showing both', () => {
     expect(historicalFor('globalEquity').nominal).toBeGreaterThan(7.0)
+  })
+})
+
+describe('cash erosion', () => {
+  it('derives the loss from the two published index values, not from a typed-in number', () => {
+    const { startIndex, endIndex, purchasingPowerLostPct, pricesRosePct } = CASH_EROSION
+    expect(pricesRosePct).toBeCloseTo((endIndex / startIndex - 1) * 100, 1)
+    expect(purchasingPowerLostPct).toBeCloseTo((1 - startIndex / endIndex) * 100, 1)
+  })
+
+  it('annualises consistently with the cumulative figure', () => {
+    const { startIndex, endIndex, years, annualInflationPct, annualLossPct } = CASH_EROSION
+    expect(annualInflationPct).toBeCloseTo(((endIndex / startIndex) ** (1 / years) - 1) * 100, 1)
+    expect(annualLossPct).toBeCloseTo((1 - (startIndex / endIndex) ** (1 / years)) * 100, 1)
+  })
+
+  it('shrinks a pile of cash by the published amount', () => {
+    // 100k held since Oct 2019 buys roughly 77k of 2019 goods.
+    expect(erodedValue(100_000)).toBeGreaterThan(74_000)
+    expect(erodedValue(100_000)).toBeLessThan(80_000)
+  })
+
+  it('does not let this one window be mistaken for the long-run assumption', () => {
+    // The forward-looking model runs on 2.5 percent. This window ran near 4.
+    expect(CASH_EROSION.annualInflationPct).toBeGreaterThan(3.5)
+    expect(CASH_EROSION.caution).toMatch(/general rule/i)
   })
 })

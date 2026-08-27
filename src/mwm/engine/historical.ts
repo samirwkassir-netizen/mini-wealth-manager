@@ -48,3 +48,33 @@ export const WHY_NOT_TWELVE = {
     'https://www.ubs.com/content/dam/assets/wm/static/cio/documents/giry2026-summary-public.pdf',
   ],
 }
+
+export interface CashErosion {
+  label: string
+  startLabel: string
+  endLabel: string
+  startIndex: number
+  endIndex: number
+  years: number
+  pricesRosePct: number
+  purchasingPowerLostPct: number
+  annualInflationPct: number
+  annualLossPct: number
+  measures: string
+  source: string
+  sourceUrl: string
+  startSourceUrl: string
+  verified: boolean
+  caution: string
+}
+
+/**
+ * What a dollar left alone since the start of the Lebanese banking crisis
+ * actually bought by July 2026. Published index values, both ends, no model.
+ */
+export const CASH_EROSION = assumptions.cashErosion as CashErosion
+
+/** What a pile of cash held untouched since October 2019 would buy today, in 2019 dollars. */
+export function erodedValue(usd: number): number {
+  return usd * (CASH_EROSION.startIndex / CASH_EROSION.endIndex)
+}

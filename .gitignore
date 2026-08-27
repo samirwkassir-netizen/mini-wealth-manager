@@ -30,3 +30,5 @@ node_modules/
 *.tsbuildinfo
 
 dist-single/
+
+_to_delete/

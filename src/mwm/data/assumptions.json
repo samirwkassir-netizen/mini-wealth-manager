@@ -315,5 +315,23 @@
         "source": "https://www.ubs.com/content/dam/assets/wm/static/cio/documents/giry2026-summary-public.pdf"
       }
     ]
+  },
+  "cashErosion": {
+    "label": "What holding dollars in cash has cost since 2019",
+    "startLabel": "October 2019",
+    "endLabel": "July 2026",
+    "startIndex": 257.346,
+    "endIndex": 333.918,
+    "years": 6.75,
+    "pricesRosePct": 29.8,
+    "purchasingPowerLostPct": 22.9,
+    "annualInflationPct": 3.9,
+    "annualLossPct": 3.8,
+    "measures": "US CPI for All Urban Consumers, not seasonally adjusted, 1982-84 = 100. October 2019 is the month Lebanon's banking crisis began. This measures what a dollar buys in the United States. It is not a measure of the cost of living in Lebanon, which moved differently.",
+    "source": "US Bureau of Labor Statistics, Consumer Price Index news releases",
+    "sourceUrl": "https://www.bls.gov/news.release/cpi.nr0.htm",
+    "startSourceUrl": "https://www.bls.gov/news.release/archives/cpi_11132019.htm",
+    "verified": true,
+    "caution": "Do not state this as a general rule. Long-run US inflation is nearer 3 percent a year. The last six years ran hotter than the long run."
   }
 }
