@@ -18,6 +18,12 @@ export interface Account {
   access: Access
   /** Can this money be sent to another country without asking permission? */
   transferable: boolean
+  /**
+   * For money that comes out slowly: roughly how much per month, in the
+   * account's own currency. Optional. Left blank, the timing is unknown and
+   * the tool says so rather than assuming a rate.
+   */
+  monthlyCap?: number | null
 }
 
 export type IncomeStability = 'none' | 'irregular' | 'recurring'
@@ -45,6 +51,7 @@ export interface Flows {
 export type Horizon = 2 | 5 | 10 | 20
 export type DrawdownReaction = 'sell' | 'hold' | 'buy'
 export type Tilt = 'none' | 'moderate' | 'strong'
+export type BrokerAccess = 'have' | 'could' | 'no'
 
 export interface Profile {
   horizonYears: Horizon
@@ -53,6 +60,11 @@ export interface Profile {
   usPerson: boolean
   emTilt: Tilt
   includeProperty: boolean
+  /**
+   * Whether a brokerage account abroad is realistic for you. 'no' does not
+   * change the target mix. It changes what the tool tells you to do about it.
+   */
+  brokerAccess: BrokerAccess
 }
 
 export interface AppState {

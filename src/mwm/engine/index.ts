@@ -7,6 +7,8 @@ import { blendedWeights, computeTiering, equityShare, growthWeights } from './po
 import { historicalReturn } from './historical'
 import { buildAllocation, outcomeBand } from './portfolio'
 import { firstMoves } from './actions'
+import { computeLiquidity } from './liquidity'
+import { mismatchReadout, parallelGaps } from './fxStress'
 
 export * from './types'
 export * from './fx'
@@ -20,6 +22,10 @@ export * from './historical'
 export * from './portfolio'
 export * from './stress'
 export * from './actions'
+export * from './liquidity'
+export * from './fxStress'
+export * from './breaksFirst'
+export * from './dials'
 
 export function analyse(state: AppState, upliftOverride?: number) {
   const standing = computeStanding(state.accounts)
@@ -64,7 +70,27 @@ export function analyse(state: AppState, upliftOverride?: number) {
   const actions = firstMoves(state, standing, flow, tiering, human)
   const band = outcomeBand(allocation.stat, tiering.investableUsd)
 
-  return { standing, flow, risk, tiering, growth, weights, allocation, growthOnly, human, alternatives, actions, band }
+  const liquidity = computeLiquidity(state.accounts)
+  const mismatch = mismatchReadout(state.accounts, state.flows)
+  const parallel = parallelGaps(state.accounts)
+
+  return {
+    standing,
+    flow,
+    risk,
+    tiering,
+    growth,
+    weights,
+    allocation,
+    growthOnly,
+    human,
+    alternatives,
+    actions,
+    band,
+    liquidity,
+    mismatch,
+    parallel,
+  }
 }
 
 export type Analysis = ReturnType<typeof analyse>

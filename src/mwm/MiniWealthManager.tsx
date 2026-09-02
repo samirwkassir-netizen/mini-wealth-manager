@@ -27,7 +27,14 @@ const EMPTY: AppState = {
     investPct: 25,
     goals: [],
   },
-  profile: { horizonYears: 10, drawdownReaction: 'hold', usPerson: false, emTilt: 'moderate', includeProperty: true },
+  profile: {
+    horizonYears: 10,
+    drawdownReaction: 'hold',
+    usPerson: false,
+    emTilt: 'moderate',
+    includeProperty: true,
+    brokerAccess: 'could',
+  },
   picks: {},
 }
 
@@ -35,7 +42,7 @@ const EMPTY: AppState = {
 const EXAMPLE: AppState = {
   accounts: [
     { id: 'e1', label: '', type: 'localBank', currency: 'USD', amount: 5000, access: 'restricted', transferable: false },
-    { id: 'e2', label: '', type: 'localBank', currency: 'USD', amount: 1200, access: 'days', transferable: false },
+    { id: 'e2', label: '', type: 'localBank', currency: 'USD', amount: 1200, access: 'days', transferable: false, monthlyCap: 300 },
     { id: 'e3', label: '', type: 'cashHand', currency: 'USD', amount: 1400, access: 'today', transferable: true },
     { id: 'e4', label: '', type: 'neobank', currency: 'EUR', amount: 3900, access: 'today', transferable: true },
   ],
@@ -48,7 +55,14 @@ const EXAMPLE: AppState = {
     investPct: 35,
     goals: [{ id: 'g1', name: 'Travel', amount: 900, currency: 'USD', months: 8 }],
   },
-  profile: { horizonYears: 20, drawdownReaction: 'hold', usPerson: false, emTilt: 'moderate', includeProperty: true },
+  profile: {
+    horizonYears: 20,
+    drawdownReaction: 'hold',
+    usPerson: false,
+    emTilt: 'moderate',
+    includeProperty: true,
+    brokerAccess: 'could',
+  },
   picks: {},
 }
 

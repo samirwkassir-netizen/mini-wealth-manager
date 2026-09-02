@@ -30,7 +30,7 @@ const baseState = (over: Partial<AppState> = {}): AppState => ({
     investPct: 30,
     goals: [],
   },
-  profile: { horizonYears: 20, drawdownReaction: 'hold', usPerson: false, emTilt: 'moderate', includeProperty: true },
+  profile: { horizonYears: 20, drawdownReaction: 'hold', usPerson: false, emTilt: 'moderate', includeProperty: true, brokerAccess: 'could' as const },
   picks: {},
   ...over,
 })
@@ -120,7 +120,7 @@ describe('policy', () => {
       for (const emTilt of ['none', 'moderate', 'strong'] as const) {
         for (const includeProperty of [true, false]) {
           for (const frag of [0, 35, 70, 100]) {
-            const w = growthWeights(level, { horizonYears: 10, drawdownReaction: 'hold', usPerson: false, emTilt, includeProperty }, frag)
+            const w = growthWeights(level, { horizonYears: 10, drawdownReaction: 'hold', usPerson: false, emTilt, includeProperty, brokerAccess: 'could' as const }, frag)
             const total = ASSET_KEYS.reduce((s, k) => s + w[k], 0)
             expect(total).toBeCloseTo(100, 4)
             for (const k of ASSET_KEYS) expect(w[k]).toBeGreaterThanOrEqual(0)
@@ -133,7 +133,7 @@ describe('policy', () => {
   })
 
   it('takes less risk at Cautious than at Growth', () => {
-    const p = { horizonYears: 10 as const, drawdownReaction: 'hold' as const, usPerson: false, emTilt: 'moderate' as const, includeProperty: true }
+    const p = { horizonYears: 10 as const, drawdownReaction: 'hold' as const, usPerson: false, emTilt: 'moderate' as const, includeProperty: true, brokerAccess: 'could' as const }
     const c = growthWeights('Cautious', p, 0)
     const g = growthWeights('Growth', p, 0)
     const equity = (w: Weights) => w.globalEquity + w.emEquity + w.property
@@ -142,7 +142,7 @@ describe('policy', () => {
 
   it('puts near-term money in safe assets when the buffer is not yet full', () => {
     const t = { bufferTargetMonths: 6, safetyUsd: 5000, shortGoalsUsd: 0, growthUsd: 0, investableUsd: 5000, shortfallUsd: 0 }
-    const w = blendedWeights(t, growthWeights('Growth', { horizonYears: 20, drawdownReaction: 'buy', usPerson: false, emTilt: 'moderate', includeProperty: true }, 0))
+    const w = blendedWeights(t, growthWeights('Growth', { horizonYears: 20, drawdownReaction: 'buy', usPerson: false, emTilt: 'moderate', includeProperty: true, brokerAccess: 'could' as const }, 0))
     expect(w.globalEquity).toBe(0)
     expect(w.cash + w.shortGov).toBeCloseTo(100, 4)
   })
@@ -345,7 +345,7 @@ describe('the whole thing holds together', () => {
   it('never produces a weight outside zero to a hundred', () => {
     for (const level of [2, 5, 10, 20] as const) {
       for (const react of ['sell', 'hold', 'buy'] as const) {
-        const a = analyse(baseState({ profile: { horizonYears: level, drawdownReaction: react, usPerson: false, emTilt: 'moderate', includeProperty: true } }))
+        const a = analyse(baseState({ profile: { horizonYears: level, drawdownReaction: react, usPerson: false, emTilt: 'moderate', includeProperty: true, brokerAccess: 'could' as const } }))
         const total = ASSET_KEYS.reduce((s, k) => s + a.weights[k], 0)
         expect(total).toBeCloseTo(100, 3)
         expect(a.allocation.stat.ter).toBeGreaterThan(0)
@@ -366,7 +366,7 @@ describe('the whole thing holds together', () => {
   })
 
   it('keeps a two year horizon out of shares', () => {
-    const a = analyse(baseState({ profile: { horizonYears: 2, drawdownReaction: 'buy', usPerson: false, emTilt: 'moderate', includeProperty: true } }))
+    const a = analyse(baseState({ profile: { horizonYears: 2, drawdownReaction: 'buy', usPerson: false, emTilt: 'moderate', includeProperty: true, brokerAccess: 'could' as const } }))
     expect(a.risk.level).toBe('Cautious')
     expect(a.risk.override).toBeTruthy()
   })
@@ -382,7 +382,7 @@ describe('the whole thing holds together', () => {
 })
 
 describe('the three levels are actually different', () => {
-  const p = { horizonYears: 20 as const, drawdownReaction: 'buy' as const, usPerson: false, emTilt: 'moderate' as const, includeProperty: true }
+  const p = { horizonYears: 20 as const, drawdownReaction: 'buy' as const, usPerson: false, emTilt: 'moderate' as const, includeProperty: true, brokerAccess: 'could' as const }
   const sleeve = (lvl: 'Cautious' | 'Balanced' | 'Growth') => growthWeights(lvl, p, 0)
 
   it('spreads the forecast return by at least two points, floor to ceiling', () => {
