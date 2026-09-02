@@ -25,7 +25,10 @@ export function firstMoves(
   let n = 0
   const push = (a: Omit<Action, 'order'>) => out.push({ ...a, order: ++n })
 
-  const hasBrokerage = state.accounts.some((a: Account) => a.type === 'brokerage' && a.amount > 0)
+  const hasBrokerage =
+    state.accounts.some((a: Account) => a.type === 'brokerage' && a.amount > 0) ||
+    state.profile.brokerAccess === 'have'
+  const noBrokerRoute = state.profile.brokerAccess === 'no'
 
   if (standing.restrictedUsd > 0) {
     push({
@@ -81,7 +84,16 @@ export function firstMoves(
     })
   }
 
-  if (tiering.growthUsd > 0 && !hasBrokerage) {
+  if (tiering.growthUsd > 0 && noBrokerRoute) {
+    push({
+      id: 'noBroker',
+      tag: 'then',
+      title: 'Work the access problem before the allocation',
+      body: `You said a foreign brokerage is not realistic. Then the mix below is a target, not a shopping list. What is usually still reachable without one: physical gold bought locally, hard-currency cash held outside the fragile bank, and paying down any debt you carry, which earns its interest rate risk-free. Revisit the broker question once a year. The situation that makes it impossible has a habit of changing.`,
+    })
+  }
+
+  if (tiering.growthUsd > 0 && !hasBrokerage && !noBrokerRoute) {
     push({
       id: 'broker',
       tag: 'then',
@@ -90,7 +102,7 @@ export function firstMoves(
     })
   }
 
-  if (tiering.growthUsd > 0) {
+  if (tiering.growthUsd > 0 && !noBrokerRoute) {
     push({
       id: 'buy',
       tag: 'then',

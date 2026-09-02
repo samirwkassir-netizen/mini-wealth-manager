@@ -2,6 +2,8 @@ import { AnimatePresence, motion } from 'motion/react'
 import {
   ACCESS_OPTIONS,
   ACCOUNT_TYPES,
+  bufferMonths,
+  computeLiquidity,
   computeStanding,
   fmtUsd,
   rates,
@@ -32,6 +34,7 @@ export function newGoal(): Goal {
 
 export function Step1({ accounts, onChange }: { accounts: Account[]; onChange: (a: Account[]) => void }) {
   const standing = computeStanding(accounts)
+  const liquidity = computeLiquidity(accounts)
   const update = (id: string, patch: Partial<Account>) =>
     onChange(accounts.map((a) => (a.id === id ? { ...a, ...patch } : a)))
 
@@ -113,6 +116,22 @@ export function Step1({ accounts, onChange }: { accounts: Account[]; onChange: (
                       )}
                     </Field>
 
+                    {a.access === 'days' ? (
+                      <Field
+                        label="Roughly how much of it can you pull out per month?"
+                        hint="Optional. If the limit is weekly, work it out as a month. Left blank, the tool treats the timing as unknown rather than guessing a rate."
+                      >
+                        {(id) => (
+                          <MoneyInput
+                            id={id}
+                            currency={a.currency}
+                            value={a.monthlyCap ?? 0}
+                            onChange={(n) => update(a.id, { monthlyCap: n > 0 ? n : null })}
+                          />
+                        )}
+                      </Field>
+                    ) : null}
+
                     <Field
                       label="Could you send this money to another country?"
                       hint="For example, to open an investment account abroad."
@@ -155,6 +174,15 @@ export function Step1({ accounts, onChange }: { accounts: Account[]; onChange: (
                 : 'All of it. Good position to be in.'
             }
           />
+          {liquidity.drippingUsd > 0 && liquidity.dripDoneMonth ? (
+            <Box variant="edge">
+              <p className="mwm-note">
+                Another <strong>{money(liquidity.drippingUsd)}</strong> arrives over the next{' '}
+                <strong>{liquidity.dripDoneMonth} {liquidity.dripDoneMonth === 1 ? 'month' : 'months'}</strong>, on the
+                limits you declared. The plan counts it on that timetable, not before.
+              </p>
+            </Box>
+          ) : null}
           {standing.totalUsd > 0 ? (
             <Box variant="edge">
               <p className="mwm-eyebrow">How exposed is it</p>
@@ -194,6 +222,7 @@ export function Step2({
   const spendUsd = flows.spendMonthly / (rates.find((r) => r.code === flows.spendCurrency)?.perUsd ?? 1)
   const reach = spendUsd > 0 ? standing.accessibleTodayUsd / spendUsd : 0
   const total = spendUsd > 0 ? standing.totalUsd / spendUsd : 0
+  const bufferTarget = bufferMonths(standing.fragility.score, flows.incomeStability)
   const set = (patch: Partial<Flows>) => onChange({ ...flows, ...patch })
 
   return (
@@ -394,7 +423,7 @@ export function Step2({
               <p className="mwm-eyebrow" style={{ marginBottom: '1rem' }}>
                 <Define term="monthsCovered">Months covered</Define>
               </p>
-              <MonthsStrip months={reach} target={6} totalMonths={total} />
+              <MonthsStrip months={reach} target={bufferTarget} totalMonths={total} />
             </Box>
           ) : null}
         </div>
@@ -481,6 +510,24 @@ export function Step3({
                     options={[
                       { value: 'no', label: 'No' },
                       { value: 'yes', label: 'Yes' },
+                    ]}
+                  />
+                )}
+              </Field>
+
+              <Field
+                label="Could you open an investment account with a foreign broker?"
+                hint="Some countries make this hard, and some banks make funding it harder. Answer honestly. The target mix does not change; what the tool tells you to do about it does."
+              >
+                {() => (
+                  <Choices
+                    row
+                    value={profile.brokerAccess}
+                    onChange={(v) => set({ brokerAccess: v as Profile['brokerAccess'] })}
+                    options={[
+                      { value: 'have', label: 'I already have one' },
+                      { value: 'could', label: 'Not yet, but I could' },
+                      { value: 'no', label: 'Realistically, no' },
                     ]}
                   />
                 )}

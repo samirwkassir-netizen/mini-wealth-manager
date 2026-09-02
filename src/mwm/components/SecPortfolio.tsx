@@ -24,6 +24,7 @@ const money = (n: number) => fmtUsd(n)
 
 export function SecPortfolio({
   a,
+  state,
   onPick,
 }: {
   a: Analysis
@@ -52,6 +53,21 @@ export function SecPortfolio({
         title="Your portfolio"
         lede={`Your money does three jobs, in order: money you can reach in a day, money for things inside three years, and only what is left over goes into the long-term mix.`}
       />
+
+      {state.profile.brokerAccess === 'no' && a.tiering.growthUsd > 0 ? (
+        <Reveal>
+          <Box variant="accent">
+            <p className="mwm-eyebrow">Read this section differently</p>
+            <p className="mwm-body" style={{ marginTop: '1rem' }}>
+              You said a foreign brokerage account is not realistic for you. Then everything below is a target, not a
+              shopping list, and pretending otherwise would be the kind of dishonesty this tool exists to avoid. What
+              the mix is still for: it tells you what you are exposed to by not holding it, it gives you the shape to
+              build toward the year access opens up, and its gold and cash lines are usually reachable without any
+              broker at all. What it is not: instructions you can execute this month.
+            </p>
+          </Box>
+        </Reveal>
+      ) : null}
 
       {/* three jobs */}
       <Reveal>
