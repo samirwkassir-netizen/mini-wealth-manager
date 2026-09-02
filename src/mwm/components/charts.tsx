@@ -331,6 +331,68 @@ export function StressBars({
   )
 }
 
+/**
+ * The reachable pool, month by month, under whatever stress is dialled in.
+ * A bar per month. The month the pool cannot cover is where the bars stop.
+ */
+export function TimelineChart({
+  timeline,
+  breakMonth,
+  monthlySpendUsd,
+}: {
+  timeline: { month: number; poolUsd: number }[]
+  breakMonth: number | null
+  monthlySpendUsd: number
+}) {
+  const reduce = useReducedMotion()
+  const ref = useRef<HTMLDivElement>(null)
+  const inView = useInView(ref, { once: true, margin: '-30px' })
+
+  const shown = timeline.slice(0, 37)
+  const max = Math.max(1, ...shown.map((p) => p.poolUsd), monthlySpendUsd)
+  const compact = (v: number) =>
+    v >= 10000 ? `$${(v / 1000).toFixed(0)}k` : v >= 1000 ? `$${(v / 1000).toFixed(1)}k` : `$${Math.round(v)}`
+
+  return (
+    <div ref={ref}>
+      <div style={{ display: 'flex', alignItems: 'flex-end', gap: 3, height: 150 }}>
+        {shown.map((p, i) => {
+          const broken = breakMonth !== null && p.month > breakMonth
+          return (
+            <motion.div
+              key={p.month}
+              title={`Month ${p.month}: ${compact(p.poolUsd)} in reach`}
+              style={{
+                flex: 1,
+                minWidth: 0,
+                borderRadius: 3,
+                background: broken ? 'var(--surface-2)' : p.month === breakMonth ? 'var(--accent)' : 'var(--c-globalBonds)',
+                border: p.month === breakMonth ? '1px solid var(--accent)' : '1px solid transparent',
+              }}
+              initial={reduce ? false : { height: 0 }}
+              animate={
+                inView || reduce
+                  ? { height: `${Math.max(broken ? 2 : 3, (p.poolUsd / max) * 100)}%` }
+                  : undefined
+              }
+              transition={{ duration: 0.5, delay: i * 0.015, ease: [0.2, 0.8, 0.2, 1] }}
+            />
+          )
+        })}
+      </div>
+      <div className="mwm-row" style={{ justifyContent: 'space-between', marginTop: '0.5rem' }}>
+        <span className="mwm-tiny">now</span>
+        {breakMonth !== null ? (
+          <span className="mwm-tiny mwm-accent">the red bar is month {breakMonth}, the last you cover in full</span>
+        ) : (
+          <span className="mwm-tiny">{shown.length - 1} months out, still standing</span>
+        )}
+        <span className="mwm-tiny">month {shown[shown.length - 1]?.month ?? 0}</span>
+      </div>
+    </div>
+  )
+}
+
 export function MonthsStrip({ months, target, totalMonths }: { months: number; target: number; totalMonths: number }) {
   const reduce = useReducedMotion()
   const span = Math.max(target + 2, Math.ceil(totalMonths) + 1, 6)

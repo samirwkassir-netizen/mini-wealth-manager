@@ -43,9 +43,9 @@ export const SECTIONS: { id: SectionId; n: string; title: string; blurb: string;
   {
     id: 'bad',
     n: '05',
-    title: 'Bad years',
-    blurb: 'What 2008, Covid and the 1970s would have done to this. Three of them really happened.',
-    tab: 'Bad years',
+    title: 'What breaks first',
+    blurb: 'The market falls, the bank does not pay, the currency reprices. Each one tested, with a date on the damage.',
+    tab: 'What breaks first',
   },
   {
     id: 'practical',
@@ -124,7 +124,7 @@ export function Results({
               {open === 'first' ? <SecFirst a={a} /> : null}
               {open === 'yourself' ? <SecYourself a={a} uplift={uplift} setUplift={setUplift} /> : null}
               {open === 'portfolio' ? <SecPortfolio a={a} state={state} onPick={onPick} /> : null}
-              {open === 'bad' ? <SecBadYears a={a} /> : null}
+              {open === 'bad' ? <SecBadYears a={a} state={state} /> : null}
               {open === 'practical' ? <SecPractical /> : null}
 
               <NextUp open={open} onOpen={go} />
