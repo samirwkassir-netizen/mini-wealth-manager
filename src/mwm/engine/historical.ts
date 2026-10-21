@@ -42,7 +42,7 @@ export function historicalCoverage(w: Weights): number {
 export const WHY_NOT_TWELVE = {
   question: 'People say shares return 10 to 12 percent a year. Why does this say less?',
   answer:
-    'Because that number is American shares on their own. The S&P 500 returned 10.4 percent a year over the last thirty years and 11.9 percent over the last fifty. A portfolio spread across the whole world returned about 8.5 percent over the same kind of period. The missing point and a half a year is what you pay for not having everything you own in one country. Whether that is worth paying is a real question, and this tool thinks it is, especially for someone whose bank is already a concentrated bet.',
+    'Because that number is American shares on their own. The S&P 500 returned 10.4 percent a year over the last thirty years and 11.9 percent over the last fifty. Developed-market shares spread across the world returned about 8.5 percent a year from 1900 to 2025. The missing point and a half a year is what you pay for not having everything you own in one country. Whether that is worth paying is a real question, and this tool thinks it is, especially for someone whose bank is already a concentrated bet.',
   sources: [
     'https://www.reit.com/sites/default/files/reitwatch/RW2607.pdf',
     'https://www.ubs.com/content/dam/assets/wm/static/cio/documents/giry2026-summary-public.pdf',

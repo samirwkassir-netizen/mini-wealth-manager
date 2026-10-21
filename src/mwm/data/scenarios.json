@@ -144,7 +144,7 @@
         {
           "key": "gold",
           "figure": "held flat",
-          "measures": "Historical daily LBMA gold prices were withdrawn from public access in March 2025 at the benchmark administrator's request, so this window could not be verified. Gold finished calendar 2020 up about 24 percent.",
+          "measures": "Historical daily LBMA gold prices now sit behind an IBA licence (the MyLBMA Portal), so this window could not be verified from a public source. Held at zero.",
           "source": "https://www.gold.org/goldhub/research/outlook-2021",
           "verified": false
         },
@@ -165,9 +165,9 @@
       "summary": "The scenario almost nobody models. Shares and bonds fell together while prices rose 22 percent. Gold nearly tripled. Diversifying across shares and bonds alone did not save anyone.",
       "headline": "US shares lost 37 percent in cash terms over two years and 49 percent in real terms once inflation is taken out. Bonds gained 5.7 percent in cash terms and lost about 13 percent in real terms. Both of the things a normal portfolio is made of failed at the same time.",
       "headlineSource": "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datafile/histretSP.html",
-      "inflation": 22.07,
+      "inflation": 22.12,
       "shocks": {
-        "globalEquity": -37.27,
+        "globalEquity": -36.5,
         "emEquity": 0,
         "globalBonds": 5.72,
         "shortGov": 5.72,
@@ -179,9 +179,9 @@
       "lines": [
         {
           "key": "globalEquity",
-          "figure": "-37.27%",
+          "figure": "-36.50%",
           "measures": "S&P 500 total return, 1973 and 1974 chained. Used as the equity line because no comparable published global series for that era was verified.",
-          "source": "https://www.slickcharts.com/sp500/returns",
+          "source": "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datafile/histretSP.html",
           "verified": true
         },
         {

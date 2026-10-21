@@ -2,7 +2,7 @@
   "meta": {
     "base": "USD",
     "note": "These rates are frozen. This tool makes no network calls, which means it cannot be wrong about a rate it never fetched, but it also means the numbers age. Each rate below carries the date it was read and where it came from. Where an official rate and a street rate differ, both are shown, because in several of these countries the official rate is not the rate you can actually transact at.",
-    "checkedOn": "2026-08-24"
+    "checkedOn": "2026-10-22"
   },
   "rates": [
     {
@@ -18,22 +18,22 @@
     {
       "code": "EUR",
       "name": "Euro",
-      "perUsd": 0.8548,
-      "asOf": "2026-08-21",
+      "perUsd": 0.8902,
+      "asOf": "2026-10-21",
       "regime": "floating",
       "source": "European Central Bank reference rates",
       "sourceUrl": "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
-      "note": "Derived from the ECB reference rate of 1 EUR = 1.1699 USD."
+      "note": "Derived from the ECB reference rate of 1 EUR = 1.1234 USD."
     },
     {
       "code": "GBP",
       "name": "British pound",
-      "perUsd": 0.7323,
-      "asOf": "2026-08-21",
+      "perUsd": 0.7462,
+      "asOf": "2026-10-21",
       "regime": "floating",
       "source": "European Central Bank reference rates",
       "sourceUrl": "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
-      "note": "Derived from ECB cross rates."
+      "note": "Derived from ECB cross rates (GBP 0.83825 per EUR, USD 1.1234 per EUR)."
     },
     {
       "code": "LBP",
@@ -68,44 +68,44 @@
     {
       "code": "EGP",
       "name": "Egyptian pound",
-      "perUsd": 50.7395,
-      "asOf": "2026-08-24",
+      "perUsd": 54.3877,
+      "asOf": "2026-10-21",
       "regime": "managed float",
-      "source": "XE market mid rate",
-      "sourceUrl": "https://www.xe.com/currencyconverter/convert/?Amount=1&From=USD&To=EGP",
-      "note": "The Central Bank of Egypt site could not be read directly, so this is a market mid rate rather than an official one. Any parallel-market gap is unverified here."
+      "source": "Central Bank of Egypt official rate",
+      "sourceUrl": "https://www.cbe.org.eg/en/economic-research/statistics/exchange-rates",
+      "note": "Midpoint of the CBE buying rate of 54.3377 and selling rate of 54.4377. Any parallel-market gap is unverified here."
     },
     {
       "code": "TRY",
       "name": "Turkish lira",
-      "perUsd": 47.9231,
-      "asOf": "2026-08-21",
+      "perUsd": 49.5569,
+      "asOf": "2026-10-21",
       "regime": "floating",
-      "source": "Central Bank of the Republic of Turkey, bulletin 2026/156",
+      "source": "Central Bank of the Republic of Turkey, bulletin 2026/199",
       "sourceUrl": "https://www.tcmb.gov.tr/kurlar/today.xml",
-      "note": "Midpoint of the CBRT buying rate of 47.8799 and selling rate of 47.9662."
+      "note": "Midpoint of the CBRT buying rate of 49.5123 and selling rate of 49.6015."
     },
     {
       "code": "NGN",
       "name": "Nigerian naira",
-      "perUsd": 1346.49,
-      "parallelPerUsd": 1405,
-      "asOf": "2026-08-21",
+      "perUsd": 1334.22,
+      "parallelPerUsd": 1380,
+      "asOf": "2026-10-21",
       "regime": "official market",
-      "source": "Nigerian Foreign Exchange Market official rate, reported in Vanguard",
-      "sourceUrl": "https://www.vanguardngr.com/2026/08/dollar-to-naira-exchange-rate-today-august-24-2026/",
-      "note": "The street rate quoted in the same report was around 1,405, roughly 4 percent weaker than the official rate."
+      "source": "Central Bank of Nigeria central rate",
+      "sourceUrl": "https://www.cbn.gov.ng/rates/",
+      "note": "CBN central rate (buy 1,333.72, sell 1,334.72). Street rates were about 1,365 to 1,380, roughly 3 percent weaker, per Vanguard on 21 October 2026."
     },
     {
       "code": "ARS",
       "name": "Argentine peso",
-      "perUsd": 1499,
-      "parallelPerUsd": 1550,
-      "asOf": "2026-08-21",
+      "perUsd": 1526.67,
+      "parallelPerUsd": 1555,
+      "asOf": "2026-10-21",
       "regime": "managed float",
       "source": "Banco Central de la República Argentina, Comunicación A 3500 wholesale reference",
-      "sourceUrl": "https://api.bcra.gob.ar/estadisticascambiarias/v1.0/Cotizaciones",
-      "note": "The blue rate was around 1,540 to 1,560 and the contado con liquidación rate around 1,599 on 24 August 2026. Argentines have lived with several simultaneous exchange rates for years."
+      "sourceUrl": "https://api.bcra.gob.ar/estadisticas/v4.0/monetarias/5",
+      "note": "Comunicación A 3500 (BCRA series 5). The blue rate was about 1,545 to 1,565 and the contado con liquidación rate about 1,633 on 21 October 2026. Argentines have lived with several simultaneous exchange rates for years."
     }
   ]
 }

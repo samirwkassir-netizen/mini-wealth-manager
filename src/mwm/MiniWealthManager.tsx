@@ -1,221 +1,239 @@
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
-import { useMemo, useState } from 'react'
-import './styles.css'
-import { analyse, defaultUplift, type AppState } from './engine'
-import { Intro } from './components/Intro'
-import { Step1, Step2, Step3, newAccount } from './components/Steps'
-import { PlanLoader } from './components/PlanLoader'
-import { Results } from './components/Results'
+import { useDeferredValue, useEffect, useMemo, useState } from 'react'
+import './app/app.css'
+import { analyse, defaultUplift, fxMeta, toUsd, ASSUMPTION_META, type AppState, type RiskLevel } from './engine'
+import { Why } from './app/bits'
+import { Inputs } from './app/Inputs'
+import { Headline, Stage } from './app/Headline'
+import { BadYears, Invest, SafetyNet, YouFirst } from './app/views'
+import { Moves } from './app/Moves'
+import { BLANK, PRESETS, decodeState, encodeState } from './app/state'
+import { drawShareCard } from './app/shareCard'
 
-type Phase = 'intro' | 'q1' | 'q2' | 'q3' | 'loading' | 'plan'
+type Tab = 'safety' | 'invest' | 'bad' | 'you'
+type Pane = 'numbers' | 'plan' | 'moves'
 
-const QUESTIONS: Phase[] = ['q1', 'q2', 'q3']
-const LABELS: Record<string, string> = {
-  q1: 'What you have',
-  q2: 'In and out',
-  q3: 'Your risk',
-}
-
-const EMPTY: AppState = {
-  accounts: [newAccount()],
-  flows: {
-    incomeMonthly: 0,
-    incomeCurrency: 'USD',
-    incomeStability: 'irregular',
-    spendMonthly: 0,
-    spendCurrency: 'USD',
-    investPct: 25,
-    goals: [],
-  },
-  profile: {
-    horizonYears: 10,
-    drawdownReaction: 'hold',
-    usPerson: false,
-    emTilt: 'moderate',
-    includeProperty: true,
-    brokerAccess: 'could',
-  },
-  picks: {},
-}
-
-/** An example person. Round, invented numbers, so the shape is visible first. */
-const EXAMPLE: AppState = {
-  accounts: [
-    { id: 'e1', label: '', type: 'localBank', currency: 'USD', amount: 5000, access: 'restricted', transferable: false },
-    { id: 'e2', label: '', type: 'localBank', currency: 'USD', amount: 1200, access: 'days', transferable: false, monthlyCap: 300 },
-    { id: 'e3', label: '', type: 'cashHand', currency: 'USD', amount: 1400, access: 'today', transferable: true },
-    { id: 'e4', label: '', type: 'neobank', currency: 'EUR', amount: 3900, access: 'today', transferable: true },
-  ],
-  flows: {
-    incomeMonthly: 1600,
-    incomeCurrency: 'USD',
-    incomeStability: 'recurring',
-    spendMonthly: 620,
-    spendCurrency: 'USD',
-    investPct: 35,
-    goals: [{ id: 'g1', name: 'Travel', amount: 900, currency: 'USD', months: 8 }],
-  },
-  profile: {
-    horizonYears: 20,
-    drawdownReaction: 'hold',
-    usPerson: false,
-    emTilt: 'moderate',
-    includeProperty: true,
-    brokerAccess: 'could',
-  },
-  picks: {},
-}
+const TABS: { id: Tab; label: string }[] = [
+  { id: 'safety', label: 'Safety net' },
+  { id: 'invest', label: 'Invest' },
+  { id: 'bad', label: 'Bad years' },
+  { id: 'you', label: 'You first' },
+]
 
 export default function MiniWealthManager() {
-  const [phase, setPhase] = useState<Phase>('intro')
-  const [state, setState] = useState<AppState>(EMPTY)
-  const [upliftTouched, setUpliftTouched] = useState<number | null>(null)
-  const reduce = useReducedMotion()
+  const [state, setState] = useState<AppState>(PRESETS[0].state)
+  const [level, setLevel] = useState<RiskLevel | null>(null)
+  const [preset, setPreset] = useState<string | null>(PRESETS[0].id)
+  const [tab, setTab] = useState<Tab>('safety')
+  const [pane, setPane] = useState<Pane>('plan')
+  const [uplift, setUplift] = useState<number | null>(null)
+  const [toast, setToast] = useState<string | null>(null)
 
-  const base = useMemo(() => analyse(state), [state])
-  const uplift = upliftTouched ?? defaultUplift(base.flow.incomeUsd)
-  const a = useMemo(() => analyse(state, uplift), [state, uplift])
+  // A shared link carries its numbers in the hash. Read once, on arrival.
+  useEffect(() => {
+    const fromHash = decodeState(window.location.hash)
+    if (fromHash) {
+      setState(fromHash.state)
+      setLevel(fromHash.ui.level)
+      setPreset(null)
+      // The numbers are loaded; take them out of the address bar so they are not shared by accident.
+      window.history.replaceState(null, '', window.location.pathname)
+    }
+  }, [])
 
-  const mirror = useMemo(
-    () =>
-      analyse(
-        { ...state, accounts: state.accounts.map((x) => ({ ...x, access: 'today' as const, transferable: true })) },
-        uplift,
-      ),
-    [state, uplift],
-  )
+  // #demo flips between the two examples on a loop, for screen recordings.
+  useEffect(() => {
+    if (window.location.hash !== '#demo') return
+    let i = 0
+    const t = setInterval(() => {
+      i = (i + 1) % PRESETS.length
+      setState(PRESETS[i].state)
+      setPreset(PRESETS[i].id)
+    }, 3200)
+    return () => clearInterval(t)
+  }, [])
 
-  const go = (p: Phase) => {
-    setPhase(p)
-    window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' })
+  useEffect(() => {
+    if (!toast) return
+    const t = setTimeout(() => setToast(null), 2200)
+    return () => clearTimeout(t)
+  }, [toast])
+
+  // Typing stays instant; the analysis catches up a frame later if it has to.
+  const live = useDeferredValue(state)
+  const up = uplift ?? defaultUplift(toUsd(live.flows.incomeMonthly || 0, live.flows.incomeCurrency))
+  const a = useMemo(() => analyse(live, up, level), [live, up, level])
+
+  const edit = (s: AppState) => {
+    setState(s)
+    setPreset(null)
   }
 
-  const qIndex = QUESTIONS.indexOf(phase)
-  const isQuestion = qIndex >= 0
-  const hasMoney = state.accounts.some((x) => x.amount > 0)
-
-  if (phase === 'intro') {
-    return (
-      <div className="mwm">
-        <Intro
-          onStart={() => {
-            setState(EMPTY)
-            go('q1')
-          }}
-          onExample={() => {
-            setState(EXAMPLE)
-            go('loading')
-          }}
-        />
-      </div>
-    )
+  const loadPreset = (id: string) => {
+    const p = PRESETS.find((x) => x.id === id)
+    if (!p) return
+    setState(p.state)
+    setPreset(id)
+    setLevel(null)
+    setUplift(null)
   }
 
-  if (phase === 'loading') {
-    return (
-      <div className="mwm">
-        <PlanLoader a={a} onDone={() => setPhase('plan')} />
-      </div>
-    )
+  const copyLink = async () => {
+    const url = `${window.location.origin}${window.location.pathname}#s=${encodeState(state, { level })}`
+    try {
+      await navigator.clipboard.writeText(url)
+      setToast('Link copied. It carries these numbers, so share it only if you mean to.')
+    } catch {
+      window.prompt('Copy this link', url)
+    }
   }
 
-  if (phase === 'plan') {
-    return (
-      <div className="mwm">
-        <Results
-          a={a}
-          mirror={mirror}
-          state={state}
-          uplift={uplift}
-          setUplift={setUpliftTouched}
-          onPick={(key, id) => setState({ ...state, picks: { ...state.picks, [key]: id } })}
-          onRestart={() => {
-            setState(EMPTY)
-            setUpliftTouched(null)
-            go('intro')
-          }}
-        />
-      </div>
-    )
+  const saveImage = async () => {
+    const blob = await drawShareCard(a, state)
+    if (!blob) return
+    const link = document.createElement('a')
+    link.href = URL.createObjectURL(blob)
+    link.download = 'my-balance-is-not-my-money.png'
+    link.click()
+    setTimeout(() => URL.revokeObjectURL(link.href), 4000)
+    setToast('Image saved.')
   }
 
   return (
-    <div className="mwm">
-      {/* progress */}
-      <div className="mwm-shell mwm-noprint" style={{ paddingTop: '1.6rem' }}>
-        <div className="mwm-row" style={{ justifyContent: 'space-between' }}>
-          <div className="mwm-row" style={{ gap: '0.5rem' }}>
-            {QUESTIONS.map((q, i) => (
+    <div className="w-app">
+      <div className="w-bar">
+        <div className="w-bar-title">
+          <a href="/" className="w-home" aria-label="Back to samirkassir.me">
+            SK
+          </a>
+          <div>
+            <h1 className="w-title">Mini Wealth Manager</h1>
+            <p className="w-sub">Your balance is not your money. See how much of it you can use, and what to do next.</p>
+          </div>
+        </div>
+
+        <div className="w-bar-tools">
+          <div className="w-presets" role="group" aria-label="Examples">
+            <span className="w-label">Example</span>
+            {PRESETS.map((p) => (
               <button
-                key={q}
-                className="mwm-tab"
-                aria-current={phase === q}
-                onClick={() => go(q)}
-                style={{ opacity: i <= qIndex ? 1 : 0.45 }}
+                key={p.id}
+                type="button"
+                className="w-preset"
+                aria-pressed={preset === p.id}
+                title={p.line}
+                onClick={() => loadPreset(p.id)}
               >
-                {i + 1}. {LABELS[q]}
+                {p.name}
               </button>
             ))}
+            <button
+              type="button"
+              className="w-preset w-preset--mine"
+              aria-pressed={preset === null}
+              onClick={() => {
+                if (preset !== null) {
+                  edit(BLANK)
+                  setLevel(null)
+                  setUplift(null)
+                  setPane('numbers')
+                }
+              }}
+            >
+              My numbers
+            </button>
           </div>
-          <button className="mwm-link" onClick={() => go('intro')}>
-            start over
-          </button>
+          <div className="w-actions">
+            <button type="button" className="w-act" onClick={copyLink}>
+              Copy link
+            </button>
+            <button type="button" className="w-act" onClick={saveImage}>
+              Save image
+            </button>
+            <Why label="Sources" title="What this runs on">
+              <p>
+                Return and risk figures: {ASSUMPTION_META.primarySource} Exchange rates frozen on {fxMeta.checkedOn}. Crash
+                figures from MSCI and Bloomberg index data; unverified lines are held at zero and marked.
+              </p>
+              <p>
+                No account, no server, no network calls. Everything is computed in your browser. A teaching tool, and not
+                investment advice.
+              </p>
+              <p>
+                <a href="https://github.com/samirwkassir-netizen/mini-wealth-manager" target="_blank" rel="noopener noreferrer">
+                  Read the source
+                </a>
+              </p>
+            </Why>
+          </div>
         </div>
       </div>
 
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={phase}
-          initial={reduce ? false : { opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={reduce ? undefined : { opacity: 0, y: -10 }}
-          transition={{ duration: 0.35, ease: [0.2, 0.8, 0.2, 1] }}
-        >
-          {phase === 'q1' ? (
-            <Step1 accounts={state.accounts} onChange={(accounts) => setState({ ...state, accounts })} />
-          ) : null}
-          {phase === 'q2' ? (
-            <Step2 flows={state.flows} state={state} onChange={(flows) => setState({ ...state, flows })} />
-          ) : null}
-          {phase === 'q3' ? (
-            <Step3
-              profile={state.profile}
-              onChange={(profile) => setState({ ...state, profile })}
-              level={a.risk.level}
-              levelWhy={a.risk.parts}
-            />
-          ) : null}
-        </motion.div>
-      </AnimatePresence>
+      <nav className="w-panes" aria-label="Sections">
+        {(
+          [
+            ['numbers', 'Your numbers'],
+            ['plan', 'Plan'],
+            ['moves', 'Next moves'],
+          ] as [Pane, string][]
+        ).map(([id, label]) => (
+          <button key={id} type="button" aria-pressed={pane === id} onClick={() => setPane(id)}>
+            {label}
+          </button>
+        ))}
+      </nav>
 
-      {/* always on screen, never something to scroll for */}
-      {isQuestion ? (
-        <div className="mwm-actionbar mwm-noprint">
-          <div className="mwm-shell">
-            <div className="mwm-actionbar-inner">
-              <button
-                className="mwm-btn mwm-btn--ghost"
-                onClick={() => go(qIndex === 0 ? 'intro' : QUESTIONS[qIndex - 1])}
-              >
-                ← Back
-              </button>
-              <span className="mwm-note" style={{ display: 'none' }} />
-              {qIndex < 2 ? (
-                <button className="mwm-btn mwm-btn--lg" onClick={() => go(QUESTIONS[qIndex + 1])} disabled={!hasMoney}>
-                  Next question →
-                </button>
-              ) : (
-                <button className="mwm-btn mwm-btn--lg" onClick={() => go('loading')} disabled={!hasMoney}>
-                  Build my plan →
-                </button>
-              )}
+      <div className="w-grid" data-pane={pane}>
+        <aside className="w-left" aria-label="Your numbers">
+          <Inputs state={state} onChange={edit} />
+          <p className="w-privacy">Nothing you type leaves this page.</p>
+        </aside>
+
+        <main className="w-right">
+          <Headline a={a} state={live} />
+          <Stage a={a} state={live} />
+
+          <div className="w-body">
+            <div className="w-tabs-wrap">
+              <div className="w-tabs" role="tablist" aria-label="Plan">
+                {TABS.map((t) => (
+                  <button
+                    key={t.id}
+                    type="button"
+                    role="tab"
+                    id={`w-tab-${t.id}`}
+                    aria-selected={tab === t.id}
+                    aria-controls="w-tabpanel"
+                    onClick={() => setTab(t.id)}
+                  >
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+              <div className="w-tabpanel" id="w-tabpanel" role="tabpanel" aria-labelledby={`w-tab-${tab}`}>
+                {tab === 'safety' ? <SafetyNet a={a} state={live} /> : null}
+                {tab === 'invest' ? (
+                  <Invest
+                    a={a}
+                    state={live}
+                    level={level}
+                    setLevel={setLevel}
+                    onUsPerson={(v) => edit({ ...state, profile: { ...state.profile, usPerson: v } })}
+                    onBroker={(v) => edit({ ...state, profile: { ...state.profile, brokerAccess: v } })}
+                  />
+                ) : null}
+                {tab === 'bad' ? <BadYears a={a} state={live} /> : null}
+                {tab === 'you' ? <YouFirst a={a} uplift={up} setUplift={setUplift} /> : null}
+              </div>
             </div>
-            {!hasMoney ? (
-              <p className="mwm-tiny" style={{ marginTop: '0.6rem', textAlign: 'right' }}>
-                Put an amount in at least one pot to carry on.
-              </p>
-            ) : null}
+            <Moves a={a} />
           </div>
+        </main>
+      </div>
+
+      <p className="w-foot">A teaching tool, not investment advice. Figures are estimates with dated sources.</p>
+      {toast ? (
+        <div className="w-toast" role="status">
+          {toast}
         </div>
       ) : null}
     </div>

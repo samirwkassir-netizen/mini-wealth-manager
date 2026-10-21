@@ -27,10 +27,13 @@ export * from './fxStress'
 export * from './breaksFirst'
 export * from './dials'
 
-export function analyse(state: AppState, upliftOverride?: number) {
+export function analyse(state: AppState, upliftOverride?: number, levelOverride?: RiskLevel | null) {
   const standing = computeStanding(state.accounts)
   const flow = computeFlows(state.flows, standing)
-  const risk = computeRisk(state.profile, state.flows, flow)
+  const suggested = computeRisk(state.profile, state.flows, flow)
+  // The reader can overrule the suggested level. The suggestion is kept so
+  // the screen can say what it would have picked and why.
+  const risk = levelOverride ? { ...suggested, level: levelOverride, suggested: suggested.level } : { ...suggested, suggested: suggested.level }
 
   const tiering = computeTiering(standing, flow, standing.fragility.score, state.flows.incomeStability)
 

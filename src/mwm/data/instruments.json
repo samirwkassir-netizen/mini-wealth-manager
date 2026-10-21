@@ -1,6 +1,6 @@
 {
   "meta": {
-    "checkedOn": "2026-08-24",
+    "checkedOn": "2026-10-22",
     "note": "Every expense ratio, ISIN and domicile below was read off the fund issuer's own product page on the date above. Expense ratios change. Funds close. Check before you buy anything. Nothing here is a recommendation to buy any particular fund.",
     "wrapperNote": "UCITS funds are domiciled in Ireland and regulated in Europe. ETC means exchange traded commodity: a debt security backed by metal, not a fund, and it does not carry UCITS protections. Grantor trust and statutory trust are US structures that are also not funds."
   },
@@ -138,7 +138,7 @@
       "tradeCurrency": "USD",
       "coverage": "The whole US market",
       "usSitus": true,
-      "concentration": "One country. Renamed in July 2026 when its index moved from CRSP to Morningstar; same fund, same ticker.",
+      "concentration": "Renamed on 29 July 2026 after Morningstar, which bought CRSP, rebranded the index. Same index, same fund, same ticker.",
       "default": false,
       "source": "https://advisors.vanguard.com/investments/products/vti/vanguard-total-stock-market-etf"
     },

@@ -5,6 +5,7 @@ import { NO_STRESS, simulateBreaks } from '../breaksFirst'
 import { DIALS, DIALS_NOTE } from '../dials'
 import { bufferMonths, goldWeight } from '../policy'
 import type { Account, Flows } from '../types'
+import { rate } from '../fx'
 
 const acc = (o: Partial<Account>): Account => ({
   id: Math.random().toString(36).slice(2),
@@ -138,10 +139,13 @@ describe('the mismatch readout', () => {
 
 describe('the official-versus-street gap', () => {
   it('computes the haircut from the two published rates', () => {
-    const gaps = parallelGaps([acc({ amount: 1346490, currency: 'NGN' })])
+    // Read the frozen rates rather than hard-coding them, so refreshing fx.json does not break the test.
+    const ngn = rate('NGN')
+    const amount = ngn.perUsd * 1000
+    const gaps = parallelGaps([acc({ amount, currency: 'NGN' })])
     expect(gaps).toHaveLength(1)
     expect(gaps[0].usdAtOfficial).toBeCloseTo(1000, 0)
-    expect(gaps[0].usdAtParallel).toBeCloseTo(1346490 / 1405, 0)
+    expect(gaps[0].usdAtParallel).toBeCloseTo(amount / (ngn.parallelPerUsd as number), 0)
     expect(gaps[0].gapPct).toBeLessThan(0)
     expect(gaps[0].gapPct).toBeGreaterThan(-10)
   })
