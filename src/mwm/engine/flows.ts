@@ -38,8 +38,8 @@ export function computeFlows(flows: Flows, standing: Standing): FlowResult {
     flags.push({
       id: 'runway',
       severity: 'critical',
-      title: `You have ${runwayAccessibleMonths.toFixed(1)} months of reachable money`,
-      body: `At ${fmtUsd(spendUsd)} a month, the money you can actually get to covers ${runwayAccessibleMonths.toFixed(1)} months. Nothing in the allocation section matters more than getting this to three months first. An investment you have to sell in an emergency is not an investment.`,
+      title: `You have ${runwayAccessibleMonths.toFixed(1)} months of money you can use`,
+      body: `At ${fmtUsd(spendUsd)} a month, the money you can really use covers ${runwayAccessibleMonths.toFixed(1)} months. Get this to three months first, because nothing about how you split your investments matters more. Otherwise an emergency can force you to sell them.`,
     })
   }
 
@@ -47,8 +47,8 @@ export function computeFlows(flows: Flows, standing: Standing): FlowResult {
     flags.push({
       id: 'runwaygap',
       severity: 'warn',
-      title: 'Two different runways',
-      body: `Counting everything you own, you have ${runwayTotalMonths.toFixed(1)} months. Counting only what you can reach, ${runwayAccessibleMonths.toFixed(1)}. The gap of ${runwayGapMonths.toFixed(1)} months is the part of your net worth that will not answer the phone in a crisis.`,
+      title: 'How long your money lasts, two ways',
+      body: `Counting everything you own, your money lasts ${runwayTotalMonths.toFixed(1)} months. Counting only what you can really use, it lasts ${runwayAccessibleMonths.toFixed(1)}. The ${runwayGapMonths.toFixed(1)} months in between is money that will not be there for you in a crisis.`,
     })
   }
 
@@ -57,14 +57,14 @@ export function computeFlows(flows: Flows, standing: Standing): FlowResult {
       id: 'deficit',
       severity: 'critical',
       title: 'You are spending more than you earn',
-      body: `Every month you are ${fmtUsd(Math.abs(surplusUsd))} short. No allocation fixes that. This is an income and spending problem and it has to be solved before anything below is worth reading.`,
+      body: `Every month you are ${fmtUsd(Math.abs(surplusUsd))} short. No way of investing fixes that. It is about what comes in and what goes out, and it has to be fixed before the rest of the plan is worth reading.`,
     })
   } else if (incomeUsd > 0 && intendedInvestUsd > surplusUsd) {
     flags.push({
       id: 'overcommit',
       severity: 'warn',
       title: 'You are investing more than you keep',
-      body: `You want to put ${fmtUsd(intendedInvestUsd)} a month to work but only ${fmtUsd(surplusUsd)} is left after you spend. The difference has to come out of savings, which works for a while and then does not.`,
+      body: `You want to invest ${fmtUsd(intendedInvestUsd)} a month, but only ${fmtUsd(surplusUsd)} is left after you spend. The difference has to come out of savings, which works for a while and then stops working.`,
     })
   }
 
@@ -72,8 +72,8 @@ export function computeFlows(flows: Flows, standing: Standing): FlowResult {
     flags.push({
       id: 'goals',
       severity: 'warn',
-      title: 'Your goals already spend the money',
-      body: `The things you said you want cost ${fmtUsd(goalsMonthlyTotal)} a month to fund on schedule, which is more than the ${fmtUsd(intendedInvestUsd)} you planned to invest. Either the dates move or the amounts do. Both are fine. Pretending the arithmetic works is not.`,
+      title: 'Your goals already use up the money',
+      body: `To reach your goals on time you need to put aside ${fmtUsd(goalsMonthlyTotal)} a month, which is more than the ${fmtUsd(intendedInvestUsd)} you planned to invest. Move the dates or lower the amounts, either is fine. Pretending the sums add up is not.`,
     })
   }
 
@@ -84,8 +84,8 @@ export function computeFlows(flows: Flows, standing: Standing): FlowResult {
       title: `You earn in ${flows.incomeCurrency} and spend in ${flows.spendCurrency}`,
       body:
         hardness(flows.incomeCurrency) < hardness(flows.spendCurrency)
-          ? 'Earning in the harder currency and spending in the softer one is the good side of this trade. It is the single largest financial advantage available to most people in a fragile-currency country, and it is worth protecting.'
-          : 'Earning in the softer currency and spending in the harder one is the wrong side of this trade. Your income can lose value against your costs without anything visibly happening.',
+          ? 'You earn in the stronger currency and spend in the weaker one, which is the good side to be on. For most people in a country with a shaky currency, it is the biggest money advantage there is, and it is worth protecting.'
+          : 'You earn in the weaker currency and spend in the stronger one, which is the hard side to be on. Your income can lose value against your costs without anything you can see happening.',
     })
   }
 

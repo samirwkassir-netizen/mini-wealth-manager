@@ -8,10 +8,10 @@ import { RISK_LEVELS, rates, toUsd, type Access, type Account, type AccountType,
 export type Freedom = 'free' | 'local' | 'slow' | 'stuck'
 
 export const FREEDOMS: { value: Freedom; label: string; line: string }[] = [
-  { value: 'free', label: 'Free', line: 'You can take all of it out tomorrow and send it abroad.' },
-  { value: 'local', label: 'Local', line: 'You can spend it here, but it cannot leave the country easily.' },
-  { value: 'slow', label: 'Slow', line: 'Only some of it, or only bit by bit: limits, queues, fees.' },
-  { value: 'stuck', label: 'Stuck', line: 'You can see the balance. You cannot get the money.' },
+  { value: 'free', label: 'Free', line: 'You can take it all out tomorrow, and send it abroad.' },
+  { value: 'local', label: 'Local', line: 'You can spend it here, but it can’t easily leave the country.' },
+  { value: 'slow', label: 'Slow', line: 'It comes out bit by bit: limits, queues or fees.' },
+  { value: 'stuck', label: 'Stuck', line: 'You can see the balance, but you can’t get the money.' },
 ]
 
 export function freedomOf(a: Pick<Account, 'access' | 'transferable'>): Freedom {
@@ -31,10 +31,10 @@ export function withFreedom(a: Account, f: Freedom): Account {
 }
 
 export const POT_TYPES: { value: AccountType; label: string }[] = [
-  { value: 'localBank', label: 'Bank at home' },
+  { value: 'localBank', label: 'Bank here' },
   { value: 'internationalBank', label: 'Bank abroad' },
-  { value: 'neobank', label: 'Wise, Revolut…' },
-  { value: 'brokerage', label: 'Investment account' },
+  { value: 'neobank', label: 'Wise, Revolut' },
+  { value: 'brokerage', label: 'Investing account' },
   { value: 'cashHand', label: 'Cash' },
   { value: 'goldPhysical', label: 'Gold' },
   { value: 'crypto', label: 'Crypto' },
@@ -83,7 +83,7 @@ const profile = (horizonYears: Horizon = 10, drawdownReaction: DrawdownReaction 
 export const PRESETS: { id: string; name: string; line: string; state: AppState }[] = [
   {
     id: 'stuck',
-    name: 'Held at home',
+    name: 'Stuck at home',
     line: 'Most of it in a local bank that rations withdrawals.',
     state: {
       accounts: [
@@ -98,7 +98,7 @@ export const PRESETS: { id: string; name: string; line: string; state: AppState 
   },
   {
     id: 'free',
-    name: 'Held where it moves',
+    name: 'Free to move',
     line: 'The same amount, in places that let it go.',
     state: {
       accounts: [

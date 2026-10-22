@@ -120,7 +120,7 @@ export function simulateBreaks(accounts: Account[], flows: Flows, dials: StressD
       id: 'deficit',
       month: 1,
       title: `Every month costs you money`,
-      detail: `Spending runs ${fmt(monthlyBurnUsd)} ahead of income under these settings, so the clock is ticking from month one.`,
+      detail: `With these settings, spending is ${fmt(monthlyBurnUsd)} a month more than income, so the countdown starts in month one.`,
     })
   }
 
@@ -128,8 +128,8 @@ export function simulateBreaks(accounts: Account[], flows: Flows, dials: StressD
     events.push({
       id: 'dripEnds',
       month: dripEndsMonth,
-      title: 'The drip runs dry',
-      detail: `By month ${dripEndsMonth} the slow accounts have paid out everything they hold. After that you are living on what is already in hand.`,
+      title: 'The Slow money stops coming',
+      detail: `By month ${dripEndsMonth}, your Slow accounts have paid out everything in them. After that you live on what you already have in hand.`,
     })
   }
 
@@ -137,8 +137,8 @@ export function simulateBreaks(accounts: Account[], flows: Flows, dials: StressD
     events.push({
       id: 'cashOut',
       month: survivalMonths,
-      title: 'The reachable money runs out',
-      detail: `Month ${survivalMonths} is the last one you can cover in full from money with a real timetable.`,
+      title: 'The money you can use runs out',
+      detail: `Month ${survivalMonths} is the last one you can fully pay for with money you know will be there.`,
     })
     if (strandedUsd > 0) {
       events.push({
@@ -146,7 +146,7 @@ export function simulateBreaks(accounts: Account[], flows: Flows, dials: StressD
         month: survivalMonths,
         title: `${fmt(strandedUsd)} is still yours, on paper`,
         detail:
-          'What remains at that point is money with no timetable: trapped, frozen, or slow with no declared limit. It may come back. You cannot budget a month around it.',
+          'What is left then is money with no date attached: Stuck, frozen, or Slow with no monthly limit given. It may come back, but you cannot plan a month around it.',
       })
     }
   }

@@ -8,8 +8,8 @@
       "name": "The 2008 crash",
       "kind": "historical",
       "period": "Calendar year 2008",
-      "summary": "Global shares lost about two fifths of their value in twelve months. Bonds and gold went up. This is the textbook case for owning things that do not all move together.",
-      "headline": "From its October 2007 peak to its March 2009 low, the MSCI World index fell 57.8 percent. That is seventeen months, not twelve, and it is the number people actually lived through.",
+      "summary": "Shares around the world lost about two fifths of their value in twelve months. Bonds and gold went up. It is the classic example of why you own things that do not all move together.",
+      "headline": "From its top in October 2007 to its bottom in March 2009, the MSCI World index (a measure of shares in rich countries) fell 57.8 percent. That took seventeen months, not twelve, and it is the drop people really lived through.",
       "headlineSource": "https://www.msci.com/documents/10199/149ed7bc-316e-4b4c-8ea4-43fcb5bd6523",
       "shocks": {
         "globalEquity": -40.71,
@@ -85,8 +85,8 @@
       "name": "The Covid crash",
       "kind": "historical",
       "period": "19 February to 23 March 2020",
-      "summary": "A third of the value of global shares gone in twenty-three trading days. The fastest fall of that size on record. Then it was all back within months.",
-      "headline": "Global shares fell 34 percent in about five weeks, and the same index finished the calendar year up 15.9 percent. Anyone who sold in March locked in the loss and missed the recovery.",
+      "summary": "Shares around the world lost a third of their value in twenty-three trading days, the fastest fall of that size on record. Then it all came back within months.",
+      "headline": "Shares around the world fell 34 percent in about five weeks, and the same index ended the year up 15.9 percent. Anyone who sold in March made the loss permanent and missed the recovery.",
       "headlineSource": "https://www.msci.com/documents/10199/149ed7bc-316e-4b4c-8ea4-43fcb5bd6523",
       "shocks": {
         "globalEquity": -33.97,
@@ -162,8 +162,8 @@
       "name": "The 1970s inflation shock",
       "kind": "historical",
       "period": "1973 and 1974 combined",
-      "summary": "The scenario almost nobody models. Shares and bonds fell together while prices rose 22 percent. Gold nearly tripled. Diversifying across shares and bonds alone did not save anyone.",
-      "headline": "US shares lost 37 percent in cash terms over two years and 49 percent in real terms once inflation is taken out. Bonds gained 5.7 percent in cash terms and lost about 13 percent in real terms. Both of the things a normal portfolio is made of failed at the same time.",
+      "summary": "The case almost nobody tests for. Shares and bonds fell together while prices rose 22 percent. Gold nearly tripled. Spreading money across shares and bonds alone did not protect anyone.",
+      "headline": "Over two years, US shares lost 37 percent, or 49 percent once rising prices are counted. Bonds gained 5.7 percent, but lost about 13 percent once rising prices are counted. Both things a normal mix is made of failed at the same time.",
       "headlineSource": "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datafile/histretSP.html",
       "inflation": 22.12,
       "shocks": {

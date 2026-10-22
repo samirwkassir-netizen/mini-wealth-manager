@@ -88,15 +88,17 @@ export function Segmented<T extends string | number>({
   onChange,
   label,
   size = 'md',
+  className,
 }: {
   value: T
   options: { value: T; label: string; title?: string }[]
   onChange: (v: T) => void
   label: string
   size?: 'sm' | 'md'
+  className?: string
 }) {
   return (
-    <div className={`w-seg w-seg--${size}`} role="radiogroup" aria-label={label}>
+    <div className={['w-seg', `w-seg--${size}`, className].filter(Boolean).join(' ')} role="radiogroup" aria-label={label}>
       {options.map((o) => (
         <button
           key={String(o.value)}
@@ -104,7 +106,7 @@ export function Segmented<T extends string | number>({
           role="radio"
           aria-checked={value === o.value}
           title={o.title}
-          className="w-seg-opt"
+          className={`w-seg-opt w-seg-opt--${String(o.value)}`}
           onClick={() => onChange(o.value)}
         >
           {o.label}

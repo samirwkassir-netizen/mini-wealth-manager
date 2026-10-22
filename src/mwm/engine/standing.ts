@@ -4,7 +4,7 @@ import { hardness, toUsd, fmtUsd } from './fx'
 export const ACCOUNT_TYPES: { value: AccountType; label: string; hint: string }[] = [
   { value: 'localBank', label: 'A bank in the country I live in', hint: 'Your normal, everyday bank' },
   { value: 'internationalBank', label: 'A bank in another country', hint: 'An account you hold abroad' },
-  { value: 'neobank', label: 'Wise, Revolut or something like it', hint: 'An app-based account, usually multi-currency' },
+  { value: 'neobank', label: 'Wise, Revolut or something like it', hint: 'An account in an app, often in several currencies' },
   { value: 'brokerage', label: 'An investment account', hint: 'Where you already hold shares or funds' },
   { value: 'cashHand', label: 'Cash at home', hint: 'Physical notes, in a drawer or a safe' },
   { value: 'goldPhysical', label: 'Gold you can hold', hint: 'Coins or bars' },
@@ -75,31 +75,31 @@ export function computeStanding(accounts: Account[]): Standing {
   const parts = [
     {
       key: 'restricted',
-      label: 'Money you cannot reach',
+      label: 'Money that is stuck or slow',
       points: Math.round(pRestricted),
       max: 25,
-      detail: `${restrictedPct.toFixed(0)}% of what you hold is money you told us you cannot get at, and a further ${(share(accessibleDaysUsd) * 100).toFixed(0)}% comes with limits or delays.`,
+      detail: `${restrictedPct.toFixed(0)}% of what you have is money you told us you cannot get out, and another ${(share(accessibleDaysUsd) * 100).toFixed(0)}% comes out only slowly or with limits.`,
     },
     {
       key: 'transfer',
-      label: 'Money that cannot leave',
+      label: 'Money that cannot leave the country',
       points: Math.round(pTransfer),
       max: 25,
-      detail: `${nonTransferablePct.toFixed(0)}% of what you hold cannot be sent to another country. That is the difference between owning money and having permission to use it.`,
+      detail: `${nonTransferablePct.toFixed(0)}% of what you have cannot be sent to another country. Owning money is not the same as being allowed to use it.`,
     },
     {
       key: 'concentration',
       label: 'Everything in one place',
       points: Math.round(pConcentration),
       max: 25,
-      detail: `Your largest single account holds ${largestAccountPct.toFixed(0)}% of your money. Below 40% this scores nothing.`,
+      detail: `Your biggest account holds ${largestAccountPct.toFixed(0)}% of your money. Below 40%, this adds no points.`,
     },
     {
       key: 'currency',
-      label: 'Currency that can reprice',
+      label: 'Currency that can suddenly lose value',
       points: Math.round(pCurrency),
       max: 25,
-      detail: `Weighted by how much you hold in each, ${softCurrencyPct.toFixed(0)}% of your money sits in currencies that have moved sharply against the dollar or are held at an official rate.`,
+      detail: `Based on how much you hold in each, ${softCurrencyPct.toFixed(0)}% of your money is in currencies that have moved sharply against the dollar or are priced at an official rate.`,
     },
   ]
 
@@ -109,8 +109,8 @@ export function computeStanding(accounts: Account[]): Standing {
     flags.push({
       id: 'restricted',
       severity: 'critical',
-      title: 'Your plan runs on the smaller number',
-      body: `You hold ${fmtUsd(totalUsd)} in total and ${fmtUsd(accessibleTodayUsd)} you could actually reach tomorrow. Every recommendation below is built on ${fmtUsd(accessibleTodayUsd)}. The rest is not ignored, it is just not something you can plan around until it moves.`,
+      title: 'Your plan is built on the smaller number',
+      body: `You have ${fmtUsd(totalUsd)}, and you can really use ${fmtUsd(accessibleTodayUsd)} of it. Everything this tool suggests is built on ${fmtUsd(accessibleTodayUsd)}. The rest is not forgotten, but you cannot plan around it until you can get it out.`,
     })
   }
 
@@ -118,8 +118,8 @@ export function computeStanding(accounts: Account[]): Standing {
     flags.push({
       id: 'transfer',
       severity: 'warn',
-      title: 'Some of this cannot cross a border',
-      body: `${fmtUsd(nonTransferableUsd)} sits somewhere it cannot leave. If your plan needs a foreign brokerage account, that money is not the money that funds it.`,
+      title: 'Some of this cannot leave the country',
+      body: `${fmtUsd(nonTransferableUsd)} is held where it cannot leave the country. If your plan needs an investing account abroad, this money cannot pay for it.`,
     })
   }
 
@@ -128,7 +128,7 @@ export function computeStanding(accounts: Account[]): Standing {
       id: 'concentration',
       severity: 'warn',
       title: 'One account holds almost everything',
-      body: `${largestAccountPct.toFixed(0)}% of your money is in a single place. Splitting it across two institutions costs you nothing and removes a single point of failure. This is the cheapest improvement available to you.`,
+      body: `${largestAccountPct.toFixed(0)}% of your money is in one place. Splitting it between two banks or apps costs nothing and means one problem cannot hit all of it. It is the cheapest fix you have.`,
     })
   }
 
@@ -138,7 +138,7 @@ export function computeStanding(accounts: Account[]): Standing {
       id: 'currency',
       severity: 'warn',
       title: `${softest.pct.toFixed(0)}% of your money is in ${softest.code}`,
-      body: `Most portfolio tools treat your bank balance as the safe asset and measure everything else against it. If your balance is in a currency that has repriced before, that assumption is doing a lot of quiet work.`,
+      body: `Most money tools treat your bank balance as the safe part and compare everything else to it. If that balance is in a currency that has suddenly lost value before, it may not be as safe as it looks.`,
     })
   }
 

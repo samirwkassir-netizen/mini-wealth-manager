@@ -4,6 +4,18 @@ A portfolio tool for people whose cash is not the risk-free asset.
 
 **Live:** [samirkassir.me/wealth](https://samirkassir.me/wealth)
 
+## Version 3.1, 22 October 2026
+
+Drawn by hand and written in plain words. Every pot of money is a jar you can
+see: Free has its lid off, Local carries a pin (it only works here), Slow has
+a tap that drips, Stuck has a padlock. The answer opens with the four jars on
+a shelf and one sentence, "Your $7,000, honestly. You can really use $980 of
+it." The tabs have small drawings and everyday names (Rainy day, Grow it, Bad
+times, You first), the jargon is gone or explained, the two investing
+questions now sit next to the mix they decide, and the share image is drawn
+with the same jars. The drawings live in `src/art/`. Engine, data and the 77
+tests are unchanged apart from wording.
+
 ## Version 3, October 2026
 
 The interface is now one screen. What you hold sits on the left, each pot

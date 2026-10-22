@@ -8,15 +8,17 @@ import { BadYears, Invest, SafetyNet, YouFirst } from './app/views'
 import { Moves } from './app/Moves'
 import { BLANK, PRESETS, decodeState, encodeState } from './app/state'
 import { drawShareCard } from './app/shareCard'
+import { Cap, Sprout, Storm, Umbrella } from '../art/Icons'
+import '../art/art.css'
 
 type Tab = 'safety' | 'invest' | 'bad' | 'you'
 type Pane = 'numbers' | 'plan' | 'moves'
 
-const TABS: { id: Tab; label: string }[] = [
-  { id: 'safety', label: 'Safety net' },
-  { id: 'invest', label: 'Invest' },
-  { id: 'bad', label: 'Bad years' },
-  { id: 'you', label: 'You first' },
+const TABS: { id: Tab; label: string; Icon: typeof Umbrella }[] = [
+  { id: 'safety', label: 'Rainy day', Icon: Umbrella },
+  { id: 'invest', label: 'Grow it', Icon: Sprout },
+  { id: 'bad', label: 'Bad times', Icon: Storm },
+  { id: 'you', label: 'You first', Icon: Cap },
 ]
 
 export default function MiniWealthManager() {
@@ -89,7 +91,7 @@ export default function MiniWealthManager() {
     const url = `${window.location.origin}${window.location.pathname}#s=${encodeState(state, { level })}`
     try {
       await navigator.clipboard.writeText(url)
-      setToast('Link copied. It carries these numbers, so share it only if you mean to.')
+      setToast('Link copied. It carries your numbers, so only share it if you mean to.')
     } catch {
       window.prompt('Copy this link', url)
     }
@@ -115,13 +117,13 @@ export default function MiniWealthManager() {
           </a>
           <div>
             <h1 className="w-title">Mini Wealth Manager</h1>
-            <p className="w-sub">Your balance is not your money. See how much of it you can use, and what to do next.</p>
+            <p className="w-sub">How much of your savings can you really use? And what should you do next?</p>
           </div>
         </div>
 
         <div className="w-bar-tools">
           <div className="w-presets" role="group" aria-label="Examples">
-            <span className="w-label">Example</span>
+            <span className="w-label">Try</span>
             {PRESETS.map((p) => (
               <button
                 key={p.id}
@@ -147,7 +149,7 @@ export default function MiniWealthManager() {
                 }
               }}
             >
-              My numbers
+              My own numbers
             </button>
           </div>
           <div className="w-actions">
@@ -159,13 +161,13 @@ export default function MiniWealthManager() {
             </button>
             <Why label="Sources" title="What this runs on">
               <p>
-                Return and risk figures: {ASSUMPTION_META.primarySource} Exchange rates frozen on {fxMeta.checkedOn}. Crash
-                figures from MSCI, Nareit, Callan and NYU Stern (Damodaran) data; lines without a verified figure are held at
-                zero and marked.
+                Growth and risk figures: {ASSUMPTION_META.primarySource} Exchange rates as of {fxMeta.checkedOn}. Crash figures
+                from MSCI, Nareit, Callan and NYU Stern (Damodaran) data. Where no checked figure exists, the tool shows zero and
+                says so.
               </p>
               <p>
-                No account and no server. Nothing you type is sent anywhere; everything is computed in your browser. A teaching
-                tool, and not investment advice.
+                No account and no server. Nothing you type is sent anywhere; it is all worked out in your browser. A tool for
+                learning, not investment advice.
               </p>
               <p>
                 <a href="https://github.com/samirwkassir-netizen/mini-wealth-manager" target="_blank" rel="noopener noreferrer">
@@ -180,9 +182,9 @@ export default function MiniWealthManager() {
       <nav className="w-panes" aria-label="Sections">
         {(
           [
-            ['numbers', 'Your numbers'],
-            ['plan', 'Plan'],
-            ['moves', 'Next moves'],
+            ['numbers', 'Your money'],
+            ['plan', 'Your plan'],
+            ['moves', 'Next steps'],
           ] as [Pane, string][]
         ).map(([id, label]) => (
           <button key={id} type="button" aria-pressed={pane === id} onClick={() => setPane(id)}>
@@ -193,7 +195,7 @@ export default function MiniWealthManager() {
 
       <Guard onReset={() => loadPreset(PRESETS[0].id)}>
       <div className="w-grid" data-pane={pane}>
-        <aside className="w-left" aria-label="Your numbers">
+        <aside className="w-left" aria-label="Your money">
           <Inputs state={state} onChange={edit} />
           <p className="w-privacy">Nothing you type leaves this page.</p>
         </aside>
@@ -215,7 +217,8 @@ export default function MiniWealthManager() {
                     aria-controls="w-tabpanel"
                     onClick={() => setTab(t.id)}
                   >
-                    {t.label}
+                    <t.Icon size={28} />
+                    <span>{t.label}</span>
                   </button>
                 ))}
               </div>
@@ -229,6 +232,7 @@ export default function MiniWealthManager() {
                     setLevel={setLevel}
                     onUsPerson={(v) => edit({ ...state, profile: { ...state.profile, usPerson: v } })}
                     onBroker={(v) => edit({ ...state, profile: { ...state.profile, brokerAccess: v } })}
+                    onProfile={(p) => edit({ ...state, profile: { ...state.profile, ...p } })}
                   />
                 ) : null}
                 {tab === 'bad' ? <BadYears a={a} state={live} /> : null}
@@ -241,7 +245,7 @@ export default function MiniWealthManager() {
       </div>
       </Guard>
 
-      <p className="w-foot">A teaching tool, not investment advice. Figures are estimates with dated sources.</p>
+      <p className="w-foot">A tool for learning, not investment advice. Every figure is an estimate with a dated source.</p>
       {toast ? (
         <div className="w-toast" role="status">
           {toast}

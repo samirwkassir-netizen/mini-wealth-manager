@@ -35,35 +35,35 @@ export function computeHumanCapital(
   if (flows.incomeStability === 'none') {
     stage = 'buildIncome'
     reasons.push(
-      'You told us you have no income yet. A portfolio is a machine for growing money you already have. Right now the constraint is not your return, it is that there is nothing regular flowing in for the return to work on.',
+      'You told us you have no income yet. Investing can only grow money you already have. Right now the problem is not what your money earns, it is that nothing new comes in each month for it to work on.',
     )
   } else if (flows.incomeStability === 'irregular') {
     stage = 'buildIncome'
     reasons.push(
-      'Your income is irregular. Irregular income means you will eventually have to sell an investment at the worst possible moment to cover a normal month, and that single forced sale can cost more than several years of returns.',
+      'Your income comes and goes. Sooner or later that means selling an investment at the worst moment just to pay for a normal month, and one sale like that can cost more than several years of gains.',
     )
   }
 
   if (flow.spendUsd > 0 && flow.runwayAccessibleMonths < bufferTargetMonths) {
     if (stage === 'invest') stage = 'buildBuffer'
     reasons.push(
-      `You have ${flow.runwayAccessibleMonths.toFixed(1)} months of reachable money against a target of ${bufferTargetMonths}. The buffer comes before the portfolio, always, and it is not a compromise. It is the thing that lets the portfolio be left alone.`,
+      `You have ${flow.runwayAccessibleMonths.toFixed(1)} months of money you can really use, and the target is ${bufferTargetMonths}. Rainy-day money always comes before investing, and that is not settling for less. It is what lets your investments be left alone.`,
     )
   }
 
   if (flow.surplusUsd <= 0 && flow.incomeUsd > 0) {
     stage = 'buildIncome'
-    reasons.push('You are not keeping anything at the end of the month, so there is nothing to invest yet.')
+    reasons.push('Nothing is left at the end of the month, so there is nothing to invest yet.')
   }
 
   if (flow.spendUsd <= 0 && standing.totalUsd > 0) {
     if (stage === 'invest') stage = 'buildBuffer'
-    reasons.push('Add your monthly spending so the safety net can be sized. Until then the tool will not tell you to invest.')
+    reasons.push('Add what you spend each month so the tool can work out your rainy-day money. Until then, it will not tell you to invest.')
   }
 
   if (stage === 'invest') {
     reasons.push(
-      'Recurring income, a buffer in place, and money left over. This is the point at which markets start doing more for you than another course would.',
+      'Your income is steady, your rainy-day money is in place, and money is left over. This is the point where investing starts to do more for you than another course would.',
     )
   }
 

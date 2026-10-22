@@ -7,32 +7,32 @@
     "title": "Where you would actually hold this",
     "points": [
       {
-        "claim": "Interactive Brokers lists Lebanon among the countries and territories it accepts applications from.",
+        "claim": "Interactive Brokers, a large broker (a company that buys funds for you), lists Lebanon among the countries it accepts applications from.",
         "source": "https://www.interactivebrokers.com/en/accounts/open-account-country-list.php",
         "caveat": "Appearing on the list is not the same as being approved. Expect real questions about source of funds."
       },
       {
-        "claim": "There is no account minimum and no inactivity fee on an individual account.",
+        "claim": "A personal account has no minimum amount and no fee for leaving it unused.",
         "source": "https://www.interactivebrokers.com/en/accounts/required-minimums.php",
         "caveat": "The ten thousand dollar minimum that turns up in search results applies to broker and institutional accounts, not to you."
       },
       {
-        "claim": "Deposits have to come from an account in your own name. Third-party deposits are generally rejected.",
+        "claim": "Money you pay in has to come from an account in your own name. Money sent by someone else is usually turned down.",
         "source": "https://www.interactivebrokers.com/en/support/fund-my-account.php",
         "caveat": "This rules out having a relative abroad send the money for you, which is the first thing most people try."
       },
       {
-        "claim": "Wise's own list of countries you must live in to hold money with Wise does not include Lebanon.",
+        "claim": "To keep money in a Wise account, you must live in a country on Wise's own list. Lebanon is not on it.",
         "source": "https://wise.com/help/articles/2813542/where-do-i-need-to-live-to-hold-money-with-wise",
         "caveat": "Wise can send US dollars to Lebanon over Swift, and Lebanon is not on its unsupported list for registering and sending. But a Wise balance, which is what the broker's Wise integration transfers from, needs residence elsewhere. Revolut does not cover Lebanon at all."
       },
       {
-        "claim": "The practical consequence: for a Lebanon resident an international wire straight from the bank to the broker is the direct route. Routing through a digital account first adds a step and a fee without removing one.",
+        "claim": "So if you live in Lebanon, the direct route is an international transfer straight from your bank to the broker. Going through an app account first adds a step and a fee, and takes none away.",
         "source": null,
         "caveat": "This is a conclusion drawn from the published facts above, not a quote from any of them. Check your own bank's outbound wire fee before assuming anything."
       },
       {
-        "claim": "Non-US persons file a W-8BEN with the broker at account opening.",
+        "claim": "If you are not a US citizen or resident, you give the broker a short form called a W-8BEN when you open the account.",
         "source": "https://ibkrcampus.com/campus/trading-lessons/us-taxes-for-us-non-residents-3/",
         "caveat": "It is a short form and it is where you claim a treaty rate if your country has one."
       }

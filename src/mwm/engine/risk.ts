@@ -4,11 +4,11 @@ export const RISK_LEVELS: RiskLevel[] = ['Cautious', 'Balanced', 'Growth']
 
 export const RISK_DESCRIPTION: Record<RiskLevel, string> = {
   Cautious:
-    'Built to be left alone through a bad year without you touching it. Gives up return to do that, and the giving up is the point.',
+    'Made to be left alone through a bad year without you touching it. It grows more slowly to do that, and that is the point.',
   Balanced:
-    'Most of the long-run growth, most of the time, with enough in defensive assets that a bad year is survivable rather than frightening.',
+    'Most of the long-term growth, most of the time, with enough in safer things that a bad year feels bearable, not frightening.',
   Growth:
-    'Nearly all shares. Expects to be worth a lot more in fifteen years and expects to lose a third of its value somewhere along the way.',
+    'Nearly all shares. Expect it to be worth a lot more in fifteen years, and expect it to lose a third of its value at some point along the way.',
 }
 
 export function computeRisk(profile: Profile, flows: Flows, flow: FlowResult): RiskResult {
@@ -27,13 +27,13 @@ export function computeRisk(profile: Profile, flows: Flows, flow: FlowResult): R
   if (profile.horizonYears <= 2 && level !== 'Cautious') {
     level = 'Cautious'
     override =
-      'Overridden to Cautious. You said you may need this money within about two years. Over two years, shares are close to a coin toss, and no score should be allowed to argue with that.'
+      'Set to Cautious. You said you may need this money within about two years. Over two years, shares go up or down almost like a coin toss, and no score should argue with that.'
   }
 
   if (profile.drawdownReaction === 'sell' && level === 'Growth') {
     level = 'Balanced'
     override =
-      'Overridden down one level. You said you would sell if it fell 30 percent. A portfolio you sell at the bottom returns less than a smaller one you hold, so the honest answer is to hold less risk rather than to promise you will behave differently next time.'
+      'Moved down one level. You said you would sell if it fell 30 percent. Investments you sell at the bottom earn less than a safer mix you keep, so it is better to take less risk than to promise you will act differently next time.'
   }
 
   return {
@@ -46,7 +46,7 @@ export function computeRisk(profile: Profile, flows: Flows, flow: FlowResult): R
         label: 'How long until you need it',
         points: horizonPoints,
         max: 5,
-        detail: `${profile.horizonYears} years. Time is the only thing that reliably converts the volatility of shares into their return.`,
+        detail: `${profile.horizonYears} years. Time is the only thing that reliably turns the ups and downs of shares into growth.`,
       },
       {
         label: 'What you would do in a crash',
@@ -54,25 +54,25 @@ export function computeRisk(profile: Profile, flows: Flows, flow: FlowResult): R
         max: 5,
         detail:
           profile.drawdownReaction === 'sell'
-            ? 'You said you would sell. That is an honest answer and it is worth more than a brave one.'
+            ? 'You said you would sell. That is an honest answer, and it is worth more than a brave one.'
             : profile.drawdownReaction === 'hold'
-              ? 'You said you would hold. Most people say this and about half of them do it.'
-              : 'You said you would buy more. That is the right answer and it requires cash sitting there to be true.',
+              ? 'You said you would wait. Most people say this, and about half of them actually do it.'
+              : 'You said you would buy more. That is the right answer, but it only works if you have cash ready to do it.',
       },
       {
-        label: 'How reliable your income is',
+        label: 'How steady your income is',
         points: stabilityPoints,
         max: 3,
         detail:
           flows.incomeStability === 'recurring'
-            ? 'Recurring income lets a portfolio be left alone, which is most of what makes it work.'
-            : 'Income that stops and starts eventually forces a sale at a bad price.',
+            ? 'Steady income lets your investments be left alone, which is most of what makes them work.'
+            : 'Income that stops and starts will one day force you to sell at a bad price.',
       },
       {
-        label: 'How much reachable money you already have',
+        label: 'How much money you can already use',
         points: runwayPoints,
         max: 3,
-        detail: `${runway.toFixed(1)} months of spending in money you can get to. This is what stands between a bad month and a forced sale.`,
+        detail: `${runway.toFixed(1)} months of spending in money you can really use. This is what stops a bad month from forcing you to sell.`,
       },
     ],
   }

@@ -97,6 +97,6 @@ export function outcomeBand(stat: PortfolioStat, amountUsd: number) {
     typicalLow: amountUsd * (1 + r - s),
     typicalHigh: amountUsd * (1 + r + s),
     badYear: amountUsd * (1 + r - 2 * s),
-    note: 'Roughly two years in three land inside the first range, and about one year in twenty is worse than the third figure. These come straight from the volatility number and assume returns behave more politely than they actually do in a crisis.',
+    note: 'About two years in three end up inside the first range, and about one year in twenty is worse than the third figure. These come straight from how much the mix swings, and they assume markets behave more calmly than they really do in a crisis.',
   }
 }

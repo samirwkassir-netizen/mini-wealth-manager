@@ -95,10 +95,10 @@ export function computeLiquidity(accounts: Account[]): LiquiditySchedule {
   })
 
   const bands: LiquidityBand[] = [
-    { key: 'now', label: 'Reachable now', usd: nowUsd, pct: pct(nowUsd) },
-    { key: 'drip', label: 'On a declared drip', usd: drippingUsd, pct: pct(drippingUsd) },
-    { key: 'unknown', label: 'Slow, timing unknown', usd: unknownUsd, pct: pct(unknownUsd) },
-    { key: 'trapped', label: 'Trapped', usd: trappedUsd, pct: pct(trappedUsd) },
+    { key: 'now', label: 'Usable now', usd: nowUsd, pct: pct(nowUsd) },
+    { key: 'drip', label: 'Slow, with a monthly limit', usd: drippingUsd, pct: pct(drippingUsd) },
+    { key: 'unknown', label: 'Slow, no limit given', usd: unknownUsd, pct: pct(unknownUsd) },
+    { key: 'trapped', label: 'Stuck', usd: trappedUsd, pct: pct(trappedUsd) },
   ]
 
   return { totalUsd, nowUsd, drippingUsd, dripMonthlyUsd, unknownUsd, trappedUsd, bands, points, dripDoneMonth }

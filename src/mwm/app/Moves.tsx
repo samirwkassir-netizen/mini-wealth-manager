@@ -2,10 +2,10 @@ import { useState } from 'react'
 import type { Analysis } from '../engine'
 
 const TAG: Record<string, string> = {
-  'before markets': 'Before markets',
+  'before markets': 'Before investing',
   first: 'First',
   then: 'Then',
-  ongoing: 'Ongoing',
+  ongoing: 'Keep doing',
 }
 
 export function Moves({ a }: { a: Analysis }) {
@@ -16,9 +16,9 @@ export function Moves({ a }: { a: Analysis }) {
   return (
     <section className="w-moves" aria-labelledby="w-h-moves">
       <h2 id="w-h-moves" className="w-h">
-        Your next moves
+        What to do next
       </h2>
-      {empty ? <p className="w-muted">Your moves, in order, appear here once you add what you hold.</p> : null}
+      {empty ? <p className="w-muted">Your next steps, in order, show up here once you add your money.</p> : null}
       <ol className="w-moves-list">
         {list.map((m) => {
           const isOpen = open === m.id

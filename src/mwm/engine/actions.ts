@@ -34,8 +34,8 @@ export function firstMoves(
     push({
       id: 'restricted',
       tag: 'before markets',
-      title: 'Take the trapped money out of your plan',
-      body: `You hold ${fmtUsd(standing.totalUsd)} and can reach ${fmtUsd(standing.accessibleTodayUsd)}. Plan with the second number. Keep chasing the first through whatever process exists, but do not let it sit in your head as savings, because a balance you cannot draw on will not pay a bill.`,
+      title: 'Leave Stuck money out of your plan',
+      body: `You have ${fmtUsd(standing.totalUsd)}, and you can really use ${fmtUsd(standing.accessibleTodayUsd)} of it. Plan with ${fmtUsd(standing.accessibleTodayUsd)}. Keep trying to get the rest out, but do not count it as savings, because money you cannot take out will not pay a bill.`,
     })
   }
 
@@ -43,15 +43,15 @@ export function firstMoves(
     push({
       id: 'deficit',
       tag: 'before markets',
-      title: `Close a gap of ${fmtUsd(Math.abs(flow.surplusUsd))} a month`,
-      body: 'Nothing else on this page works while more goes out than comes in. Every month of deficit eats a month of buffer, and buffer is what an allocation is built on.',
+      title: `You spend ${fmtUsd(Math.abs(flow.surplusUsd))} a month more than you earn`,
+      body: 'Nothing else on this page works while more money goes out than comes in. Each month like this eats into your rainy-day money, and the rest of the plan stands on that money.',
     })
   } else if (flow.incomeUsd <= 0 && flow.spendUsd > 0) {
     push({
       id: 'deficit',
       tag: 'before markets',
       title: `You are living on savings: ${fmtUsd(flow.spendUsd)} a month`,
-      body: 'Every month comes out of what you hold. That is fine for a while, as long as you know how many months you have and what starts the income.',
+      body: 'Every month is paid for from what you already have. That is fine for a while, as long as you know how many months it lasts and what will start your income.',
     })
   }
 
@@ -59,8 +59,8 @@ export function firstMoves(
     push({
       id: 'income',
       tag: 'before markets',
-      title: 'Put the money into the income before the market',
-      body: `At the model's expected return, ${fmtUsd(human.investableUsd)} invested is worth about ${fmtUsd(human.marketIncomeMonthUsd)} a month. An extra ${fmtUsd(human.upliftMonthlyUsd)} a month of income is worth the same as ${fmtUsd(human.upliftEquivalentCapitalUsd)} invested. When the second number is a multiple of what you actually have, capital spent on making yourself more valuable beats capital spent on a fund, and it is not close.`,
+      title: 'Put money into your earning power first',
+      body: `At the return this tool expects, ${fmtUsd(human.investableUsd)} invested earns about ${fmtUsd(human.marketIncomeMonthUsd)} a month. Earning ${fmtUsd(human.upliftMonthlyUsd)} more each month is worth the same as having ${fmtUsd(human.upliftEquivalentCapitalUsd)} invested. If that second amount is many times what you have, money spent on your skills and earning power beats money put in a fund, by a long way.`,
     })
   }
 
@@ -68,8 +68,8 @@ export function firstMoves(
     push({
       id: 'buffer',
       tag: 'first',
-      title: `Get to ${tiering.bufferTargetMonths} months of money you can reach`,
-      body: `You are ${fmtUsd(tiering.shortfallUsd)} short of that. It sits in cash or in a short government bond fund and it is supposed to be boring. This is what stops you selling a portfolio at the worst possible moment, which is the mistake that actually costs people their returns.`,
+      title: `Build up ${tiering.bufferTargetMonths} months of rainy-day money`,
+      body: `You need ${fmtUsd(tiering.shortfallUsd)} more to get there. Keep it in cash, or in a fund that holds short US government loans (very safe, pays a little interest). It is meant to be boring: it stops you selling your investments at the worst moment, which is the mistake that really costs people their gains.`,
     })
   }
 
@@ -83,8 +83,8 @@ export function firstMoves(
     push({
       id: 'split',
       tag: 'first',
-      title: 'Open a second account somewhere unrelated',
-      body: `${reachLargestPct.toFixed(0)} percent of the money you can reach is in one place. A second account in your own name at an unrelated institution removes a single point of failure.`,
+      title: 'Open a second account somewhere else',
+      body: `${reachLargestPct.toFixed(0)} percent of the money you can really use is in one place. A second account in your own name, at a bank or app with no link to the first, means one problem cannot hit all of it.`,
     })
   }
 
@@ -92,8 +92,8 @@ export function firstMoves(
     push({
       id: 'route',
       tag: 'first',
-      title: 'Build a route out before you need one',
-      body: 'Most of what you hold cannot cross a border. Getting one working channel open, tested with a small amount, while nothing is wrong, is worth more than any allocation decision below.',
+      title: 'Set up a way to send money abroad',
+      body: 'Much of what you have cannot leave the country. Open one way to send money out now, while nothing is wrong, and test it with a small amount. That is worth more than any choice about how to split your money.',
     })
   }
 
@@ -103,8 +103,8 @@ export function firstMoves(
     push({
       id: 'park',
       tag: 'then',
-      title: 'Park the long-term money until the income is steady',
-      body: `Keep ${tiering.bufferTargetMonths} months reachable. The rest can wait in a short Treasury fund until you have a steady income, or go into the mix on the Invest tab if you are sure you will not need it for five years.`,
+      title: 'Keep long-term money safe until income is steady',
+      body: `Keep ${tiering.bufferTargetMonths} months of spending where you can get it fast. The rest can wait in a fund that holds short US government loans (very safe, pays a little interest) until your income is steady. Or, if you are sure you will not need it for five years, put it into the mix on the Invest tab.`,
     })
   }
 
@@ -112,8 +112,8 @@ export function firstMoves(
     push({
       id: 'noBroker',
       tag: 'then',
-      title: 'Work the access problem before the allocation',
-      body: `You said a foreign brokerage is not realistic. Then the mix below is a target, not a shopping list. What is usually still reachable without one: physical gold bought locally, hard-currency cash held outside the fragile bank, and paying down any debt you carry, which earns its interest rate risk-free. Revisit the broker question once a year. The situation that makes it impossible has a habit of changing.`,
+      title: 'Find a way to invest before picking funds',
+      body: `You said an investing app or broker abroad (a company that buys funds for you) is not realistic, so the mix on the Invest tab is a goal, not a shopping list. What usually still works without one: gold coins or bars bought locally, cash in a strong currency kept outside a shaky bank, and paying off any debt, which saves you its interest with no risk. Ask the broker question again once a year, because what blocks you now often changes.`,
     })
   }
 
@@ -121,8 +121,8 @@ export function firstMoves(
     push({
       id: 'broker',
       tag: 'then',
-      title: 'Open the brokerage account',
-      body: 'It takes a few days and it is the step people put off for years. The account has to be in your own name and funded from an account in your own name. If you are not a US person, the funds this tool points you to are Irish; the reason is behind the Why? link on the Invest tab.',
+      title: 'Open an investing account',
+      body: 'It takes a few days with an investing app or broker (a company that buys funds for you), and it is the step people put off for years. The account, and the account you pay in from, must both be in your own name. If you are not a US citizen or resident, the funds shown here are Irish ones, and the Why? on the Invest tab explains the reason.',
     })
   }
 
@@ -130,8 +130,8 @@ export function firstMoves(
     push({
       id: 'buy',
       tag: 'then',
-      title: `Put ${fmtUsd(tiering.growthUsd)} to work in two or three orders`,
-      body: 'Not twelve. Every order costs a commission and a spread, and on this size those are a real percentage. Buy the largest holdings first and let the small ones wait until the next contribution.',
+      title: `Invest ${fmtUsd(tiering.growthUsd)} in two or three purchases`,
+      body: 'Not twelve. Each purchase costs a fee and a small extra on the price, and on an amount this size that is a real share of it. Buy the biggest parts of the mix first, and leave the small ones until you next add money.',
     })
   }
 
@@ -139,16 +139,16 @@ export function firstMoves(
     push({
       id: 'automate',
       tag: 'ongoing',
-      title: `Automate ${fmtUsd(flow.freeMonthlyUsd)} a month`,
-      body: 'A standing order on payday, before you see the money. The research on automatic saving is consistent: the decision to save is made once, or it is made badly every month.',
+      title: `Save ${fmtUsd(flow.freeMonthlyUsd)} a month automatically`,
+      body: 'Set up an automatic transfer on payday, before you see the money. Research on automatic saving keeps finding the same thing: you decide to save once, or you end up deciding badly every month.',
     })
   }
 
   push({
     id: 'review',
     tag: 'ongoing',
-    title: 'Look at it twice a year and otherwise leave it alone',
-    body: 'Rebalance when a holding drifts more than about five percentage points from its target. Checking the price weekly changes nothing except how you feel, and how you feel is the thing most likely to cost you money.',
+    title: 'Check it twice a year, then leave it alone',
+    body: 'If one part of your mix drifts more than about five percentage points from its target, buy or sell a little to bring it back. Checking prices every week changes nothing except how you feel, and your feelings are the thing most likely to cost you money.',
   })
 
   return out
