@@ -4,6 +4,22 @@ A portfolio tool for people whose cash is not the risk-free asset.
 
 **Live:** [samirkassir.me/wealth](https://samirkassir.me/wealth)
 
+## Version 3, October 2026
+
+The interface is now one screen. What you hold sits on the left, each pot
+marked Free, Local, Slow or Stuck, with an optional monthly limit for slow
+money (how Lebanon's Circular 158 actually pays out). The answer sits on the
+right and updates as you type: on paper against within reach, months of
+spending on paper against in reality, your stage (income, safety net,
+invest), and four short views: Safety net, Invest, Bad years (2008, Covid,
+the 1970s, a bank freeze, and Hard months, which plays your real pots forward
+when income stops, a currency falls or slow money freezes) and You first.
+Explanations sit behind Why? links instead of on long pages. Two built-in
+examples, share links that carry the numbers only in the URL fragment, and a
+share card that shows percentages, never amounts. Data refreshed to
+21 October 2026. The method below is unchanged; the engine now also includes
+the liquidity timeline, currency stress and what-breaks-first modules.
+
 ---
 
 ## Why this exists
