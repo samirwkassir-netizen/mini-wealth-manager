@@ -19,11 +19,16 @@ export function Headline({ a, state }: { a: Analysis; state: AppState }) {
   const parts = splitByFreedom(state)
   const total = s.totalUsd
   const reach = parts.free + parts.local
-  const pct = total > 0 ? Math.round((reach / total) * 100) : 0
+  const share = total > 0 ? reach / total : 0
+  const pct = Math.round(share * 100)
+  const pctText = share > 0 && share < 0.005 ? 'Less than 1%' : `${pct}%`
   const order: Freedom[] = ['free', 'local', 'slow', 'stuck']
 
   return (
-    <header className="w-headline" aria-live="polite">
+    <header className="w-headline">
+      <p className="w-sr" aria-live="polite">
+        {total > 0 ? `${pctText} within reach: ${usd(reach)} of ${usd(total)}.` : ''}
+      </p>
       <div className="w-headline-nums">
         <div>
           <p className="w-k">On paper</p>
@@ -53,11 +58,13 @@ export function Headline({ a, state }: { a: Analysis; state: AppState }) {
       <p className="w-headline-line">
         {total <= 0 ? (
           'Add what you have on the left. Round numbers are fine.'
-        ) : pct >= 95 ? (
+        ) : reach >= total - 0.5 ? (
           <>All of it is money you can use. The plan below runs on the full amount.</>
+        ) : pct >= 95 ? (
+          <>Almost all of it is money you can use. The plan below is built on {usd(reach)}.</>
         ) : (
           <>
-            {pct}% of what you own is money you can use. The plan below is built on {usd(reach)}, not {usd(total)}.
+            {pctText} of what you own is money you can use. The plan below is built on {usd(reach)}, not {usd(total)}.
           </>
         )}
         {a.flow.spendUsd > 0 && total > 0 && a.flow.runwayTotalMonths - a.flow.runwayAccessibleMonths >= 0.5 ? (
@@ -109,9 +116,14 @@ export function Stage({ a, state }: { a: Analysis; state: AppState }) {
 
   let line: string
   if (a.standing.totalUsd <= 0 && f.incomeUsd <= 0) line = 'Fill in the left side and your stage shows here.'
+  else if (a.standing.totalUsd > 0 && f.spendUsd <= 0) line = 'Add what you spend each month to size your safety net.'
   else if (f.incomeUsd > 0 && f.surplusUsd < 0) line = `You spend ${usd(-f.surplusUsd)} a month more than you earn. Close that first.`
   else if (state.flows.incomeStability === 'none') line = 'No income yet. A portfolio grows money you earn, so that comes first.'
-  else if (state.flows.incomeStability === 'irregular') line = 'Income comes and goes. Steady it, or a bad month forces a sale.'
+  else if (state.flows.incomeStability === 'irregular')
+    line =
+      t.growthUsd > 0
+        ? `Income comes and goes, so the safety net is bigger. Park the other ${usd(t.growthUsd)} until the income is steady.`
+        : 'Income comes and goes. Steady it, or a bad month forces a sale.'
   else if (h.stage === 'buildBuffer')
     line = `${f.runwayAccessibleMonths.toFixed(1)} of ${t.bufferTargetMonths} months covered. Finish the safety net, then invest.`
   else line = `Safety net in place. ${usd(t.growthUsd)} can go to work.`

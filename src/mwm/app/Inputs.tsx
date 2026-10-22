@@ -28,8 +28,17 @@ export function Inputs({ state, onChange }: { state: AppState; onChange: (s: App
               ))}
             </ul>
             <p>
-              In Lebanon: old dollars paid out under BDL Circular 158 are Slow, not Stuck. It pays up to $1,000 a month, $800
-              of which can be wired abroad, to a lifetime cap of $54,200, and runs to 30 June 2027.
+              In Lebanon: old dollars paid out under BDL Circular 158 are Slow, not Stuck. Its consolidated text pays up to
+              $1,000 a month, $800 of which can be wired abroad, to a lifetime cap of $54,200, until 30 June 2027. Enter what
+              your bank actually pays you as the monthly limit.{' '}
+              <a
+                href="https://www.bdl.gov.lb/CB%20Com/Laws%20And%20Regulations/Basic%20Circulars/Decision_13335_EN%C2%A74457_3.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                BDL text
+              </a>
+              , checked 22 October 2026.
             </p>
             <p>Rough numbers are fine. Nothing you type leaves this page.</p>
           </Why>
@@ -187,7 +196,7 @@ export function Inputs({ state, onChange }: { state: AppState; onChange: (s: App
           </h2>
           <Why title="Two questions decide the mix">
             <p>
-              How long until you need the money, and what you would really do if it fell by a third. An honest
+              How long until you need the money, and what you would really do if it fell 30 percent. An honest
               "sell" here is worth more than a brave answer you would not keep.
             </p>
           </Why>

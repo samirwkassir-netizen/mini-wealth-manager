@@ -1,12 +1,15 @@
 import { useMemo, useState } from 'react'
 import {
+  CASH_EROSION,
   INSTRUMENTS,
   RISK_DESCRIPTION,
   RISK_LEVELS,
   SCENARIOS,
   applyScenario,
   defaultUplift,
+  hardness,
   simulateBreaks,
+  toUsd,
   touchedCurrencies,
   haircutRestricted,
   outcomeBand,
@@ -16,6 +19,7 @@ import {
   type BrokerAccess,
   type RiskLevel,
 } from '../engine'
+import accessData from '../data/access.json'
 import { Segmented, Why, months, usd } from './bits'
 import { splitByFreedom } from './Headline'
 
@@ -135,12 +139,31 @@ export function SafetyNet({ a, state }: { a: Analysis; state: AppState }) {
               </p>
               <p>
                 It pays roughly the US short-term interest rate and can be sold any trading day. That is the whole job of a
-                safety net: boring, reachable, not in the local banking system.
+                safety net: boring and reachable. Money in a local bank counts toward it only while you can actually withdraw
+                it.
               </p>
             </Why>
           </dd>
         </div>
       </dl>
+
+      <p className="w-tiny">
+        Cash that only sits also shrinks: a dollar held untouched since {CASH_EROSION.startLabel}, when Lebanon’s banking crisis
+        began, bought {CASH_EROSION.purchasingPowerLostPct} percent less in the US by {CASH_EROSION.endLabel}.{' '}
+        <Why title={CASH_EROSION.label}>
+          <p>
+            US consumer prices rose {CASH_EROSION.pricesRosePct} percent from {CASH_EROSION.startLabel} to {CASH_EROSION.endLabel}{' '}
+            (BLS CPI-U, index {CASH_EROSION.startIndex} to {CASH_EROSION.endIndex}). That is about {CASH_EROSION.annualLossPct} percent of
+            buying power a year.
+          </p>
+          <p>{CASH_EROSION.caution}</p>
+          <p>
+            <a href={CASH_EROSION.sourceUrl} target="_blank" rel="noopener noreferrer">
+              BLS CPI release
+            </a>
+          </p>
+        </Why>
+      </p>
     </div>
   )
 }
@@ -176,8 +199,8 @@ export function Invest({
       <div className="w-view w-empty">
         <p className="w-view-big">Nothing here can be invested yet.</p>
         <p className="w-muted">
-          An investment account abroad has to be funded from money that is yours and can move. Right now none of your pots
-          is marked Free. Getting even a small amount into one is the first real step.
+          An investment account abroad has to be funded from money that is yours and can move. None of your pots marked
+          Free has money in it yet. Getting even a small amount into one is the first real step.
         </p>
       </div>
     )
@@ -289,6 +312,23 @@ export function Invest({
           ]}
         />
       </div>
+      <p className="w-tiny">
+        <Why label="Where would I hold this?" title={accessData.broker.title}>
+          <ul className="w-pop-list">
+            {accessData.broker.points.map((pt) => (
+              <li key={pt.claim}>
+                {pt.claim}{' '}
+                {pt.source ? (
+                  <a href={pt.source} target="_blank" rel="noopener noreferrer">
+                    source
+                  </a>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+          <p className="w-tiny">Checked {accessData.meta.checkedOn}. Not a recommendation of any broker.</p>
+        </Why>
+      </p>
       {state.profile.brokerAccess === 'no' ? (
         <p className="w-callout">Then this mix is a target, not a shopping list. Your next moves say what still works without one.</p>
       ) : null}
@@ -350,9 +390,16 @@ function HardMonths({ state }: { state: AppState }) {
   const [incomeStops, setIncomeStops] = useState(true)
   const [slowFreezes, setSlowFreezes] = useState(false)
   const [fall, setFall] = useState(0)
-  const soft = touchedCurrencies(state.accounts, state.flows).filter((c) => c !== 'USD')
+  // Only currencies that have repriced before get the dial; pegs and the euro stay put.
+  const soft = touchedCurrencies(state.accounts, state.flows).filter((c) => hardness(c) >= 0.5)
   const fxShocks = Object.fromEntries(soft.map((c) => [c, -fall]))
-  const r = simulateBreaks(state.accounts, state.flows, { incomeStops, slowMoneyFreezes: slowFreezes, fxShocks })
+  // Spending is held at its dollar value: when a currency falls, local prices follow.
+  const flowsUsd = {
+    ...state.flows,
+    spendMonthly: toUsd(state.flows.spendMonthly || 0, state.flows.spendCurrency),
+    spendCurrency: 'USD',
+  }
+  const r = simulateBreaks(state.accounts, flowsUsd, { incomeStops, slowMoneyFreezes: slowFreezes, fxShocks })
   const spend = r.spendAfterUsd
 
   if (spend <= 0) {
@@ -379,7 +426,7 @@ function HardMonths({ state }: { state: AppState }) {
         </label>
         {soft.length ? (
           <label>
-            {soft.join(', ')} falls
+            {soft.join(' and ')} {soft.length > 1 ? 'fall' : 'falls'}
             <input type="range" min={0} max={60} step={5} value={fall} onChange={(e) => setFall(Number(e.currentTarget.value))} />
             <output>{fall}%</output>
           </label>
@@ -388,11 +435,17 @@ function HardMonths({ state }: { state: AppState }) {
 
       <div className="w-stress-head">
         <p className={`w-stress-num ${r.survivalMonths === null ? 'is-good' : 'is-bad'}`}>
-          {r.survivalMonths === null ? 'You do not run out' : r.survivalMonths === 0 ? 'Not one month covered' : `${r.survivalMonths} ${r.survivalMonths === 1 ? 'month' : 'months'}`}
-          <small>{r.survivalMonths === null ? ' over five years' : ' before the reachable money runs out'}</small>
+          {r.survivalMonths === null ? 'You do not run out' : r.survivalMonths === 0 ? 'Not even one month' : `${r.survivalMonths} ${r.survivalMonths === 1 ? 'month' : 'months'}`}
+          <small>{r.survivalMonths === null ? ' over five years' : r.survivalMonths === 0 ? ': the reachable money does not cover one month' : ' before the reachable money runs out'}</small>
         </p>
         <p className="w-muted">
-          {r.monthlyBurnUsd > 0 ? <>Spending runs {usd(r.monthlyBurnUsd)} a month ahead of income. </> : <>Income still covers spending. </>}
+          {incomeStops ? (
+            <>With the income stopped, {usd(spend)} a month comes out of what you hold. </>
+          ) : r.monthlyBurnUsd > 0 ? (
+            <>Spending runs {usd(r.monthlyBurnUsd)} a month ahead of income. </>
+          ) : (
+            <>Income still covers spending. </>
+          )}
           You start with {usd(r.startingPoolUsd)} in hand
           {r.dripTotalUsd > 0 ? <>, plus {usd(r.dripTotalUsd)} arriving on a monthly limit</> : null}.{' '}
           <Why title="How this is worked out">
@@ -402,6 +455,10 @@ function HardMonths({ state }: { state: AppState }) {
               could not.
             </p>
             <p>Nothing here predicts that your income stops or a currency falls. It answers: if it did, which month hurts.</p>
+            <p>
+              When a currency falls, your spending is held at its dollar value, as if local prices rise to match. That is close
+              to what Lebanon lived through after 2019. Pegged currencies and the euro are not moved by the dial.
+            </p>
           </Why>
         </p>
       </div>
@@ -416,9 +473,9 @@ function HardMonths({ state }: { state: AppState }) {
       {r.events.length ? (
         <ul className="w-events">
           {r.events.map((e) => (
-            <li key={e.id} title={e.detail}>
+            <li key={e.id}>
               <b>{e.month ? `Month ${e.month}. ` : ''}</b>
-              {e.title}.
+              {e.title}. <small>{e.detail}</small>
             </li>
           ))}
         </ul>
@@ -454,11 +511,11 @@ function Market({ a, id, amount }: { a: Analysis; id: string; amount: number }) 
         <p className="w-muted">
           {r.portfolioUsd < 0 ? (
             <>
-              On the {usd(amount)} you can move, today's mix. That is {months(r.monthsOfSpendLost)} months of spending
+              On the {usd(amount)} you can move, in the suggested mix. That is {months(r.monthsOfSpendLost)} months of spending
               {r.yearsToRecover > 0 ? <>, back in about {months(r.yearsToRecover)} years at the expected return</> : null}.
             </>
           ) : (
-            <>On the {usd(amount)} you can move, today's mix. This one would have helped.</>
+            <>On the {usd(amount)} you can move, in the suggested mix. This one would have helped.</>
           )}{' '}
           <Why title={sc.name}>
             <p>{sc.summary}</p>
@@ -554,19 +611,27 @@ function Freeze({
 
 export function YouFirst({ a, uplift, setUplift }: { a: Analysis; uplift: number; setUplift: (n: number) => void }) {
   const h = a.human
-  const r = a.allocation.stat.expectedReturn
-  const value = h.upliftEquivalentCapitalUsd
+  // With nothing invested yet the blended mix has no return, so fall back to
+  // the long-term mix the tool would build. Never show infinity on screen.
+  const r = a.allocation.stat.expectedReturn > 0 ? a.allocation.stat.expectedReturn : a.growthOnly.stat.expectedReturn
+  const value = r > 0 ? (uplift * 12) / (r / 100) : 0
+  const monthly = (h.investableUsd * (r / 100)) / 12
+  const multiple = h.investableUsd > 0 ? value / h.investableUsd : null
   const fallback = defaultUplift(a.flow.incomeUsd)
 
   return (
     <div className="w-view">
-      <p className="w-view-big">With a small pile, your income is the best asset you own.</p>
+      <p className="w-view-big">
+        {multiple === null || multiple >= 1
+          ? 'With a small pile, your income is the best asset you own.'
+          : 'At this size the portfolio earns more than a raise would. Protect it first.'}
+      </p>
 
       <div className="w-compare">
         <div>
-          <p className="w-k">Your {usd(h.investableUsd)}, invested</p>
+          <p className="w-k">{h.investableUsd > 0 ? <>Your {usd(h.investableUsd)}, invested</> : <>Invested money you can move</>}</p>
           <p className="w-mid">
-            {usd(h.marketIncomeMonthUsd)}
+            {usd(monthly)}
             <small> a month</small>
           </p>
         </div>
@@ -586,14 +651,13 @@ export function YouFirst({ a, uplift, setUplift }: { a: Analysis; uplift: number
       </label>
 
       <p className="w-muted">
-        {h.investableUsd > 0 && Number.isFinite(h.multiple) ? (
+        {multiple !== null ? (
           <>
-            That raise equals <b>{h.multiple >= 10 ? Math.round(h.multiple) : h.multiple.toFixed(1)}×</b> what you can invest
-            today.{' '}
+            That raise equals <b>{multiple >= 10 ? Math.round(multiple) : multiple.toFixed(1)}×</b> what you can invest today.{' '}
           </>
         ) : null}
-        At about {r.toFixed(1)}% a year, each extra dollar of monthly income is worth roughly {usd(12 / (r / 100))} of capital.
-        A course, a tool or a job search that adds income usually beats a fund at this size.{' '}
+        {r > 0 ? <>At about {r.toFixed(1)}% a year, each extra dollar of monthly income is worth roughly {usd(12 / (r / 100))} of capital. </> : null}
+        {multiple === null || multiple >= 1 ? <>A course, a tool or a job search that adds income usually beats a fund at this size. </> : null}
         <Why title="Is it worth spending on?">
           <p>Two yeses out of three:</p>
           <ol className="w-pop-list">

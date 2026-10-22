@@ -56,6 +56,11 @@ export function computeHumanCapital(
     reasons.push('You are not keeping anything at the end of the month, so there is nothing to invest yet.')
   }
 
+  if (flow.spendUsd <= 0 && standing.totalUsd > 0) {
+    if (stage === 'invest') stage = 'buildBuffer'
+    reasons.push('Add your monthly spending so the safety net can be sized. Until then the tool will not tell you to invest.')
+  }
+
   if (stage === 'invest') {
     reasons.push(
       'Recurring income, a buffer in place, and money left over. This is the point at which markets start doing more for you than another course would.',

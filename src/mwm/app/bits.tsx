@@ -1,4 +1,4 @@
-import { useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
+import { Component, useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 
 /* ---------- a short explanation, one tap away, never in the way ---------- */
 
@@ -160,7 +160,7 @@ export function Amount({
           const raw = e.currentTarget.value.replace(/[^\d.]/g, '')
           setText(e.currentTarget.value)
           const n = Number(raw)
-          onChange(Number.isFinite(n) ? Math.min(n, 1e9) : 0)
+          onChange(Number.isFinite(n) ? Math.min(n, 1e15) : 0)
         }}
       />
     </label>
@@ -179,3 +179,34 @@ export const usdShort = (n: number) => {
 }
 
 export const months = (m: number) => (m >= 10 ? Math.round(m).toString() : m.toFixed(1).replace(/\.0$/, ''))
+
+/* ---------- if the numbers ever break the screen, say so instead of going blank ---------- */
+
+export class Guard extends Component<{ children: ReactNode; onReset: () => void }, { failed: boolean }> {
+  state = { failed: false }
+
+  static getDerivedStateFromError() {
+    return { failed: true }
+  }
+
+  render() {
+    if (!this.state.failed) return this.props.children
+    return (
+      <div className="w-empty" style={{ padding: '32px' }}>
+        <p className="w-view-big">Something in these numbers broke the tool.</p>
+        <p className="w-muted">
+          <button
+            type="button"
+            className="w-act"
+            onClick={() => {
+              this.setState({ failed: false })
+              this.props.onReset()
+            }}
+          >
+            Start again from the example
+          </button>
+        </p>
+      </div>
+    )
+  }
+}

@@ -1,4 +1,4 @@
-import { toUsd, type Access, type Account, type AccountType, type AppState, type BrokerAccess, type DrawdownReaction, type Horizon, type IncomeStability, type RiskLevel } from '../engine'
+import { RISK_LEVELS, rates, toUsd, type Access, type Account, type AccountType, type AppState, type BrokerAccess, type DrawdownReaction, type Horizon, type IncomeStability, type RiskLevel } from '../engine'
 
 /**
  * The four ways a pot of money can behave. The engine thinks in two
@@ -157,6 +157,25 @@ export function decodeState(hash: string): { state: AppState; ui: Ui } | null {
     const m = raw.match(/(?:^|&)s=([^&]+)/)
     if (!m) return null
     const p = JSON.parse(unb64(m[1])) as Packed
+    // A shared link is untrusted input: keep only values this tool knows.
+    const codes = new Set(rates.map((r) => r.code))
+    const ccy = (c: unknown) => (typeof c === 'string' && codes.has(c) ? c : 'USD')
+    const types = new Set(POT_TYPES.map((t) => t.value))
+    const freedoms = new Set(FREEDOMS.map((f) => f.value))
+    p.a = (Array.isArray(p.a) ? p.a : []).slice(0, 8).map(([type, currency, amount, fr, cap]) => [
+      types.has(type) ? type : 'localBank',
+      ccy(currency),
+      amount,
+      freedoms.has(fr) ? fr : 'free',
+      cap,
+    ])
+    p.f[1] = ccy(p.f[1])
+    p.f[4] = ccy(p.f[4])
+    if (!['none', 'irregular', 'recurring'].includes(p.f[2])) p.f[2] = 'recurring'
+    if (![2, 5, 10, 20].includes(p.p[0])) p.p[0] = 10
+    if (!['sell', 'hold', 'buy'].includes(p.p[1])) p.p[1] = 'hold'
+    if (p.p[3] && !['have', 'could', 'no'].includes(p.p[3])) p.p[3] = 'could'
+    if (p.l && !RISK_LEVELS.includes(p.l)) delete p.l
     const accounts = p.a.map(([type, currency, amount, fr, cap], i) =>
       withFreedom(
         newPot({ id: `h${i}`, type, currency, amount: Math.max(0, Number(amount) || 0), monthlyCap: cap ? Math.max(0, Number(cap) || 0) : null }),

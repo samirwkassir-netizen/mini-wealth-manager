@@ -48,7 +48,9 @@ export function analyse(state: AppState, upliftOverride?: number, levelOverride?
     standing,
     flow,
     state.flows,
-    allocation.stat.expectedReturn,
+    // With nothing invested the blended mix has no return; use the long-term
+    // mix instead so the income comparison never divides by zero.
+    allocation.stat.expectedReturn > 0 ? allocation.stat.expectedReturn : growthOnly.stat.expectedReturn,
     tiering.bufferTargetMonths,
     uplift,
   )

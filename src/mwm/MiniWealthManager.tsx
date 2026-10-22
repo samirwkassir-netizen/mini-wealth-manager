@@ -1,7 +1,7 @@
 import { useDeferredValue, useEffect, useMemo, useState } from 'react'
 import './app/app.css'
 import { analyse, defaultUplift, fxMeta, toUsd, ASSUMPTION_META, type AppState, type RiskLevel } from './engine'
-import { Why } from './app/bits'
+import { Guard, Why } from './app/bits'
 import { Inputs } from './app/Inputs'
 import { Headline, Stage } from './app/Headline'
 import { BadYears, Invest, SafetyNet, YouFirst } from './app/views'
@@ -59,7 +59,15 @@ export default function MiniWealthManager() {
   }, [toast])
 
   // Typing stays instant; the analysis catches up a frame later if it has to.
-  const live = useDeferredValue(state)
+  const deferred = useDeferredValue(state)
+  // No income entered means no income, whatever the steadiness toggle says.
+  const live = useMemo(
+    () =>
+      deferred.flows.incomeMonthly > 0 || deferred.flows.incomeStability === 'none'
+        ? deferred
+        : { ...deferred, flows: { ...deferred.flows, incomeStability: 'none' as const } },
+    [deferred],
+  )
   const up = uplift ?? defaultUplift(toUsd(live.flows.incomeMonthly || 0, live.flows.incomeCurrency))
   const a = useMemo(() => analyse(live, up, level), [live, up, level])
 
@@ -152,11 +160,12 @@ export default function MiniWealthManager() {
             <Why label="Sources" title="What this runs on">
               <p>
                 Return and risk figures: {ASSUMPTION_META.primarySource} Exchange rates frozen on {fxMeta.checkedOn}. Crash
-                figures from MSCI and Bloomberg index data; unverified lines are held at zero and marked.
+                figures from MSCI, Nareit, Callan and NYU Stern (Damodaran) data; lines without a verified figure are held at
+                zero and marked.
               </p>
               <p>
-                No account, no server, no network calls. Everything is computed in your browser. A teaching tool, and not
-                investment advice.
+                No account and no server. Nothing you type is sent anywhere; everything is computed in your browser. A teaching
+                tool, and not investment advice.
               </p>
               <p>
                 <a href="https://github.com/samirwkassir-netizen/mini-wealth-manager" target="_blank" rel="noopener noreferrer">
@@ -182,6 +191,7 @@ export default function MiniWealthManager() {
         ))}
       </nav>
 
+      <Guard onReset={() => loadPreset(PRESETS[0].id)}>
       <div className="w-grid" data-pane={pane}>
         <aside className="w-left" aria-label="Your numbers">
           <Inputs state={state} onChange={edit} />
@@ -229,6 +239,7 @@ export default function MiniWealthManager() {
           </div>
         </main>
       </div>
+      </Guard>
 
       <p className="w-foot">A teaching tool, not investment advice. Figures are estimates with dated sources.</p>
       {toast ? (

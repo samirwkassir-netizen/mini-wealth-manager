@@ -477,3 +477,21 @@ describe('cash erosion', () => {
     expect(CASH_EROSION.caution).toMatch(/general rule/i)
   })
 })
+
+describe('local money and the safety net', () => {
+  it('lets reachable money that cannot leave the country fill the safety net first', () => {
+    const a = analyse(
+      baseState({
+        accounts: [
+          acc({ amount: 6000, access: 'today', transferable: false }),
+          acc({ amount: 4000, access: 'today', transferable: true }),
+        ],
+      }),
+    )
+    // The local pot covers the buffer, so the movable pot is free to invest
+    // and the plan reports no shortfall.
+    expect(a.tiering.shortfallUsd).toBe(0)
+    expect(a.tiering.growthUsd).toBeGreaterThan(0)
+    expect(a.actions.some((m) => m.id === 'buffer')).toBe(false)
+  })
+})

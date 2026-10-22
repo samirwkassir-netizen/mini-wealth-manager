@@ -1,5 +1,5 @@
 import type { Account, AppState, FlowResult, HumanCapital, Standing, Tiering } from './types'
-import { fmtUsd } from './fx'
+import { fmtUsd, toUsd } from './fx'
 
 export interface Action {
   id: string
@@ -39,12 +39,19 @@ export function firstMoves(
     })
   }
 
-  if (flow.surplusUsd < 0) {
+  if (flow.surplusUsd < 0 && flow.incomeUsd > 0) {
     push({
       id: 'deficit',
       tag: 'before markets',
       title: `Close a gap of ${fmtUsd(Math.abs(flow.surplusUsd))} a month`,
       body: 'Nothing else on this page works while more goes out than comes in. Every month of deficit eats a month of buffer, and buffer is what an allocation is built on.',
+    })
+  } else if (flow.incomeUsd <= 0 && flow.spendUsd > 0) {
+    push({
+      id: 'deficit',
+      tag: 'before markets',
+      title: `You are living on savings: ${fmtUsd(flow.spendUsd)} a month`,
+      body: 'Every month comes out of what you hold. That is fine for a while, as long as you know how many months you have and what starts the income.',
     })
   }
 
@@ -66,12 +73,18 @@ export function firstMoves(
     })
   }
 
-  if (standing.largestAccountPct > 70 && standing.totalUsd > 0) {
+  // Concentration among the money you can actually move between banks.
+  const reachable = state.accounts
+    .filter((a) => a.access === 'today' && Number.isFinite(a.amount) && a.amount > 0)
+    .map((a) => toUsd(a.amount, a.currency))
+  const reachTotal = reachable.reduce((s, x) => s + x, 0)
+  const reachLargestPct = reachTotal > 0 && reachable.length ? (Math.max(...reachable) / reachTotal) * 100 : 0
+  if (reachLargestPct > 70 && reachTotal > 0) {
     push({
       id: 'split',
       tag: 'first',
       title: 'Open a second account somewhere unrelated',
-      body: `${standing.largestAccountPct.toFixed(0)} percent of your money is in one place. Splitting it costs nothing and removes the only risk on this page that can take everything at once.`,
+      body: `${reachLargestPct.toFixed(0)} percent of the money you can reach is in one place. A second account in your own name at an unrelated institution removes a single point of failure.`,
     })
   }
 
@@ -84,7 +97,18 @@ export function firstMoves(
     })
   }
 
-  if (tiering.growthUsd > 0 && noBrokerRoute) {
+  const investing = human.stage === 'invest' && flow.spendUsd > 0
+
+  if (tiering.growthUsd > 0 && !investing) {
+    push({
+      id: 'park',
+      tag: 'then',
+      title: 'Park the long-term money until the income is steady',
+      body: `Keep ${tiering.bufferTargetMonths} months reachable. The rest can wait in a short Treasury fund until you have a steady income, or go into the mix on the Invest tab if you are sure you will not need it for five years.`,
+    })
+  }
+
+  if (tiering.growthUsd > 0 && investing && noBrokerRoute) {
     push({
       id: 'noBroker',
       tag: 'then',
@@ -93,16 +117,16 @@ export function firstMoves(
     })
   }
 
-  if (tiering.growthUsd > 0 && !hasBrokerage && !noBrokerRoute) {
+  if (tiering.growthUsd > 0 && investing && !hasBrokerage && !noBrokerRoute) {
     push({
       id: 'broker',
       tag: 'then',
       title: 'Open the brokerage account',
-      body: 'It takes a few days and it is the step people put off for years. The account has to be in your own name and funded from an account in your own name. If you are not a US person, the funds this tool points you to are Irish, and the reason is in the tax panel below.',
+      body: 'It takes a few days and it is the step people put off for years. The account has to be in your own name and funded from an account in your own name. If you are not a US person, the funds this tool points you to are Irish; the reason is behind the Why? link on the Invest tab.',
     })
   }
 
-  if (tiering.growthUsd > 0 && !noBrokerRoute) {
+  if (tiering.growthUsd > 0 && investing && !noBrokerRoute) {
     push({
       id: 'buy',
       tag: 'then',
@@ -116,7 +140,7 @@ export function firstMoves(
       id: 'automate',
       tag: 'ongoing',
       title: `Automate ${fmtUsd(flow.freeMonthlyUsd)} a month`,
-      body: 'A standing order on payday, before you see the money. Every study of this finds the same thing: the decision to save is made once, or it is made badly every month.',
+      body: 'A standing order on payday, before you see the money. The research on automatic saving is consistent: the decision to save is made once, or it is made badly every month.',
     })
   }
 

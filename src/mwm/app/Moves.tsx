@@ -10,13 +10,15 @@ const TAG: Record<string, string> = {
 
 export function Moves({ a }: { a: Analysis }) {
   const [open, setOpen] = useState<string | null>(null)
-  const list = a.actions
+  const empty = a.standing.totalUsd <= 0 && a.flow.incomeUsd <= 0 && a.flow.spendUsd <= 0
+  const list = empty ? [] : a.actions
 
   return (
     <section className="w-moves" aria-labelledby="w-h-moves">
       <h2 id="w-h-moves" className="w-h">
         Your next moves
       </h2>
+      {empty ? <p className="w-muted">Your moves, in order, appear here once you add what you hold.</p> : null}
       <ol className="w-moves-list">
         {list.map((m) => {
           const isOpen = open === m.id

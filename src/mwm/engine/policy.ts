@@ -72,8 +72,14 @@ export function computeTiering(
   const bufferTargetMonths = bufferMonths(fragilityScore, incomeStability)
   const bufferNeed = flow.spendUsd * bufferTargetMonths
 
-  const safetyUsd = Math.min(investableUsd, bufferNeed)
-  const shortfallUsd = Math.max(0, bufferNeed - investableUsd)
+  // Reachable money that cannot leave the country still pays local bills, so
+  // it fills the safety net first. Only what is left of the need comes out of
+  // the money that could otherwise be invested abroad.
+  const localReachUsd = Math.max(0, standing.accessibleTodayUsd - standing.deployableUsd)
+  const needFromFree = Math.max(0, bufferNeed - localReachUsd)
+
+  const safetyUsd = Math.min(investableUsd, needFromFree)
+  const shortfallUsd = Math.max(0, needFromFree - investableUsd)
 
   const afterSafety = Math.max(0, investableUsd - safetyUsd)
   const shortGoalsNeed = flow.goals.filter((g) => g.months <= 36).reduce((s, g) => s + g.usd, 0)
